@@ -1,5 +1,5 @@
-ZETES_FEET_PATH = ../target
-ZETES_WINGS_PATH = ../target
+ZETES_FEET_PATH = ../zetes/zetesfeet/target
+ZETES_WINGS_PATH = ../zetes/zeteswings/target
 
 APPLICATION_NAME = GLDemo
 BINARY_NAME = gltest
@@ -20,3 +20,5 @@ endif
 all: package
 
 include $(ZETES_WINGS_PATH)/ZetesWings.mk
+
+.SILENT:
