@@ -1,4 +1,3 @@
-/**
- * This constant is used by Zetes to find the Java code entry point
- */
-char* applicationClass = const_cast<char*>("bellardpi/Main");
+#include "ZetesHands.h"
+
+char* zetes::hands::applicationClass = const_cast<char*>("bellardpi/Main");
