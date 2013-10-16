@@ -3,6 +3,7 @@ ZETES_WINGS_PATH = ../zetes/zeteswings/target
 
 APPLICATION_NAME = Tiny\ Viewer
 BINARY_NAME = tinyview
+ENTRY_CLASS = tinyviewer/TinyViewerApplication
 
 TARGET = target
 
