@@ -3,6 +3,7 @@ ZETES_WINGS_PATH = ../zetes/zeteswings/target
 
 APPLICATION_NAME = GLDemo
 BINARY_NAME = gltest
+ENTRY_CLASS = gltest/GLTestApplication
 
 TARGET = target
 
