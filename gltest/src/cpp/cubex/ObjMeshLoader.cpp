@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include <string>
 #include <vector>
+#include <sstream>
 
 #include "ObjMeshLoader.h"
 
@@ -112,6 +113,12 @@ namespace cubex
 		return res;
 	}
 
+	string concatMessageAndLineNumber(const string& msg, int lineNumber) {
+		std::stringstream ss;
+		ss << msg << " " << lineNumber;
+		return ss.str();
+	}
+
 	Mesh ObjMeshLoader::createMeshFromFile(const string& fileName)
 	{
 		FILE* f = fopen(fileName.c_str(), "r");
@@ -143,7 +150,7 @@ namespace cubex
 					if (tokens.size() != 4)
 					{
 						error = true;
-						errorMessage = "Incorrect number of tokens in vertex declaration at line " + lineNumber;
+						errorMessage = concatMessageAndLineNumber("Incorrect number of tokens in vertex declaration at line ", lineNumber);
 						break;
 					}
 
@@ -160,7 +167,7 @@ namespace cubex
 					if (tokens.size() != 3)
 					{
 						error = true;
-						errorMessage = "Incorrect number of tokens in vertex coordinates declaration at line " + lineNumber;
+						errorMessage = concatMessageAndLineNumber("Incorrect number of tokens in vertex coordinates declaration at line ", lineNumber);
 						break;
 					}
 
@@ -176,7 +183,7 @@ namespace cubex
 					if (tokens.size() != 4)
 					{
 						error = true;
-						errorMessage = "Incorrect number of tokens in normal declaration at line " + lineNumber;
+						errorMessage = concatMessageAndLineNumber("Incorrect number of tokens in normal declaration at line ", lineNumber);
 						break;
 					}
 
@@ -215,7 +222,7 @@ namespace cubex
 							else
 							{
 								error = true;
-								errorMessage = "Incorrect number of indices in face declaration at line" + lineNumber;
+										errorMessage = concatMessageAndLineNumber("Incorrect number of indices in face declaration at line", lineNumber);
 								break;
 							}
 						}
@@ -238,7 +245,7 @@ namespace cubex
 							else
 							{
 								error = true;
-								errorMessage = "Incorrect number of indices in face declaration at line" + lineNumber;
+										errorMessage = concatMessageAndLineNumber("Incorrect number of indices in face declaration at line", lineNumber);
 								break;
 							}
 						}
@@ -281,7 +288,7 @@ namespace cubex
 								else
 								{
 									error = true;
-									errorMessage = "Incorrect number of indices in face declaration at line" + lineNumber;
+												errorMessage = concatMessageAndLineNumber("Incorrect number of indices in face declaration at line", lineNumber);
 									break;
 								}
 
@@ -289,7 +296,7 @@ namespace cubex
 							else
 							{
 								error = true;
-								errorMessage = "Incorrect number of indices in face declaration at line" + lineNumber;
+								errorMessage = concatMessageAndLineNumber("Incorrect number of indices in face declaration at line", lineNumber);
 								break;
 							}
 						}
@@ -321,7 +328,7 @@ namespace cubex
 							else
 							{
 								error = true;
-								errorMessage = "Incorrect number of indices in face declaration at line" + lineNumber;
+										errorMessage = concatMessageAndLineNumber("Incorrect number of indices in face declaration at line", lineNumber);
 								break;
 							}
 						}
@@ -347,7 +354,7 @@ namespace cubex
 							else
 							{
 								error = true;
-								errorMessage = "Incorrect number of indices in face declaration at line" + lineNumber;
+										errorMessage = concatMessageAndLineNumber("Incorrect number of indices in face declaration at line", lineNumber);
 								break;
 							}
 						}
@@ -397,7 +404,7 @@ namespace cubex
 								else
 								{
 									error = true;
-									errorMessage = "Incorrect number of indices in face declaration at line" + lineNumber;
+												errorMessage = concatMessageAndLineNumber("Incorrect number of indices in face declaration at line", lineNumber);
 									break;
 								}
 
@@ -405,7 +412,7 @@ namespace cubex
 							else
 							{
 								error = true;
-								errorMessage = "Incorrect number of indices in face declaration at line" + lineNumber;
+										errorMessage = concatMessageAndLineNumber("Incorrect number of indices in face declaration at line", lineNumber);
 								break;
 							}
 						}
@@ -414,7 +421,7 @@ namespace cubex
 					else
 					{
 						error = true;
-						errorMessage = "Incorrect number of tokens in face declaration at line " + lineNumber;
+						errorMessage = concatMessageAndLineNumber("Incorrect number of tokens in face declaration at line ", lineNumber);
 						break;
 					}
 				}
