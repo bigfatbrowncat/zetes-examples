@@ -12,7 +12,7 @@ using namespace std;
 
 #include "WinLinMacApi.h"
 
-#include "cubex/cubex.h"
+#include <cubex/cubex.h>
 
 #include "Scene.h"
 
