@@ -19,6 +19,8 @@ using namespace std;
 
 namespace cubex
 {
+	const ShaderProgram* ShaderProgram::activeShaderProgram = NULL;
+
 
 	ShaderProgram::ShaderProgram(const string& vertexShaderCode, const string& fragmentShaderCode)
 	{
@@ -167,7 +169,7 @@ namespace cubex
 		return res;
 	}
 
-	void ShaderProgram::linkTexture(Texture& texture, const string& sampler2DShaderVariableName)
+	/*void ShaderProgram::linkTexture(Texture& texture, const string& sampler2DShaderVariableName)
 	{
 		linkedTextures.insert(pair<Texture*, string>(&texture, sampler2DShaderVariableName));
 		texture.linkToShaderProgram(*this);
@@ -185,13 +187,15 @@ namespace cubex
 	void ShaderProgram::unlinkMeshBuffer(MeshBuffer& meshBuffer)
 	{
 		linkedMeshBuffers.erase(&meshBuffer);
-	}
+	}*/
 
-	void ShaderProgram::process() const
+	void ShaderProgram::activate() const
 	{
+		ShaderProgram::activeShaderProgram = this;
 		glUseProgram(programID);
 		checkForError(__FILE__, __LINE__);
-
+	}
+	/*
 		// Loading textures
 		for (map<Texture*, string>::const_iterator iter = linkedTextures.begin(); iter != linkedTextures.end(); iter++)
 		{
@@ -220,18 +224,18 @@ namespace cubex
 			                getAttribLocation(meshBufferShaderVariableName + "_normal"),
 			                getAttribLocation(meshBufferShaderVariableName + "_textureCoords"));
 		}
-	}
+	}*/
 
 
 	ShaderProgram::~ShaderProgram()
 	{
 		glDeleteProgram(programID);
 
-		while (linkedTextures.size() > 0)
+		/*while (linkedTextures.size() > 0)
 		{
 			map<Texture*, string>::const_iterator iter = linkedTextures.begin();
 			unlinkTexture(*(*iter).first);
-		}
+		}*/
 
 	}
 

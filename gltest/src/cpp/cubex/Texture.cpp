@@ -258,15 +258,6 @@ namespace cubex
 		globalCountersInit();
 	}
 
-	void Texture::linkToShaderProgram(ShaderProgram& shaderProgram)
-	{
-		linkedShaderPrograms.push_back(&shaderProgram);
-	}
-	void Texture::unlinkFromShaderProgram(ShaderProgram& shaderProgram)
-	{
-		linkedShaderPrograms.remove(&shaderProgram);
-	}
-
 	Texture::Texture(const string& fileName) : samples(1), boundToIndex(-1)
 	{
 		// Instance operations
@@ -353,12 +344,6 @@ namespace cubex
 
 	Texture::~Texture()
 	{
-		// Unlinking from shaders
-		while (linkedShaderPrograms.size() > 0)
-		{
-			list<ShaderProgram*>::iterator iter = linkedShaderPrograms.begin();
-			(*iter)->unlinkTexture(*this);
-		}
 
 		// Instance operations
 		unbindFromImageUnit();
@@ -377,4 +362,17 @@ namespace cubex
 		}
 	}
 
+	void Texture::activate(const string& sampler2DShaderVariableName) const
+	{
+		if (isBoundToImageUnit())
+		{
+			activateImageUnit();
+			glUniform1i(ShaderProgram::getActive()->getUniformLocation(sampler2DShaderVariableName), getImageUnitIndex());
+			checkForError(__FILE__, __LINE__);
+		}
+		else
+		{
+			throw CubexException(__FILE__, __LINE__, string("Can't connect an unbound texture to a shader variable ") + sampler2DShaderVariableName);
+		}
+	}
 }

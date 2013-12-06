@@ -24,7 +24,7 @@ namespace cubex
 	{
 		internalConnectToImage(image, NULL);
 	}
-	void FrameBuffer::connectToImage(Texture& image, Texture& depth)
+	void FrameBuffer::connectToTexture(Texture& image, Texture& depth)
 	{
 		internalConnectToImage(image, &depth);
 	}

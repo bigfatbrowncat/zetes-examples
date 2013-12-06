@@ -27,7 +27,7 @@ namespace cubex
 		FrameBuffer();
 
 		void connectToImage(Texture& image);
-		void connectToImage(Texture& image, Texture& depth);
+		void connectToTexture(Texture& image, Texture& depth);
 		void bind();
 		void unbind();
 

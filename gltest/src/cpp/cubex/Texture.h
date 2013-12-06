@@ -47,31 +47,11 @@ namespace cubex
 		int samples;
 		Type type;
 
-		list<ShaderProgram*> linkedShaderPrograms;
-
-		void loadPNGToTexture(const char * file_name, int * width, int * height);
+		void loadPNGToTexture(const char* file_name, int* width, int* height);
 
 		void globalCountersInit();
 	protected:
 		int getTextureId() const { return textureId; }
-
-		/**
-		 * This intended to be called from the shader program only.
-		 *
-		 * When texture is linked to a shader program, it reports
-		 * this fact to the texture itself, so when the texture
-		 * is destroyed, it removes itself from all shader programs
-		 * to avoid crushes
-		 */
-		void linkToShaderProgram(ShaderProgram& shaderProgram);
-
-		/**
-		 * This intended to be called from the shader program only.
-		 *
-		 * When texture is unlinked from a shader program, it reports
-		 * this fact to the texture.
-		 */
-		void unlinkFromShaderProgram(ShaderProgram& shaderProgram);
 
 	public:
 		Texture(const string& fileName);
@@ -87,6 +67,11 @@ namespace cubex
 
 		int getSamples() const { return samples; }
 		Type getType() const { return type; }
+
+		void activate(const string& sampler2DShaderVariableName) const;
+
+		int getWidth() const { return width; }
+		int getHeight() const { return height; }
 
 		virtual ~Texture();
 	};

@@ -25,11 +25,16 @@ namespace cubex
 		int verticesCount;
 	protected:
 		int getVertexArrayID() const { return VertexArrayID; }
-		void draw(GLint vertexVec3ShaderVariableAttrib, GLint normalVec3ShaderVariableAttrib, GLint textureVec2ShaderVariableAttrib) const;
+		void draw(GLint vertexVec3ShaderVariableAttrib,
+		          GLint normalVec3ShaderVariableAttrib,
+		          GLint textureVec2ShaderVariableAttrib) const;
 
 	public:
 		MeshBuffer(const Mesh &mesh);
 
+		void process(const string& vertexPositionVec3ShaderVariableName,
+		              const string& normalVec3ShaderVariableName,
+		              const string& textureCoordsVec2ShaderVariableName) const;
 
 		virtual ~MeshBuffer();
 	};
