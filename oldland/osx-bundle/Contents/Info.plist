@@ -3,13 +3,13 @@
 <plist version="1.0">
 <dict>
 	<key>CFBundleGetInfoString</key>
-	<string>An OpenGL demo</string>
+	<string>OldLand</string>
 	<key>CFBundleExecutable</key>
-	<string>gltest</string>
+	<string>ol</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.bigfatbrowncat.gltest</string>
+	<string>com.bigfatbrowncat.oldland</string>
 	<key>CFBundleName</key>
-	<string>GL Demo</string>
+	<string>OldLand</string>
 	<key>CFBundleIconFile</key>
 	<string>wingcube.icns</string>
 	<key>CFBundleShortVersionString</key>
