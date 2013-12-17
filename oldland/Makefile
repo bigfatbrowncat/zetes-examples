@@ -22,4 +22,4 @@ all: app
 
 include $(ZETES_WINGS_PATH)/ZetesWings.mk
 
-.SILENT:
+#.SILENT:
