@@ -25,4 +25,4 @@ clean:
 	$(MAKE) clean -C tinyviewer
 
 .PHONY: all zetes zetes-examples bellardpi gltest oldland tinyviewer
-#.SILENT:
+.SILENT:
