@@ -18,7 +18,7 @@ clean()
 	while true; do
 		read -p "This will erase all your changes in this and all the nested repos. Are you sure [y/N]?" choice
 		case "$choice" in 
-			y|Y ) clean;;
+			y|Y ) clean; break;;
 			n|N|"" ) echo "Cancelled"; break;;
 			* ) echo "Please, type Y or N";;
 		esac
