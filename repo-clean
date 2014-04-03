@@ -1,0 +1,26 @@
+#!/bin/sh
+
+clean()
+{
+	git reset --hard HEAD
+	git clean -f -d -x
+	git submodule foreach --recursive git reset --hard HEAD
+	git submodule update --recursive --force
+	git submodule foreach --recursive git clean -f -d -x
+}
+
+# going to the repo folder
+(
+    cd `dirname $0`
+
+	echo "Cleaning the repository in `pwd`."
+	echo
+	while true; do
+		read -p "This will erase all your changes in this and all the nested repos. Are you sure [y/N]?" choice
+		case "$choice" in 
+			y|Y ) clean;;
+			n|N|"" ) echo "Cancelled"; break;;
+			* ) echo "Please, type Y or N";;
+		esac
+	done
+)
