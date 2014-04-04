@@ -1,6 +1,6 @@
-ZETES_FEET_PATH = ../zetes/zetesfeet/target
-ZETES_HANDS_PATH = ../zetes/zeteshands/target
-ZETES_WINGS_PATH = ../zetes/zeteswings/target
+ZETES_FEET_PATH = ../zetes/zetesfeet/target-$(CLASSPATH)
+ZETES_HANDS_PATH = ../zetes/zeteshands/target-$(CLASSPATH)
+ZETES_WINGS_PATH = ../zetes/zeteswings/target-$(CLASSPATH)
 
 all: zetes-examples
 

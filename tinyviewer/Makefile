@@ -1,11 +1,11 @@
-ZETES_FEET_PATH = ../zetes/zetesfeet/target
-ZETES_WINGS_PATH = ../zetes/zeteswings/target
+ZETES_FEET_PATH = ../zetes/zetesfeet/target-$(CLASSPATH)
+ZETES_WINGS_PATH = ../zetes/zeteswings/target-$(CLASSPATH)
 
 APPLICATION_NAME = Tiny\ Viewer
 BINARY_NAME = tinyview
 ENTRY_CLASS = tinyviewer/TinyViewerApplication
 
-TARGET = target
+TARGET = target-$(CLASSPATH)
 
 all: package
 
