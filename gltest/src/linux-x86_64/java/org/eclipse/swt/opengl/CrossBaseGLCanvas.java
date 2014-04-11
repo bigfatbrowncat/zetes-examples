@@ -301,4 +301,20 @@ private long /*int*/ gdk_x11_display_get_xdisplay(long /*int*/ window) {
 	}
 	return xdisplay;
 }
+
+@Override
+public void redraw() {
+	long /*int*/ window;
+	if (OS.GTK_VERSION >= OS.VERSION(2, 14, 0)){
+		window = OS.gtk_widget_get_window (handle);
+	} else {
+		window = OS.GTK_WIDGET_WINDOW (handle);
+	}
+	GdkRectangle rect = new GdkRectangle ();
+
+	Point size = getSize();
+	rect.width = size.x;
+	rect.height = size.y;
+	OS.gdk_window_invalidate_rect (window, rect, true);
+}
 }
