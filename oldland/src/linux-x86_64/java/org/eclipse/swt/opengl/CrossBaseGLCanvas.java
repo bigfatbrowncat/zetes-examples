@@ -110,6 +110,7 @@ public CrossBaseGLCanvas (Composite parent, int style, GLData data) {
 	} else {
 		window = OS.GTK_WIDGET_WINDOW (handle);
 	}
+	OS.gtk_widget_set_double_buffered(handle, false);
 	long /*int*/ xDisplay = OS.gdk_x11_drawable_get_xdisplay (window);
 	long /*int*/ infoPtr = GLX.glXChooseVisual (xDisplay, OS.XDefaultScreen (xDisplay), glxAttrib);
 	if (infoPtr == 0) {

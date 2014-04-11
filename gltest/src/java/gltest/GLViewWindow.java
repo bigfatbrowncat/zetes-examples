@@ -37,7 +37,7 @@ public class GLViewWindow extends ViewWindowBase<NullDocument>
 	private double angle = 0;
 	private CrossBaseGLCanvas canvas;
 	private Date lastFrameMoment = new Date();
-	private float framesPerSecond = 50;
+	private float framesPerSecond = 30;
 	
 	private Handler<GLViewWindow> viewCubeActionHandler;
 	private Handler<GLViewWindow> viewMonkeyActionHandler;
@@ -132,13 +132,18 @@ public class GLViewWindow extends ViewWindowBase<NullDocument>
 			@Override
 			public void paintControl(PaintEvent arg0)
 			{
-				if (!canvas.isCurrent()) canvas.setCurrent();
-				drawScene(angle);
-				canvas.swapBuffers();
+				updateView();
 			}
 		});
 
 		return shell;
+	}
+
+	private void updateView()
+	{
+		if (!canvas.isCurrent()) canvas.setCurrent();
+		drawScene(angle);
+		canvas.swapBuffers();
 	}
 	
 	public void updateFrame()
@@ -148,10 +153,12 @@ public class GLViewWindow extends ViewWindowBase<NullDocument>
 		
 		do
 		{
+
 			currentMoment = new Date();
 			deltaTimeSec = 0.001 * (currentMoment.getTime() - lastFrameMoment.getTime());
 			try {
 				Thread.sleep(Math.max(1, (long) (1000 / framesPerSecond)));
+				
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -163,7 +170,7 @@ public class GLViewWindow extends ViewWindowBase<NullDocument>
 			angle += 0.5 * deltaTimeSec;
 			if (canvas != null && !canvas.isDisposed())
 			{
-				canvas.redraw();
+				updateView();
 			}
 			lastFrameMoment = currentMoment;
 		}

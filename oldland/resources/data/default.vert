@@ -1,4 +1,4 @@
-#version 150
+#version 130
 
 in vec3 in_mesh_vertexPosition;
 in vec2 in_mesh_textureCoords;
