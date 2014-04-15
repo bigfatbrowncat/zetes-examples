@@ -1,3 +1,6 @@
 [submodule "zetes"]
 	path = zetes
-url=../zetes.git
+	url=../zetes.git
+[submodule "external/cubex"]
+	path = external/cubex
+	url = ../cubex.git

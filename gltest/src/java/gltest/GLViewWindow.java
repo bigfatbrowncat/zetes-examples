@@ -132,6 +132,7 @@ public class GLViewWindow extends ViewWindowBase<NullDocument>
 			@Override
 			public void paintControl(PaintEvent arg0)
 			{
+				if (!canvas.isCurrent()) canvas.setCurrent();			
 				drawScene(angle);
 				canvas.swapBuffers();
 			}
