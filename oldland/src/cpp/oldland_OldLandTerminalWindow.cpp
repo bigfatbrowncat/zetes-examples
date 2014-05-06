@@ -26,10 +26,10 @@ extern "C"
 		return globalInit();
 	}
 
-	JNIEXPORT void JNICALL Java_oldland_OldLandTerminalWindow_setScreenBuffer(JNIEnv * env, jclass appClass, jstring symbols)
+	JNIEXPORT void JNICALL Java_oldland_OldLandTerminalWindow_setScreenBuffer(JNIEnv * env, jclass appClass, jcharArray text)
 	{
-		int len = env->GetStringLength(symbols);
-		const jchar* jchars = env->GetStringChars(symbols, NULL);
+		int len = env->GetArrayLength(text);
+		jchar* jchars = env->GetCharArrayElements(text, 0);
 		wchar_t* wchars = new wchar_t[len + 1];
 		for (int i = 0; i < len; i++)
 		{
@@ -40,7 +40,7 @@ extern "C"
 		terminal->setSymbols(wchars);
 
 		delete [] wchars;
-		env->ReleaseStringChars(symbols, jchars);
+		env->ReleaseCharArrayElements(text, jchars, 0);
 	}
 
 	JNIEXPORT void JNICALL Java_oldland_OldLandTerminalWindow_setForegroundColors(JNIEnv * env, jclass appClass, jintArray forecolors)
