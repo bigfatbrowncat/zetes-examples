@@ -181,7 +181,13 @@
 
 				// Drawing the symbol
 				wchar_t ch = symbols[i];
-				codepage->getSymbol(ch)->drawAt(i % xLength, i / xLength);
+
+				const SymbolPlace* sp = codepage->getSymbol(ch);
+				if (sp != NULL) {
+					sp->drawAt(i % xLength, i / xLength);
+				} else {
+					printf("We can't draw the character '%c'. There is no such character in the codepage\n", ch);
+				}
 			}
 		}
 		fbo.unbind();

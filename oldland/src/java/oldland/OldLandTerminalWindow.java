@@ -23,6 +23,15 @@ import zetes.ui.ViewWindowBase;
 
 public class OldLandTerminalWindow extends ViewWindowBase<NullDocument>
 {
+	private int TERMINAL_WIDTH = 100;
+	private int TERMINAL_HEIGHT = 40;
+	
+	private char CHAR_NEWLINE = '\n';
+	private char CHAR_SPACE = ' ';
+	private char CHAR_TAB = '\t';
+	
+	private int TAB_LENGTH = 4;
+	
 	public class Point {
 		public final int x, y;
 		public Point(int x, int y) { this.x = x; this.y = y; }
@@ -42,6 +51,15 @@ public class OldLandTerminalWindow extends ViewWindowBase<NullDocument>
 	private CrossBaseGLCanvas canvas;
 	private Date lastFrameMoment = new Date();
 	private float framesPerSecond = 30;
+	private int cursorFrame = 0;
+
+	private Object screenLock = new Object();
+	private Point cursorPosition = new Point(0, 0);
+	private int foreColor = 0xFFAAAAAA;
+	private int backColor = 0xFF000000;
+	private char[] screenTextBuffer = new char[TERMINAL_WIDTH * TERMINAL_HEIGHT];
+	private int[] screenForeColorBuffer = new int[TERMINAL_WIDTH * TERMINAL_HEIGHT];
+	private int[] screenBackColorBuffer = new int[TERMINAL_WIDTH * TERMINAL_HEIGHT];
 	
 	public OldLandTerminalWindow()
 	{
@@ -49,12 +67,83 @@ public class OldLandTerminalWindow extends ViewWindowBase<NullDocument>
 		
 	}
 	
-	protected Point cursorPos = new Point(0, 0);
+	private void rollBuffersLineUp() {
+		for (int j = 1; j < TERMINAL_HEIGHT; j++) {
+			for (int i = 0; i < TERMINAL_WIDTH; i++) {
+				screenTextBuffer[(j - 1) * TERMINAL_WIDTH + i] = screenTextBuffer[j * TERMINAL_WIDTH + i];
+				screenForeColorBuffer[(j - 1) * TERMINAL_WIDTH + i] = screenForeColorBuffer[j * TERMINAL_WIDTH + i];
+				screenBackColorBuffer[(j - 1) * TERMINAL_WIDTH + i] = screenBackColorBuffer[j * TERMINAL_WIDTH + i];
+			}
+		}
+		for (int i = 0; i < TERMINAL_WIDTH; i++) {
+			screenTextBuffer[(TERMINAL_HEIGHT - 1) * TERMINAL_WIDTH + i] = CHAR_SPACE;
+			screenForeColorBuffer[(TERMINAL_HEIGHT - 1) * TERMINAL_WIDTH + i] = foreColor;
+			screenBackColorBuffer[(TERMINAL_HEIGHT - 1) * TERMINAL_WIDTH + i] = backColor;
+		}
+	}
+	
+	private void invertCursor() {
+		int pos = cursorPosition.y * TERMINAL_WIDTH + cursorPosition.x;
+		int fc = screenForeColorBuffer[pos];
+		int bc = screenBackColorBuffer[pos];
+		screenForeColorBuffer[pos] = bc;
+		screenBackColorBuffer[pos] = fc;
+	}
+	
+	private void printTabulation() {
+		for (int i = 0; i < TAB_LENGTH; i++) {
+			print(" ");
+		}
+	}
+	
+	public void clearScreen() {
+		synchronized (screenLock) {
+			for (int j = 0; j < TERMINAL_HEIGHT; j++) {
+				for (int i = 0; i < TERMINAL_WIDTH; i++) {
+					screenTextBuffer[j * TERMINAL_WIDTH + i] = CHAR_SPACE;
+					screenForeColorBuffer[j * TERMINAL_WIDTH + i] = foreColor;
+					screenBackColorBuffer[j * TERMINAL_WIDTH + i] = backColor;
+				}
+			}
+			cursorPosition = new Point(0, 0);
+		}
+	}
 	
 	public void print(String text) {
-		for (int i = 0; i < text.length(); i++) {
-			
+		if (text == null) throw new IllegalArgumentException("text shouldn't be null");
+
+		synchronized (screenLock) {
+			int x = cursorPosition.x, y = cursorPosition.y;
+			for (int i = 0; i < text.length(); i++) {
+				if (text.charAt(i) == CHAR_TAB) {
+					printTabulation();
+				} else if (text.charAt(i) != CHAR_NEWLINE) {
+					screenTextBuffer[y * TERMINAL_WIDTH + x] = text.charAt(i);
+					screenForeColorBuffer[y * TERMINAL_WIDTH + x] = foreColor;
+					screenBackColorBuffer[y * TERMINAL_WIDTH + x] = backColor;
+					
+					x++;
+					if (x >= TERMINAL_WIDTH) {
+						x = 0; y++;
+					}
+				} else {
+					x = 0;
+					y++;
+				}
+				
+				if (y >= TERMINAL_HEIGHT) {
+					y--;
+					rollBuffersLineUp();
+				}
+			}
+	
+			cursorPosition = new Point(x, y);
 		}
+	}
+	
+	public void println(String text) {
+		print(text);
+		print(Character.toString(CHAR_NEWLINE));
 	}
 	
 	/**
@@ -69,7 +158,7 @@ public class OldLandTerminalWindow extends ViewWindowBase<NullDocument>
 		
 		final int frame = 5;
 		
-		shell.setSize(size.x - clientSize.x + 80 * 10 + 2 * frame, size.y - clientSize.y + 30 * 19 + 2 * frame);
+		shell.setSize(size.x - clientSize.x + TERMINAL_WIDTH * 10 + 2 * frame, size.y - clientSize.y + TERMINAL_HEIGHT * 19 + 2 * frame);
 		shell.setImages(new Image[] { 
 				SWTResourceManager.getImage(OldLandTerminalWindow.class, "/gltest/wingcube16.png"),
 				SWTResourceManager.getImage(OldLandTerminalWindow.class, "/gltest/wingcube64.png")
@@ -92,29 +181,9 @@ public class OldLandTerminalWindow extends ViewWindowBase<NullDocument>
 		String codepage = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz                  " +
                           "АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдеёжзийклмнопрстуфхцчшщъыьэюя    " +
                           "1234567890-=!@#$%^&*()_+[]{},.<>/?\\|`~\"':;                            ";
-		createTerminal(100, 100, frame, 80, 30, codepage, 70, 8);
+		createTerminal(100, 100, frame, TERMINAL_WIDTH, TERMINAL_HEIGHT, codepage, 70, 8);
 		
-		char[] buf = new char[80 * 30];
-		int c = 0;
-		for (int i = 0; i < 80 * 30; i++) {
-			c = (c + 1) % 10;
-			buf[i] = (char) (c + '0');
-		}
-		
-		setScreenBuffer(buf);
-
-		int[] fg = new int[80 * 30];
-		int[] bg = new int[80 * 30];
-		Random rnd = new Random();
-		for (int i = 0; i < 80; i++)
-			for (int j = 0; j < 30; j++)
-			{
-				fg[j * 80 + i] = rnd.nextInt();
-				bg[j * 80 + i] = rnd.nextInt();
-			}
-
-		setForegroundColors(fg );
-		setBackgroundColors(bg );
+		clearScreen();
 		
 		canvas.addControlListener(new ControlListener()
 		{
@@ -139,11 +208,33 @@ public class OldLandTerminalWindow extends ViewWindowBase<NullDocument>
 			public void paintControl(PaintEvent arg0)
 			{
 				if (!canvas.isCurrent()) canvas.setCurrent();
+
+				synchronized (screenLock) {
+					cursorFrame = (cursorFrame + 1) % 4; 
+					
+					// Inverting the cursor
+					if (cursorFrame > 1) {
+						invertCursor();
+					}
+					
+					setScreenBuffer(screenTextBuffer);
+					setForegroundColors(screenForeColorBuffer);
+					setBackgroundColors(screenBackColorBuffer);
+	
+					// Inverting the cursor back
+					if (cursorFrame > 1) {
+						invertCursor();
+					}
+				}
+				
 				drawScene(time);
 				canvas.swapBuffers();
 			}
 		});
 
+		// Printing William Shakespeare's Romeo And Juliet play
+		new RomeoAndJulietPrinter(this).start();
+		
 		return shell;
 	}
 	

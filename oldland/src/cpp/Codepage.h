@@ -32,14 +32,18 @@ public:
 				SymbolPlace* sp = new SymbolPlace(xLength, yLength, width, height, matrixUniform, normalMatrixUniform);
 				sp->setSymbolPositionInTexture(i % width, i / width);
 				coords.insert(std::pair<wchar_t, SymbolPlace*>(chars[i], sp));
-				printf(".");fflush(stdout);
 			}
 		}
 	}
 
 	const SymbolPlace* getSymbol(wchar_t ch) const
 	{
-		return coords.at(ch);
+		map<wchar_t, SymbolPlace*>::const_iterator iter = coords.find(ch);
+		if (iter == coords.end()) {
+			return NULL;
+		} else {
+			return iter->second;
+		}
 	}
 
 	virtual ~Codepage()
