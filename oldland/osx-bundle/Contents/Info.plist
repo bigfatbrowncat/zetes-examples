@@ -11,7 +11,7 @@
 	<key>CFBundleName</key>
 	<string>OldLand</string>
 	<key>CFBundleIconFile</key>
-	<string>wingcube.icns</string>
+	<string>wingscreen.icns</string>
 	<key>CFBundleShortVersionString</key>
 	<string>1.0.0</string>
 	<key>LSMinimumSystemVersion</key>
@@ -19,7 +19,7 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>NSHumanReadableCopyright</key>
-	<string>Copyright © Ilya Mizus, 2013</string>
+	<string>Copyright © Ilya Mizus, 2014</string>
 	<key>CFBundleSignature</key>
 	<string>tnvwr</string>
 </dict>

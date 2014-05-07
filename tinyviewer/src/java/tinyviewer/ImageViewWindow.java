@@ -64,7 +64,7 @@ public class ImageViewWindow extends ViewWindowBase<ImageDocument>
 
 		shell.setImages(new Image[] { 
 				SWTResourceManager.getImage(ImageViewWindow.class, "/tinyviewer/wingphotos16.png"),		// Necessary in Windows (for taskbar)
-				SWTResourceManager.getImage(ImageViewWindow.class, "/tinyviewer/wingphotos32.png"),		// Necessary in Windows (for Alt-Tab)
+				SWTResourceManager.getImage(ImageViewWindow.class, "/tinyviewer/wingphotos64.png"),		// Necessary in Windows (for Alt-Tab)
 				SWTResourceManager.getImage(ImageViewWindow.class, "/tinyviewer/wingphotos512.png")		// Necessary in OS X
 		});
 	

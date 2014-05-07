@@ -25,13 +25,13 @@ all:
 	make deps
 	make app
 
-deps: ../external/cubex/target/lib/$(PLATFORM_TAG)/libcubex.a ../external/libpng-1.6.10/.libs/libpng16.a 
+deps: cubex ../external/libpng-1.6.10/.libs/libpng16.a 
 
-../external/cubex/target/lib/$(PLATFORM_TAG)/libcubex.a:
+cubex:
 	(cd ../external/cubex; make all)
 	
 ../external/libpng-1.6.10/.libs/libpng16.a:
-	(cd ../external/libpng-1.6.10; ./configure && make all)
+	(cd ../external/libpng-1.6.10; CFLAGS="-fPIC" CXXFLAGS="-fPIC" ./configure && make all)
 
 include $(ZETES_WINGS_PATH)/ZetesWings.mk
 

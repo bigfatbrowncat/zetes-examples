@@ -168,8 +168,8 @@ public class OldLandTerminalWindow extends ViewWindowBase<NullDocument>
 		
 		shell.setSize(size.x - clientSize.x + TERMINAL_WIDTH * 10 + 2 * frame, size.y - clientSize.y + TERMINAL_HEIGHT * 19 + 2 * frame);
 		shell.setImages(new Image[] { 
-				SWTResourceManager.getImage(OldLandTerminalWindow.class, "/gltest/wingcube16.png"),
-				SWTResourceManager.getImage(OldLandTerminalWindow.class, "/gltest/wingcube64.png")
+				SWTResourceManager.getImage(OldLandTerminalWindow.class, "/oldland/wingscreen16.png"),
+				SWTResourceManager.getImage(OldLandTerminalWindow.class, "/oldland/wingscreen64.png")
 		});
 
 		shell.setLayout(new FillLayout());

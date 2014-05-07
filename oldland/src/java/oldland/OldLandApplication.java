@@ -45,7 +45,7 @@ public class OldLandApplication extends ApplicationBase<DefaultAboutBox, NullDoc
 	@Override
 	public String getTitle()
 	{
-		return "OpenGL Demo";
+		return "OldLand terminal screen emulator";
 	}
 
 	@Override
@@ -53,9 +53,9 @@ public class OldLandApplication extends ApplicationBase<DefaultAboutBox, NullDoc
 	{
 		DefaultAboutBox res = new DefaultAboutBox(parentWindow);
 		res.setApplicationName(getTitle());
-		res.setIconResourceName("/gltest/wingcube64.png");
+		res.setIconResourceName("/oldland/wingscreen64.png");
 		res.setDescriptionText("A graphics demonstration which uses OpenGL canvas.\nThis application shows the power of Avian + SWT");
-		res.setCopyrightText("Copyright \u00a9 2013, Ilya Mizus");
+		res.setCopyrightText("Copyright \u00a9 2014, Ilya Mizus");
 		res.setWindowSize(new Point(410, 180));
 
 		return res;
