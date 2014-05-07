@@ -18,8 +18,8 @@ public class RomeoAndJulietPrinter extends Thread {
 	public RomeoAndJulietPrinter(OldLandTerminalWindow terminalWindow) {
 		this.terminalWindow = terminalWindow;
 		try {
-			System.out.println(WinLinMacApi.locateExecutable() + "/data/romeo.txt");
-			br = new BufferedReader(new InputStreamReader(new FileInputStream(WinLinMacApi.locateExecutable() + "/data/romeo.txt")));
+			System.out.println(WinLinMacApi.locateResource("data", "romeo.txt"));
+			br = new BufferedReader(new InputStreamReader(new FileInputStream(WinLinMacApi.locateResource("data", "romeo.txt"))));
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -46,6 +46,26 @@ public class RomeoAndJulietPrinter extends Thread {
 			for (int c = br.read(); c != -1; c = br.read()) {
 				if (c == '\n') {
 					// Here the line ends. Printing the text out.
+					String s = sb.toString();
+
+					if (s.length() > 0) {
+					
+						if (s.startsWith("        ")) {
+							// Title
+							terminalWindow.setForeColor(0xFFAAAAFF);
+						} else if (s.charAt(0) != ' ') {
+							if (s.startsWith("ACT")) {
+								terminalWindow.setForeColor(0xFF55FF88);
+							} else if (s.startsWith("PROLOGUE") || s.startsWith("SCENE")) {
+								terminalWindow.setForeColor(0xFF33AA66);
+							} else {
+								terminalWindow.setForeColor(0xFF888888);
+							}
+						} else {
+							terminalWindow.setForeColor(0xFFCCCCCC);
+						}
+					}
+					
 					typeln(sb.toString());
 					Thread.sleep(PAUSE_BETWEEN_LINES);
 					sb.setLength(0);

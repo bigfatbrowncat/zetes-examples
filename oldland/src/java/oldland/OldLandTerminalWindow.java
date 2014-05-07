@@ -61,6 +61,14 @@ public class OldLandTerminalWindow extends ViewWindowBase<NullDocument>
 	private int[] screenForeColorBuffer = new int[TERMINAL_WIDTH * TERMINAL_HEIGHT];
 	private int[] screenBackColorBuffer = new int[TERMINAL_WIDTH * TERMINAL_HEIGHT];
 	
+	public void setForeColor(int foreColor) {
+		this.foreColor = foreColor;
+	}
+	
+	public void setBackColor(int backColor) {
+		this.backColor = backColor;
+	}
+	
 	public OldLandTerminalWindow()
 	{
 		super();
