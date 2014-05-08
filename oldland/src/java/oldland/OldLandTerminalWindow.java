@@ -24,7 +24,7 @@ import zetes.ui.ViewWindowBase;
 public class OldLandTerminalWindow extends ViewWindowBase<NullDocument>
 {
 	private int TERMINAL_WIDTH = 100;
-	private int TERMINAL_HEIGHT = 40;
+	private int TERMINAL_HEIGHT = 35;
 	
 	private char CHAR_NEWLINE = '\n';
 	private char CHAR_SPACE = ' ';
