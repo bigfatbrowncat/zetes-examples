@@ -35,7 +35,7 @@ then clone every dependent repository (including zetes itself) with:
 
 	git submodule update --init --recursive
 	
-That will take some time. There you'll see "zetes" folder that contains the Zetes framework code. At first you should build it following [the official building guide](https://github.com/bigfatbrowncat/zetes#building-zetes-and-demo-applications).
+That will take some time. There you'll see "zetes" folder that contains the Zetes framework code. At first you should build it following [the official building guide](https://github.com/bigfatbrowncat/zetes#building-zetes).
 
 After Zetes is built successfully (assuming you are back to the "zetes-examples" folder), just type
 
