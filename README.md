@@ -4,6 +4,7 @@ Zetes Examples
 These small programs are made using [zetes](https://github.com/bigfatbrowncat/zetes) library. They should build well and work on Windows, OS X and desktop Linux operating systems. Their UI looks nice and native under all the OSes they support.
 
 ![Zetes demo applications](https://rawgit.com/bigfatbrowncat/zetes-examples/master/doc/images/demos.png)
+![Zetes demo applications on OS X](https://rawgit.com/bigfatbrowncat/zetes-examples/master/doc/images/demos-OSX.png)
 
 GLDemo
 ======
