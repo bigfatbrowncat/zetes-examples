@@ -35,10 +35,12 @@ then clone every dependent repository (including zetes itself) with:
 
 	git submodule update --init --recursive
 	
-That will take some time. There you'll see "zetes" folder that contains the Zetes framework code. At first you should build it following [the official building guide](https://github.com/bigfatbrowncat/zetes#building-zetes).
+That will take some time. There you'll see "zetes" folder that contains the Zetes framework code. At first you should prepare the environment and build Zetes libraries following [the official Zetes building guide](https://github.com/bigfatbrowncat/zetes#building-zetes).
 
-After Zetes is built successfully (assuming you are back to the "zetes-examples" folder), just type
+After Zetes is built successfully, go back to the <code>zetes-examples</code> and type
 
     make all
 	
 Every app is being built in its folder.
+
+If you want to build the apps for different <code>CLASSPATH</code> value, don't forget to build Zetes with this <code>CLASSPATH</code> value first. Different builds don't overwrite each other, so you could have all  <code>CLASSPATH</code> builds at the same time.
