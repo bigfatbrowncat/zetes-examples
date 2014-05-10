@@ -3,27 +3,28 @@ Zetes Examples
 
 These small programs are made using [zetes](https://github.com/bigfatbrowncat/zetes) library. They should build well and work on Windows, OS X and desktop Linux operating systems. Their UI looks nice and native under all the OSes they support.
 
+### Look
+
+That's how it look like under different platforms:
+
+#### Windows 7
 ![Zetes demo applications](https://rawgit.com/bigfatbrowncat/zetes-examples/master/doc/images/demos.png)
+#### OS X 10.9
 ![Zetes demo applications on OS X](https://rawgit.com/bigfatbrowncat/zetes-examples/master/doc/images/demos-OSX.png)
 
-GLDemo
-======
+### Description
+Here we describe what do different projects show to the user
 
+#### GLDemo
 This program shows an ability to use OpenGL 3 from a Zetes-powered application. It's a single-window app showing 3D animation. It could be zoomed (even to fullscreen). The model could be changed from a simple (cube) to a complicated (monkey) using the menu.
 
-TinyViewer
-==========
-
+#### TinyViewer
 This app shows a multi-document interface. It supports loading any number of images in different windows. When the last window is closed, the app exits. It allows opening files from the menu or the command line and could be easily used as an image viewer (but with extremely few features ;) ).
 
-OldLand
-=======
-
+#### OldLand
 Shows a terminal window emulator teletyping a long text with colored letters. No special idea... I just love terminals.
 
-How to build
-============
-
+### Building all that beauty
 To build it you must clone this repository somewhere
 
     git clone https://github.com/bigfatbrowncat/zetes-examples.git
