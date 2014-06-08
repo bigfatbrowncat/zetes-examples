@@ -1,11 +1,13 @@
-ZETES_FEET_PATH = ../zetes/zetesfeet/target-$(CLASSPATH)
-ZETES_WINGS_PATH = ../zetes/zeteswings/target-$(CLASSPATH)
+include ../zetes/common-scripts/globals.mk
+
+ZETES_FEET_PATH = ../zetes/zetesfeet/target-$(PLATFORM_TAG)-$(CLASSPATH)
+ZETES_WINGS_PATH = ../zetes/zeteswings/target-$(PLATFORM_TAG)-$(CLASSPATH)
 
 APPLICATION_NAME = Tiny\ Viewer
 BINARY_NAME = tinyview
 ENTRY_CLASS = tinyviewer/TinyViewerApplication
 
-TARGET = target-$(CLASSPATH)
+TARGET = target-$(PLATFORM_TAG)-$(CLASSPATH)
 
 all: package
 

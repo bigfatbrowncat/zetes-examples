@@ -1,11 +1,13 @@
-ZETES_FEET_PATH = ../zetes/zetesfeet/target-$(CLASSPATH)
-ZETES_WINGS_PATH = ../zetes/zeteswings/target-$(CLASSPATH)
+include ../zetes/common-scripts/globals.mk
+
+ZETES_FEET_PATH = ../zetes/zetesfeet/target-$(PLATFORM_TAG)-$(CLASSPATH)
+ZETES_WINGS_PATH = ../zetes/zeteswings/target-$(PLATFORM_TAG)-$(CLASSPATH)
 
 APPLICATION_NAME = GLDemo
 BINARY_NAME = gltest
 ENTRY_CLASS = gltest/GLTestApplication
 
-TARGET = target-$(CLASSPATH)
+TARGET = target-$(PLATFORM_TAG)-$(CLASSPATH)
 
 UNAME := $(shell uname)
 ifndef ARCH

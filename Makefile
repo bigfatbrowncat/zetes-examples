@@ -1,6 +1,8 @@
-ZETES_FEET_PATH = ../zetes/zetesfeet/target-$(CLASSPATH)
-ZETES_HANDS_PATH = ../zetes/zeteshands/target-$(CLASSPATH)
-ZETES_WINGS_PATH = ../zetes/zeteswings/target-$(CLASSPATH)
+include zetes/common-scripts/globals.mk
+
+ZETES_FEET_PATH = ../zetes/zetesfeet/target-$(PLATFORM_TAG)-$(CLASSPATH)
+ZETES_HANDS_PATH = ../zetes/zeteshands/target-$(PLATFORM_TAG)-$(CLASSPATH)
+ZETES_WINGS_PATH = ../zetes/zeteswings/target-$(PLATFORM_TAG)-$(CLASSPATH)
 
 all: zetes-examples
 
