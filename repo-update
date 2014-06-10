@@ -1,0 +1,23 @@
+#!/bin/sh
+
+clean()
+{
+	pit pull
+	git submodule update --recursive --force
+}
+
+# going to the repo folder
+(
+    cd `dirname $0`
+
+	echo "Updating the repository in `pwd`."
+	echo
+	while true; do
+		read -p "This will update this and all the nested repos. Are you sure [y/N]?" choice
+		case "$choice" in 
+			y|Y ) clean; break;;
+			n|N|"" ) echo "Cancelled"; break;;
+			* ) echo "Please, type Y or N";;
+		esac
+	done
+)
