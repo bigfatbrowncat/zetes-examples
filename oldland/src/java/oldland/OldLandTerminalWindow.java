@@ -1,7 +1,6 @@
 package oldland;
 
 import java.util.Date;
-import java.util.Random;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlEvent;
@@ -9,17 +8,15 @@ import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FillLayout;
-
 import org.eclipse.swt.opengl.CrossBaseGLCanvas;
 import org.eclipse.swt.opengl.GLData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.wb.swt.SWTResourceManager;
 
-import zetes.NullDocument;
-import zetes.ui.ViewWindowBase;
+import zetes.wings.NullDocument;
+import zetes.wings.base.ViewWindowBase;
 
 public class OldLandTerminalWindow extends ViewWindowBase<NullDocument>
 {

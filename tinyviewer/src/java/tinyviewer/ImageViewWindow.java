@@ -14,11 +14,10 @@ import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.wb.swt.SWTResourceManager;
 
-import zetes.ui.ViewWindowBase;
+import zetes.wings.base.ViewWindowBase;
 
 
 public class ImageViewWindow extends ViewWindowBase<ImageDocument>

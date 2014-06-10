@@ -1,9 +1,9 @@
 package tinyviewer;
 
-import zetes.ui.HotKey;
-import zetes.ui.MenuConstructorBase;
-import zetes.ui.actions.Action;
-import zetes.ui.actions.Handler;
+import zetes.wings.HotKey;
+import zetes.wings.base.MenuConstructorBase;
+import zetes.wings.actions.Action;
+import zetes.wings.actions.Handler;
 
 public class TinyViewerMenuConstructor extends MenuConstructorBase<ImageViewWindow>
 {

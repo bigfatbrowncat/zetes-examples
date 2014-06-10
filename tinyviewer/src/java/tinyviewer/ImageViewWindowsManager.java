@@ -6,7 +6,7 @@ import org.eclipse.swt.dnd.DropTargetAdapter;
 import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.dnd.FileTransfer;
 
-import zetes.ui.ViewWindowsManagerBase;
+import zetes.wings.base.ViewWindowsManagerBase;
 
 
 public class ImageViewWindowsManager extends ViewWindowsManagerBase<ImageDocument, ImageViewWindow>

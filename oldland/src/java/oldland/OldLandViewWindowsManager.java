@@ -1,7 +1,7 @@
 package oldland;
 
-import zetes.NullDocument;
-import zetes.ui.ViewWindowsManagerBase;
+import zetes.wings.NullDocument;
+import zetes.wings.base.ViewWindowsManagerBase;
 
 public class OldLandViewWindowsManager extends ViewWindowsManagerBase<NullDocument, OldLandTerminalWindow>
 {

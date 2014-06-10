@@ -3,9 +3,9 @@ package oldland;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Display;
 
-import zetes.ApplicationBase;
-import zetes.NullDocument;
-import zetes.ui.DefaultAboutBox;
+import zetes.wings.base.ApplicationBase;
+import zetes.wings.NullDocument;
+import zetes.wings.DefaultAboutBox;
 
 
 public class OldLandApplication extends ApplicationBase<DefaultAboutBox, NullDocument, OldLandTerminalWindow, OldLandMenuConstructor, OldLandViewWindowsManager>

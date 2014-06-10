@@ -2,9 +2,9 @@ package gltest;
 
 import org.eclipse.swt.graphics.Point;
 
-import zetes.ApplicationBase;
-import zetes.NullDocument;
-import zetes.ui.DefaultAboutBox;
+import zetes.wings.base.ApplicationBase;
+import zetes.wings.NullDocument;
+import zetes.wings.DefaultAboutBox;
 
 
 public class GLTestApplication extends ApplicationBase<DefaultAboutBox, NullDocument, GLViewWindow, GLTestMenuConstructor, GLViewWindowsManager>

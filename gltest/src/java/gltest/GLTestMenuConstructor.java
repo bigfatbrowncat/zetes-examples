@@ -1,11 +1,11 @@
 package gltest;
 
-import zetes.abstracts.ViewWindowsManagerListener;
-import zetes.ui.HotKey;
-import zetes.ui.MenuConstructorBase;
-import zetes.ui.actions.Action;
-import zetes.ui.actions.ActionList;
-import zetes.ui.actions.Separator;
+import zetes.wings.abstracts.ViewWindowsManagerListener;
+import zetes.wings.HotKey;
+import zetes.wings.base.MenuConstructorBase;
+import zetes.wings.actions.Action;
+import zetes.wings.actions.ActionList;
+import zetes.wings.actions.Separator;
 
 public class GLTestMenuConstructor extends MenuConstructorBase<GLViewWindow> {
 	private Action<GLViewWindow> viewModelCubeAction; 

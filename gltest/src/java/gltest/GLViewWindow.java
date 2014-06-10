@@ -16,9 +16,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.wb.swt.SWTResourceManager;
 
-import zetes.NullDocument;
-import zetes.ui.ViewWindowBase;
-import zetes.ui.actions.Handler;
+import zetes.wings.NullDocument;
+import zetes.wings.base.ViewWindowBase;
+import zetes.wings.actions.Handler;
 
 
 public class GLViewWindow extends ViewWindowBase<NullDocument>

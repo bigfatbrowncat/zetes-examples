@@ -1,7 +1,7 @@
 package oldland;
 
-import zetes.abstracts.ViewWindowsManagerListener;
-import zetes.ui.MenuConstructorBase;
+import zetes.wings.abstracts.ViewWindowsManagerListener;
+import zetes.wings.base.MenuConstructorBase;
 
 public class OldLandMenuConstructor extends MenuConstructorBase<OldLandTerminalWindow> {
 	private ViewWindowsManagerListener<OldLandTerminalWindow> viewWindowsManagerListener = new ViewWindowsManagerListener<OldLandTerminalWindow>() {

@@ -2,11 +2,10 @@ package oldland;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-import zetes.WinLinMacApi;
+import zetes.wings.WinLinMacApi;
 
 public class RomeoAndJulietPrinter extends Thread {
 	private int PAUSE_BETWEEN_CHARS = 40;
@@ -20,7 +19,7 @@ public class RomeoAndJulietPrinter extends Thread {
 		try {
 			System.out.println(WinLinMacApi.locateResource("data", "romeo.txt"));
 			br = new BufferedReader(new InputStreamReader(new FileInputStream(WinLinMacApi.locateResource("data", "romeo.txt"))));
-		} catch (FileNotFoundException e) {
+		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
