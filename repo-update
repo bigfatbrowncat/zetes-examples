@@ -2,7 +2,7 @@
 
 clean()
 {
-	pit pull
+	git pull
 	git submodule update --recursive --force
 }
 
