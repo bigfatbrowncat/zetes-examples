@@ -7,4 +7,4 @@ ENTRY_CLASS = tinyviewer/TinyViewerApplication
 include $(ZETES_PATH)/common-scripts/globals.mk
 include $(ZETES_WINGS_PATH)/ZetesWings.mk
 
-all: package
+all: app

@@ -16,14 +16,14 @@ else ifeq ($(OS), Windows_NT)	# Windows
   CUSTOM_LIBS = -lstdc++ -lopengl32 -lglu32 ../external/cubex/$(TARGET)/lib/$(PLATFORM_TAG)/libcubex.a ../external/libpng-1.6.10/.libs/libpng16.a
 endif
 
-all:
-	make deps
-	make app
+all: app
 
-deps: cubex ../external/libpng-1.6.10/.libs/libpng16.a 
+native-deps:: cubex libpng16
 
 cubex:
 	(cd ../external/cubex; make all)
 	
-../external/libpng-1.6.10/.libs/libpng16.a:
+libpng16:
 	(cd ../external/libpng-1.6.10; CFLAGS="-fPIC" CXXFLAGS="-fPIC" ./configure && make all)
+
+.PHONY: cubex libpng16
