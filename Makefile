@@ -12,12 +12,24 @@ app: zetes-examples-app
 
 package: zetes-examples-package
 	mkdir -p $(PACKAGE_NAME)
+	
+ifeq ($(UNAME), Darwin)	# OS X
+	cp -rf bellardpi/target-$(PLATFORM_TAG)-$(CLASSPATH)/package/BellardPI $(PACKAGE_NAME)
+	cp -rf gltest/target-$(PLATFORM_TAG)-$(CLASSPATH)/package/GLDemo/bundle/* $(PACKAGE_NAME)
+	cp -rf oldland/target-$(PLATFORM_TAG)-$(CLASSPATH)/package/OldLand/bundle/* $(PACKAGE_NAME)
+	cp -rf tinyviewer/target-$(PLATFORM_TAG)-$(CLASSPATH)/package/Tiny\ Viewer/bundle/* $(PACKAGE_NAME)
+else
 	cp -rf bellardpi/target-$(PLATFORM_TAG)-$(CLASSPATH)/package/BellardPI $(PACKAGE_NAME)
 	cp -rf gltest/target-$(PLATFORM_TAG)-$(CLASSPATH)/package/GLDemo $(PACKAGE_NAME)
 	cp -rf oldland/target-$(PLATFORM_TAG)-$(CLASSPATH)/package/OldLand $(PACKAGE_NAME)
 	cp -rf tinyviewer/target-$(PLATFORM_TAG)-$(CLASSPATH)/package/Tiny\ Viewer $(PACKAGE_NAME)
 
-ifeq ($(OS), Windows_NT)	# Windows 
+endif
+
+ifeq ($(UNAME), Darwin)	# OS X
+	hdiutil create $(PACKAGE_NAME).dmg -srcfolder $(PACKAGE_NAME) -ov
+
+else ifeq ($(OS), Windows_NT)	# Windows 
 	( \
 	    cd $(PACKAGE_NAME); \
 		zip -r ../$(PACKAGE_NAME).zip *; \
