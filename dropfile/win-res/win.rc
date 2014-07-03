@@ -1,0 +1,24 @@
+MainIcon ICON "win-res/wingphotos.ico"
+1 VERSIONINFO
+FILEVERSION 0,1,0,0
+PRODUCTVERSION 0,1,0,0
+BEGIN
+  BLOCK "StringFileInfo"
+  BEGIN
+    BLOCK "040904E4"
+    BEGIN
+      VALUE "CompanyName", "bigfatbrowncat\0"
+      VALUE "FileDescription", "A tiny multi document photo viewer app"
+      VALUE "FileVersion", "0.1\0"
+      VALUE "InternalName", "TinyViewer\0"
+      VALUE "LegalCopyright", "Ilya Mizus\0"
+      VALUE "OriginalFilename", "tinyviewer.exe\0"
+      VALUE "ProductName", "TinyViewer\0"
+      VALUE "ProductVersion", "0.1\0"
+    END
+  END
+  BLOCK "VarFileInfo"
+  BEGIN
+    VALUE "Translation", 0x409, 1251
+  END
+END
