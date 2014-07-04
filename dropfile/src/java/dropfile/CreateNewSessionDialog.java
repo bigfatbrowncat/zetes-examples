@@ -19,17 +19,19 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 
+import dropfile.protocol.Connection;
+
 public class CreateNewSessionDialog extends Dialog {
 
 	private enum State {
-		Input, Connecting
+		Input, Connecting, Connected
 	}
 
 	protected Object result;
 	protected Shell shlCreateNewSession;
 	private Text textAddress;
 	private Button btnConnect, btnCancel;
-
+	
 	private State state = null;
 	
 	protected boolean addressIsValid() {
@@ -50,9 +52,42 @@ public class CreateNewSessionDialog extends Dialog {
 				textAddress.setFocus();
 				textAddress.selectAll();
 			} else if (state == State.Connecting) {
-
+				startConnectionThread();
+			} else if (state == State.Connected) {
+				shlCreateNewSession.close();
 			}
 		}
+	}
+	
+	private void connectionThreadReport(Connection connection) {
+		if (connection.getSuccess()) {
+			setState(State.Connected);
+		} else {
+			shlCreateNewSession.setText("fail!");
+			setState(State.Input);
+		}
+		
+	}
+	
+	private void startConnectionThread() {
+		final String address = textAddress.getText();
+		
+		Thread connectionThread = new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				final Connection connection = new Connection(address);
+				Display.getDefault().asyncExec(new Runnable() {
+					
+					@Override
+					public void run() {
+						connectionThreadReport(connection);
+					}
+				});
+			}
+		});
+		
+		connectionThread.start();
 	}
 	
 	/**
@@ -191,11 +226,13 @@ public class CreateNewSessionDialog extends Dialog {
 	protected boolean cancel() {
 		if (state == State.Input) {
 			return true;
-		} else {
+		} else if (state == State.Connecting) {
 			setState(State.Input);
 			return false;
+		} else if (state == State.Connected) {
+			return true;
+		} else {
+			throw new RuntimeException("Invalid state");
 		}
 	}
-	
-	
 }
