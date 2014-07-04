@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;
@@ -43,11 +44,11 @@ public class DropFileApplication extends ApplicationBase<DefaultAboutBox, Sessio
 		return new Session(fileName);
 	}
 	
-	private Handler<SessionWindow> fileOpenHandler = new Handler<SessionWindow>() {
+	private Handler<SessionWindow> newSessionHandler = new Handler<SessionWindow>() {
 		
 		@Override
 		public void execute(SessionWindow window) {
-			Shell dummyShell = new Shell(Display.getDefault());
+/*			Shell dummyShell = new Shell(Display.getDefault());
 			FileDialog fileDialog = new FileDialog(dummyShell, SWT.OPEN | SWT.MULTI);
 			fileDialog.setText("Open file");
 			fileDialog.setFilterNames(new String[] { "All files" });
@@ -67,7 +68,10 @@ public class DropFileApplication extends ApplicationBase<DefaultAboutBox, Sessio
 				
 				getViewWindowsManager().openWindowsForDocuments(documents.toArray(new Session[] {}));
 			}
-			dummyShell.dispose();		
+			dummyShell.dispose();*/
+			
+			CreateNewSessionDialog dialog = new CreateNewSessionDialog(window.getShell(), 0);
+			dialog.open();
 		}
 	};
 	
@@ -85,7 +89,7 @@ public class DropFileApplication extends ApplicationBase<DefaultAboutBox, Sessio
 	public DropFileMenuConstructor createMenuConstructor(SessionViewWindowsManager viewWindowsManager)
 	{
 		DropFileMenuConstructor menuConstructor = new DropFileMenuConstructor(viewWindowsManager);
-		//menuConstructor.setFileOpenHandler(fileOpenHandler);
+		menuConstructor.setNewSessionHandler(newSessionHandler);
 		return menuConstructor;
 	}
 
