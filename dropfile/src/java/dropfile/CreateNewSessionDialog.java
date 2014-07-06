@@ -185,10 +185,9 @@ public class CreateNewSessionDialog extends Dialog {
 		shlCreateNewSession = new Shell(getParent(), SWT.DIALOG_TRIM);
 		shlCreateNewSession.setVisible(false);
 
-		shlCreateNewSession.setSize(295, 141);
+		shlCreateNewSession.setSize(344, 171);
 		shlCreateNewSession.setText("Create a new session");
 		GridLayout gl_shlCreateNewSession = new GridLayout(3, false);
-		gl_shlCreateNewSession.horizontalSpacing = 2;
 		shlCreateNewSession.setLayout(gl_shlCreateNewSession);
 		
 		Composite composite = new Composite(shlCreateNewSession, SWT.NONE);
@@ -198,7 +197,9 @@ public class CreateNewSessionDialog extends Dialog {
 		composite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true, 3, 1));
 		
 		Label lblSelectARemote = new Label(composite, SWT.WRAP);
-		lblSelectARemote.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, true, 2, 1));
+		GridData gd_lblSelectARemote = new GridData(SWT.LEFT, SWT.CENTER, true, true, 2, 1);
+		gd_lblSelectARemote.minimumHeight = 40;
+		lblSelectARemote.setLayoutData(gd_lblSelectARemote);
 		lblSelectARemote.setText("Select a remote machine address to create a connection with it");
 		setBoldFont(lblSelectARemote);
 		

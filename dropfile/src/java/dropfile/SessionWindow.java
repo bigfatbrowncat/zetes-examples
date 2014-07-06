@@ -60,10 +60,10 @@ public class SessionWindow extends ViewWindowBase<Session>
 	protected Shell constructShell()
 	{
 		Shell shell = new Shell(SWT.SHELL_TRIM | SWT.BORDER);
+		shell.setMinimumSize(new Point(250, 140));
 		shell.setSize(433, 139);
 
 		shell.setBackground(SWTResourceManager.getColor(SWT.COLOR_WIDGET_BACKGROUND));
-		shell.setMinimumSize(new Point(250, 120));
 
 		shell.setImages(new Image[] { 
 				SWTResourceManager.getImage(SessionWindow.class, "/tinyviewer/wingphotos16.png"),		// Necessary in Windows (for taskbar)
