@@ -1,35 +1,28 @@
 package dropfile;
 
 import zetes.wings.abstracts.Document;
-
+import dropfile.protocol.Connection;
 
 public class Session implements Document
 {
-	private String fileName;
+	private Connection connection;
 	
-	public Session()
-	{
+	public Session(Connection connection) {
+		this.connection = connection;
 	}
-	
-	public Session(String fileName) {
-		this.setFileName(fileName);
-	}
-	
-	public void setFileName(String fileName) {
-		this.fileName = fileName;
-	}
-	
-	public String getFileName() {
-		return fileName;
+
+	public Connection getConnection() {
+		return connection;
 	}
 	
 	public String getTitle()
 	{
-		return "Session";
+		return "Session with " + connection.getRemoteAddress();
 	}
 	
 	public void dispose()
-	{		
+	{
+		connection.close();
 	}
 	
 	@Override

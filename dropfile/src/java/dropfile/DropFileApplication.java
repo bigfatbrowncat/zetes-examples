@@ -1,17 +1,12 @@
 package dropfile;
 
-import java.util.ArrayList;
-
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.widgets.Dialog;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;
 
 import zetes.wings.DefaultAboutBox;
 import zetes.wings.actions.Handler;
 import zetes.wings.base.ApplicationBase;
+import dropfile.protocol.ClientConnection;
 
 
 public class DropFileApplication extends ApplicationBase<DefaultAboutBox, Session, SessionWindow, DropFileMenuConstructor, SessionViewWindowsManager>
@@ -41,7 +36,8 @@ public class DropFileApplication extends ApplicationBase<DefaultAboutBox, Sessio
 	@Override
 	public Session loadFromFile(String fileName)
 	{
-		return new Session(fileName);
+		//return new Session(fileName);
+		return null;
 	}
 	
 	private Handler<SessionWindow> newSessionHandler = new Handler<SessionWindow>() {
@@ -70,8 +66,12 @@ public class DropFileApplication extends ApplicationBase<DefaultAboutBox, Sessio
 			}
 			dummyShell.dispose();*/
 			
-			CreateNewSessionDialog dialog = new CreateNewSessionDialog(window.getShell(), 0);
-			dialog.open();
+			Shell shell = window != null ? window.getShell() : new Shell();
+			CreateNewSessionDialog dialog = new CreateNewSessionDialog(shell, 0);
+			ClientConnection newConnection = (ClientConnection) dialog.open();
+			if (newConnection != null) {
+				getViewWindowsManager().openWindowForDocument(new Session(newConnection));
+			}
 		}
 	};
 	
