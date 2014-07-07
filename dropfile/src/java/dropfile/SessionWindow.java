@@ -60,8 +60,8 @@ public class SessionWindow extends ViewWindowBase<Session>
 	protected Shell constructShell()
 	{
 		Shell shell = new Shell(SWT.SHELL_TRIM | SWT.BORDER);
-		shell.setMinimumSize(new Point(250, 140));
-		shell.setSize(433, 139);
+		shell.setMinimumSize(new Point(280, 160));
+		shell.setSize(433, 160);
 
 		shell.setBackground(SWTResourceManager.getColor(SWT.COLOR_WIDGET_BACKGROUND));
 
@@ -111,7 +111,7 @@ public class SessionWindow extends ViewWindowBase<Session>
 		composite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true, 2, 1));
 		
 		Label lblUploading = new Label(composite, SWT.NONE);
-		lblUploading.setFont(SWTResourceManager.getFont("Lucida Grande", 11, SWT.NORMAL));
+		lblUploading.setFont(SWTResourceManager.getFont("Lucida Grande", 10, SWT.NORMAL));
 		lblUploading.setText("Uploading:");
 		
 		ProgressBar progressBar = new ProgressBar(composite, SWT.NONE);
