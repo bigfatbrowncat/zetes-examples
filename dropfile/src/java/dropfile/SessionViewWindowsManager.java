@@ -95,6 +95,7 @@ public class SessionViewWindowsManager extends ViewWindowsManagerBase<Session, S
 	protected SessionWindow createViewWindow()
 	{
 		SessionWindow vw = new SessionWindow();
+		
 		vw.addDropTargetListener(viewWindowDropTargetAdapter);
 		return vw;
 	}

@@ -18,6 +18,7 @@ import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.wb.swt.SWTResourceManager;
 
+import zetes.wings.actions.Handler;
 import zetes.wings.base.ViewWindowBase;
 
 
@@ -32,6 +33,23 @@ public class SessionWindow extends ViewWindowBase<Session>
 	private Composite composite;
 	private Composite composite_1;
 	private Composite composite_2;
+	
+	private Handler<SessionWindow> sendFileHandler;
+	
+	public SessionWindow() {
+		sendFileHandler = new Handler<SessionWindow>() {
+			
+			@Override
+			public boolean isEnabled() {
+				return getDocument() != null;
+			}
+			
+			@Override
+			public void execute(SessionWindow window) {
+				getDocument().sendFile("test/testfile.txt");
+			}
+		};
+	}
 	
 	public void addDropTargetListener(DropTargetAdapter dropTargetAdapter)
 	{
@@ -148,5 +166,9 @@ public class SessionWindow extends ViewWindowBase<Session>
 	public boolean supportsMaximizing()
 	{
 		return false;
+	}
+	
+	public Handler<SessionWindow> getSendFileHandler() {
+		return sendFileHandler;
 	}
 }

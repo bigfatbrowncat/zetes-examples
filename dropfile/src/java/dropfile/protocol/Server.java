@@ -41,6 +41,8 @@ public class Server {
 					if (clientConnectedListener != null) {
 						clientConnectedListener.onClientConnected(this, connection);
 					}
+					connection.startConversation();
+					
 				} else {
 					clientSocket.close();
 				}
