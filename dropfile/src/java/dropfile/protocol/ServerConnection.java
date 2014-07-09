@@ -1,10 +1,8 @@
 package dropfile.protocol;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.HashMap;
@@ -16,11 +14,12 @@ public class ServerConnection implements Connection {
 	
 	private Thread talkingThread = new Thread(new Runnable() {
 		
-		public int fillBufferCompletely(InputStream is, byte[] bytes) throws IOException {
+		private int fillBufferCompletely(InputStream is, byte[] bytes) throws IOException {
 		    int size = bytes.length;
 		    int offset = 0;
 		    while (offset < size) {
 		        int read = is.read(bytes, offset, size - offset);
+		        System.out.print((char)read);
 		        if (read == -1) {
 		            if ( offset == 0 ) {
 		                return -1;
@@ -35,14 +34,22 @@ public class ServerConnection implements Connection {
 		    return size;
 		}
 		
+		private String readLine(InputStream is) throws IOException {
+			int c;
+			StringBuilder sb = new StringBuilder();
+			while ((c = is.read()) != -1 && c != '\n') {
+				sb.append((char)c);
+			}
+			return sb.toString();
+		}
+		
 		@Override
 		public void run() {
 			try {
 				PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-				BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			
 				while (!socket.isClosed()) {
-					String command = in.readLine();
+					String command = readLine(socket.getInputStream());
 					if (command == null) break;
 					System.out.println("command: " + command);
 					String[] commandArgs = command.split(" ");
