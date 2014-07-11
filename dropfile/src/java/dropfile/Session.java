@@ -25,13 +25,11 @@ public class Session implements Document
 	}
 	
 	public void sendFile(String fileName) {
-		if (connection instanceof ClientConnection) {	// TODO Server should be able to send files too!
-			try {
-				System.out.println("sending file " + fileName);
-				((ClientConnection) connection).sendFile(new File(fileName));
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+		try {
+			System.out.println("sending file " + fileName);
+			connection.sendFile(new File(fileName));
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 	
