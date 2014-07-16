@@ -66,11 +66,12 @@ public class TinyViewerApplication extends ApplicationBase<DefaultAboutBox, Imag
 			{
 				String[] names = fileDialog.getFileNames();
 				ArrayList<ImageDocument> documents = new ArrayList<ImageDocument>();
+				String fileStart = fileDialog.getFilterPath() + System.getProperty("file.separator");
 				
 				// Creating documents for files
 				for (int i = 0; i < names.length; i++)
 				{
-					String fileName = fileDialog.getFilterPath() + "/" + names[i];
+					String fileName = fileStart + names[i];
 					try
 					{
 						documents.add(new ImageDocument(fileName));
