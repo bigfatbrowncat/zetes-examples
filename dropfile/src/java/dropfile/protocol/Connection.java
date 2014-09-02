@@ -115,7 +115,11 @@ public abstract class Connection {
 		while ((c = socket.getInputStream().read()) != -1 && c != '\n') {
 			sb.append((char)c);
 		}
-		return sb.toString();
+		String res = sb.toString();
+		if (res.charAt(res.length() - 1) == '\r') {
+			res = res.substring(0, res.length() - 1);
+		}
+		return res;
 	}
 	
 	protected int fillBufferCompletely(byte[] bytes) throws IOException {
