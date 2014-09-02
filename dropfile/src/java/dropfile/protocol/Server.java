@@ -5,7 +5,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 public class Server {
-	private static final int PORT = 32123;
+	protected static final int PORT = 32123;
 
 	public interface ClientConnectedListener {
 		void onClientConnected(Server sender, ServerConnection connection);

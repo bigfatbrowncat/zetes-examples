@@ -5,24 +5,13 @@ import java.io.PrintWriter;
 import java.net.Socket;
 
 public class ServerConnection extends Connection {
-	
+	private static final String TAG = "server";
+	protected static final String CMD_DROPFILE_SERVER = "DROPFILE_SERVER";
 	
 	protected ServerConnection(Socket clientSocket) throws IOException {
-		super(clientSocket);
+		super(TAG, clientSocket);
 		
-		PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
-
-		System.out.println("[server] sending server greeting");
-		out.write("DROPFILE_SERVER\n");
-		out.flush();
-
-		System.out.println("[server] receiving client greeting");
-		String request = readLine();
-		if (request.equals("DROPFILE_CLIENT")) {
-			startConversation();
-		} else {
-			clientSocket.close();
-		}
+		handshake(CMD_DROPFILE_SERVER, ClientConnection.CMD_DROPFILE_CLIENT);
 	}
 	
 }

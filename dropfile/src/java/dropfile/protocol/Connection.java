@@ -8,6 +8,9 @@ import java.net.Socket;
 import java.util.HashMap;
 
 public abstract class Connection {
+	
+	protected final String logTag;
+	
 	private class FileSendingIndicator {
 		private boolean[] data = null;
 		private FileTransmitter fileTransmitter;
@@ -109,6 +112,24 @@ public abstract class Connection {
 		
 	});
 	
+	protected void handshake(String ourMessage, String theirMessage) throws IOException {
+		PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+		
+		// Sending the handshake request
+		System.out.println("[" + logTag + "] sending greeting");
+		out.write(ourMessage + "\n");
+		out.flush();
+
+		// Checking the response
+		System.out.println("[" + logTag + "] receiving greeting");
+		String response = readLine();
+		if (response.equals(theirMessage)) {
+			startConversation();
+		} else {
+			throw new IOException("Handshake failed. Maybe the DropFile port is used by another application.");
+		}
+	}
+	
 	protected String readLine() throws IOException {
 		int c;
 		StringBuilder sb = new StringBuilder();
@@ -196,7 +217,8 @@ public abstract class Connection {
 		}
 	});
 	
-	protected Connection(Socket socket) {
+	protected Connection(String logTag, Socket socket) {
+		this.logTag = logTag;
 		this.socket = socket;
 	}
 	
@@ -228,10 +250,16 @@ public abstract class Connection {
 	
 	public void close() {
 		try {
-			socket.close();
+			if (!socket.isClosed()) socket.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	@Override
+	protected void finalize() throws Throwable {
+		close();
+		super.finalize();
 	}
 	
 	public String getLocalAddress() {
