@@ -1,2 +1,8 @@
 */target-*
 .metadata
+dropfile/.classpath
+dropfile/.cproject
+dropfile/.project
+dropfile/test/testfile.txt
+dropfile/testfile.txt
+external/libpng-1.6.10/
