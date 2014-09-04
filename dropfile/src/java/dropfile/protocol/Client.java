@@ -39,6 +39,8 @@ public class Client {
 						connectionListener.onEstablished(Client.this, clientConnection);
 					}
 					
+					break;
+					
 				} catch (IOException e) {
 					attempt ++;
 					if (connectionListener != null) {
