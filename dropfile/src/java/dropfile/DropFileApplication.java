@@ -1,19 +1,23 @@
 package dropfile;
 
+import java.io.IOException;
+
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 import zetes.wings.DefaultAboutBox;
 import zetes.wings.actions.Handler;
 import zetes.wings.base.ApplicationBase;
+import dropfile.protocol.Client;
 import dropfile.protocol.ClientConnection;
+import dropfile.protocol.Server;
 
 
 public class DropFileApplication extends ApplicationBase<DefaultAboutBox, Session, SessionWindow, DropFileMenuConstructor, SessionViewWindowsManager>
 {
-	//static {
-	//	System.loadLibrary("tinyview.debug");
-	//}
+	private Client client = new Client();
+	private Server server;
 	
 	@Override
 	public String getTitle()
@@ -67,7 +71,7 @@ public class DropFileApplication extends ApplicationBase<DefaultAboutBox, Sessio
 			dummyShell.dispose();*/
 			
 			Shell shell = window != null ? window.getShell() : new Shell();
-			CreateNewSessionDialog dialog = new CreateNewSessionDialog(shell, 0);
+			CreateNewSessionDialog dialog = new CreateNewSessionDialog(shell, client);
 			ClientConnection newConnection = (ClientConnection) dialog.open();
 			if (newConnection != null) {
 				getViewWindowsManager().openWindowForDocument(new Session(newConnection));
@@ -77,12 +81,19 @@ public class DropFileApplication extends ApplicationBase<DefaultAboutBox, Sessio
 	
 	public DropFileApplication()
 	{
+		try {
+			server = new Server();
+		} catch (IOException e) {
+			System.err.println("Can't create the server");
+			e.printStackTrace();
+			//Display.getCurrent().dispose();
+		}
 	}
 	
 	@Override
 	public SessionViewWindowsManager createViewWindowsManager()
 	{
-		return new SessionViewWindowsManager();
+		return new SessionViewWindowsManager(server);
 	}
 
 	@Override

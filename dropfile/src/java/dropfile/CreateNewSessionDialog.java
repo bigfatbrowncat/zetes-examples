@@ -22,6 +22,7 @@ import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+import dropfile.protocol.Client;
 import dropfile.protocol.ClientConnection;
 
 public class CreateNewSessionDialog extends Dialog {
@@ -30,38 +31,40 @@ public class CreateNewSessionDialog extends Dialog {
 		Input, Connecting, Connected
 	}
 	
+	private Client client;
+	
 	private class ConnectionTask {
 		private volatile boolean cancelled = false;
 		private String address;
-		private volatile ClientConnection connection;
-		private Thread connectionThread = new Thread(new Runnable() {
+
+		private Client.ConnectionListener connectionListener = new Client.ConnectionListener() {
 			
 			@Override
-			public void run() {
-				try {
-					connection = new ClientConnection(address);
-					if (!cancelled) {
-						Display.getDefault().syncExec(new Runnable() {
-							
-							@Override
-							public void run() {
-								CreateNewSessionDialog.this.connectionSuccessThreadReport(connection);
-							}
-						});
-					}
-				} catch (final Exception e) {
-					if (!cancelled) {
-						Display.getDefault().syncExec(new Runnable() {
-							
-							@Override
-							public void run() {
-								CreateNewSessionDialog.this.connectionFailThreadReport(e);
-							}
-						});
-					}
+			public void onFailed(Client sender, final Exception e, int attempt) {
+				if (!cancelled) {
+					Display.getDefault().syncExec(new Runnable() {
+						
+						@Override
+						public void run() {
+							CreateNewSessionDialog.this.connectionFailThreadReport(e);
+						}
+					});
 				}
 			}
-		});
+			
+			@Override
+			public void onEstablished(Client client, final ClientConnection connection) {
+				if (!cancelled) {
+					Display.getDefault().syncExec(new Runnable() {
+						
+						@Override
+						public void run() {
+							CreateNewSessionDialog.this.connectionSuccessThreadReport(connection);
+						}
+					});
+				}
+			}
+		};
 		
 		public ConnectionTask(String address) {
 			this.address = address;
@@ -72,7 +75,7 @@ public class CreateNewSessionDialog extends Dialog {
 		
 		}
 		public void start() {
-			connectionThread.start();
+			client.connect(address, connectionListener);
 		}
 	}
 
@@ -145,8 +148,9 @@ public class CreateNewSessionDialog extends Dialog {
 	 * @param parent
 	 * @param style
 	 */
-	public CreateNewSessionDialog(Shell parent, int style) {
-		super(parent, style);
+	public CreateNewSessionDialog(Shell parent, Client client) {
+		super(parent, 0);
+		this.client = client;
 		setText("Create a new session");
 	}
 

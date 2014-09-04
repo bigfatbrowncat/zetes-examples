@@ -133,11 +133,17 @@ public abstract class Connection {
 	protected String readLine() throws IOException {
 		int c;
 		StringBuilder sb = new StringBuilder();
-		while ((c = socket.getInputStream().read()) != -1 && c != '\n') {
-			sb.append((char)c);
+		while ((c = socket.getInputStream().read()) != '\n') {
+			if (c != -1) {
+				sb.append((char)c);
+			} else {
+				try {
+					Thread.sleep(10);
+				} catch (InterruptedException e) { }
+			}
 		}
 		String res = sb.toString();
-		if (res.charAt(res.length() - 1) == '\r') {
+		if (res.length() > 0 && res.charAt(res.length() - 1) == '\r') {
 			res = res.substring(0, res.length() - 1);
 		}
 		return res;

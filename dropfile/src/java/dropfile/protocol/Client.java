@@ -9,29 +9,70 @@ public class Client {
 	private static final int ATTEMPTS_MAX = 3;
 	private static final int ATTEMPTS_PAUSE = 1000;
 	
-	public ClientConnection connect(String remoteAddress) throws IOException {
-		int attempts = 0;
-		IOException lastException = null;
-		while (attempts < ATTEMPTS_MAX) {
-			try {
-				Socket socket = new Socket();
-
-				// Connecting
-				socket.connect(new InetSocketAddress(remoteAddress, Server.PORT), ATTEMPTS_PAUSE);
-				
-				return new ClientConnection(socket, remoteAddress);
-			} catch (IOException e) {
-				attempts ++;
-				e.printStackTrace();
-				lastException = e;
-			}
-			
-			try {
-				Thread.sleep(ATTEMPTS_PAUSE);
-			} catch (InterruptedException e) {
-			}
-		}
+	private enum State {
+		free, connecting
+	}
+	
+	public enum Action { abort, retry };
+	
+	public interface ConnectionListener {
+		void onEstablished(Client client, ClientConnection connection);
+		void onFailed(Client sender, Exception e, int attempt);
+	}
+	
+	private Runnable connectionRunnable = new Runnable() {
 		
-		throw lastException;
+		@Override
+		public void run() {
+			state = State.connecting;
+			int attempt = 0;
+			while (attempt < ATTEMPTS_MAX) {
+				try {
+					Socket socket = new Socket();
+
+					// Connecting
+					socket.connect(new InetSocketAddress(remoteAddress, Server.PORT), ATTEMPTS_PAUSE);
+					
+					ClientConnection clientConnection = new ClientConnection(socket, remoteAddress);
+
+					if (connectionListener != null) {
+						connectionListener.onEstablished(Client.this, clientConnection);
+					}
+					
+				} catch (IOException e) {
+					attempt ++;
+					if (connectionListener != null) {
+						connectionListener.onFailed(Client.this, e, attempt);
+					}
+				}
+				
+				try {
+					Thread.sleep(ATTEMPTS_PAUSE);
+				} catch (InterruptedException e) { }
+			}
+			state = State.free;
+		}
+	};
+	
+	private volatile State state;
+	private Thread connectionThread;
+	private ConnectionListener connectionListener;
+	private String remoteAddress;
+	
+	
+	public Client() {
+		state = State.free;
+	}
+	
+	public boolean connect(String remoteAddress, ConnectionListener listener) {
+		if (state == State.free) {
+			this.remoteAddress = remoteAddress;
+			this.connectionListener = listener;
+			connectionThread = new Thread(connectionRunnable);
+			connectionThread.start();
+			return true;
+		} else {
+			return false;
+		}
 	}
 }
