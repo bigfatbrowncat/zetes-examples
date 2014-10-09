@@ -3,7 +3,7 @@
 clean()
 {
 	git pull
-	git submodule update --recursive --force
+	git submodule update --recursive --force --init
 }
 
 # going to the repo folder
