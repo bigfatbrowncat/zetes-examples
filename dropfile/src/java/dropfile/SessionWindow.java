@@ -13,6 +13,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Shell;
@@ -46,7 +47,14 @@ public class SessionWindow extends ViewWindowBase<Session>
 			
 			@Override
 			public void execute(SessionWindow window) {
-				getDocument().sendFile("test/testfile.txt");
+				FileDialog fileDialog = new FileDialog(window.getShell(), SWT.OPEN);
+				fileDialog.setText("Send file");
+				fileDialog.setFilterNames(new String[] { "All files" });
+				fileDialog.setFilterExtensions(new String[] { "*.*" });
+				String firstFile = fileDialog.open();
+				if (firstFile != null) {
+					getDocument().sendFile(firstFile);
+				}
 			}
 		};
 	}

@@ -2,7 +2,6 @@ package dropfile.protocol;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.HashMap;
@@ -37,7 +36,7 @@ public abstract class Connection {
 			return -1;
 		}
 
-		public void setPart(int partIndex) {
+		public void setPartComplete(int partIndex) {
 			data[partIndex] = true;
 		}
 		
@@ -87,7 +86,7 @@ public abstract class Connection {
 								System.out.println("writing " + data.length + " bytes");
 								socket.getOutputStream().write(data);
 								socket.getOutputStream().flush();
-								sendingIndicator.setPart(partIndexToSend);
+								sendingIndicator.setPartComplete(partIndexToSend);
 								doneAnything = true;
 							}
 						}
@@ -181,6 +180,7 @@ public abstract class Connection {
 					if (command == null) break;
 					System.out.println("command: " + command);
 					String[] commandArgs = command.split(" ");
+					
 					if (commandArgs[0].equals("START_FILE")) {
 						System.out.println("received start_file");
 						int id = Integer.parseInt(commandArgs[1]);
