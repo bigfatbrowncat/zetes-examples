@@ -5,7 +5,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-import zetes.wings.WinLinMacApi;
+import zetes.feet.WinLinMacApi;
 
 public class RomeoAndJulietPrinter extends Thread {
 	private int PAUSE_BETWEEN_CHARS = 40;
