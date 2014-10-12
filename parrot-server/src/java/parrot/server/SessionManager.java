@@ -52,25 +52,25 @@ public class SessionManager {
 		}
 	}
 	
-	public Session createSession(String login) {
+	public synchronized Session createSession(String login) {
 		Session newSession = new Session(UUID.randomUUID(), login);
 		openSessions.put(newSession.id, newSession);
 		return newSession;
 	}
 	
-	public Session getSession(UUID id) {
+	public synchronized Session getSession(UUID id) {
 		removeExpiredSessions();
 		Session session = openSessions.get(id); 
 		return session;
 	}
 	
-	public Session renewSession(Session oldSession) {
+	public synchronized Session renewSession(Session oldSession) {
 		Session newSession = new Session(oldSession);
 		openSessions.put(oldSession.id, newSession);
 		return newSession;
 	}
 
-	public Session fromCookie(Cookie cookie) {
+	public synchronized Session fromCookie(Cookie cookie) {
 		return getSession(UUID.fromString(cookie.getValue()));
 	}
 }

@@ -1,9 +1,19 @@
+<!DOCTYPE HTML>
 <html>
 	<head>
-		<title>Parrot @{version}</title>
+		<title>Parrot @{parrotVersion} (Zetes @{zetesVersion})</title>
 	</head>
 	<body>
-		Hello! Cooool!
-		<button type="button" onclick="alert('&amp#151;&#151;@{alert}')">@{buttonTitle}</button>
+		@if{truth}
+			<p>It's true @{parrotVersion}</p>
+		@else
+			<p>It's false @{parrotVersion} Wooo</p>
+		@end
+	
+		@loop{three}
+			<p>Hello! Cooool!
+				<button type="button" onclick="alert('&amp#151;&#151;')">Button</button>
+			</p>
+		@end
 	</body>
 </html>
