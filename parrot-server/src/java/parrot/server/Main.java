@@ -5,11 +5,9 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
-import java.text.DateFormat;
-import java.text.spi.DateFormatProvider;
-import java.util.LinkedList;
+import java.net.URL;
+import java.util.Enumeration;
 import java.util.Locale;
-import java.util.UUID;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -25,6 +23,7 @@ import org.simpleframework.transport.connect.SocketConnection;
 import parrot.server.SessionManager.Session;
 import parrot.server.data.DataConnector;
 import parrot.server.data.objects.User;
+import zetes.feet.WinLinMacApi;
 
 import com.almworks.sqlite4java.SQLiteException;
 import com.google.gson.Gson;
@@ -68,7 +67,9 @@ public class Main implements Container {
 		private void sendJson(Object object) throws IOException {
 			PrintStream body = response.getPrintStream();
 			Gson gg = gsonBuilder.create();
+			System.out.println(object);
 			String responseJson = gg.toJson(object);
+			System.out.println(responseJson);
 			body.println(responseJson);
 			body.close();
 		}
@@ -102,15 +103,41 @@ public class Main implements Container {
 			
 		}
 		
+		private void responseAPILogin() throws IOException {
+			String login = request.getParameter("login"); 
+			String password = request.getParameter("password"); 
+			if (login != null && password != null) {
+				// Validating login and password
+				User user = dataConnector.getUser(login);
+				if (user != null && user.password.equals(password)) {
+					// Login complete
+					Session session = sessionManager.createSession(login);
+					System.out.println("Member class: " + Session.class.isMemberClass());
+
+					responseHeaders(ResponseFormat.JSON, 200);
+					//response.setCookie(session.asCookie(COOKIE_SESSION_ID));
+					sendJson(session);
+				} else {
+					responseHeaders(ResponseFormat.JSON, 401);
+					sendJson(new APIErrorResponse(APIErrorResponse.CODE_INVALID_CREDENTIALS, "Invalid user name or password"));
+				}
+			} else {
+				responseHeaders(ResponseFormat.JSON, 400);
+				sendJson(new APIErrorResponse(APIErrorResponse.CODE_INCORRECT_REQUEST, "Login and password should be present"));
+			}
+		}
+		
 		private void responseUIRoot() throws IOException {
 			Cookie sessionIdCookie = request.getCookie(COOKIE_SESSION_ID);
 			Session session;
 			if (sessionIdCookie != null && (session = sessionManager.fromCookie(sessionIdCookie)) != null) {
-				session.renew();
+				// Session is open
+				session = sessionManager.renewSession(session);
 				User user = dataConnector.getUser(session.login);
 				
 				responseHeaders(ResponseFormat.HTML, 200);
 				response.setCookie(session.asCookie(COOKIE_SESSION_ID));
+				
 				PrintStream body = response.getPrintStream();
 				body.println(
 					"<!DOCTYPE HTML>" +
@@ -127,7 +154,14 @@ public class Main implements Container {
 			} else {
 				responseHeaders(ResponseFormat.HTML, 200);
 				PrintStream body = response.getPrintStream();
-				body.println(
+				
+				TemplateParser tp = new TemplateParser(getClass().getClassLoader().getResourceAsStream("parrot/server/templates/index.html.template"));
+				tp.setVariable("version", "1.0");
+				tp.setVariable("alert", "Hello!!!");
+				tp.setVariable("buttonTitle", "Push me");
+				tp.process(body);
+				
+				/*body.println(
 					"<!DOCTYPE HTML>" +
 					"<html>" +
 						"<head>" +
@@ -136,12 +170,12 @@ public class Main implements Container {
 							"<p>Log in or register.</p>" +
 						"</body>" +
 					"</html>"
-				);
+				);*/
 				body.close();
 			}
 		}
 
-		private void responseUILogin() throws IOException {
+		/*private void responseUILogin() throws IOException {
 			PrintStream body = response.getPrintStream();
 			String login = request.getParameter("login"); 
 			String password = request.getParameter("password"); 
@@ -191,7 +225,7 @@ public class Main implements Container {
 
 			
 			body.close();
-		}
+		}*/
 
 		
 		public void run() {
@@ -232,12 +266,16 @@ public class Main implements Container {
 									// Handling "/api/useradd"
 									responseAPIAddUser();
 									return;
+								} else if (requestPathParts[1].equals(ADDR_LOGIN)) {
+									// Handling "/api/login"
+									responseAPILogin();
+									return;
 								}
 							}
-						} else if (requestPathParts[0].equals(ADDR_LOGIN)) {
+						} /*else if (requestPathParts[0].equals(ADDR_LOGIN)) {
 							responseUILogin();
 							return;
-						}
+						}*/
 
 					} else {
 						responseUIRoot();

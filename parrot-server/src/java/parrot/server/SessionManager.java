@@ -9,19 +9,24 @@ import org.simpleframework.http.Cookie;
 
 public class SessionManager {
 	public class Session {
-		private final UUID id;
+		private static final int sessionExpirationAgeMillis = 1000 * 60 * 60 * 24;	// One day
+
+		public final UUID id;
 		public final String login;
-		private long expirationTimeMillis;
+		public final long expirationTimeMillis;
 
 		protected Session(UUID id, String login) {
 			super();
 			this.id = id;
 			this.login = login;
-			renew();
+			expirationTimeMillis = System.currentTimeMillis() + sessionExpirationAgeMillis;
 		}
-		
-		public long getExpirationTimeMillis() {
-			return expirationTimeMillis;
+
+		protected Session(Session oldSession) {
+			super();
+			this.id = oldSession.id;
+			this.login = oldSession.login;
+			expirationTimeMillis = System.currentTimeMillis() + sessionExpirationAgeMillis;
 		}
 		
 		public Cookie asCookie(String name) {
@@ -29,21 +34,16 @@ public class SessionManager {
 			res.setExpiry((int)((expirationTimeMillis - System.currentTimeMillis()) / 1000));
 			return res;
 		}
-		
-		public void renew() {
-			expirationTimeMillis = System.currentTimeMillis() + sessionExpirationAgeMillis;
-		}
 	}
 
-	private static final int sessionExpirationAgeMillis = 1000 * 60 * 60 * 24;	// One day
-
+	
 	private final Map<UUID, Session> openSessions = new HashMap<UUID, Session>();
 	
 	private void removeExpiredSessions() {
 		long timeMillis = System.currentTimeMillis();
 		HashSet<UUID> toRem = new HashSet<>();
 		for (UUID u : openSessions.keySet()) {
-			if (openSessions.get(u).getExpirationTimeMillis() < timeMillis) {
+			if (openSessions.get(u).expirationTimeMillis < timeMillis) {
 				toRem.add(u);
 			}
 		}
@@ -62,6 +62,12 @@ public class SessionManager {
 		removeExpiredSessions();
 		Session session = openSessions.get(id); 
 		return session;
+	}
+	
+	public Session renewSession(Session oldSession) {
+		Session newSession = new Session(oldSession);
+		openSessions.put(oldSession.id, newSession);
+		return newSession;
 	}
 
 	public Session fromCookie(Cookie cookie) {

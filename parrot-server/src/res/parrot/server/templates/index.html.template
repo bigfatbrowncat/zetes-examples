@@ -1,0 +1,9 @@
+<html>
+	<head>
+		<title>Parrot @{version}</title>
+	</head>
+	<body>
+		Hello! Cooool!
+		<button type="button" onclick="alert('&amp#151;&#151;@{alert}')">@{buttonTitle}</button>
+	</body>
+</html>
