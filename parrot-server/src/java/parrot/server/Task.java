@@ -100,7 +100,6 @@ public class Task implements Runnable {
 			if (user != null && user.password.equals(password)) {
 				// Login complete
 				Session session = main.sessionManager.createSession(login);
-				System.out.println("Member class: " + Session.class.isMemberClass());
 
 				responseHeaders(ResponseFormat.JSON, 200);
 				//response.setCookie(session.asCookie(COOKIE_SESSION_ID));
@@ -116,9 +115,10 @@ public class Task implements Runnable {
 	}
 	
 	private void responseUIRoot() throws IOException {
-		Cookie sessionIdCookie = request.getCookie(COOKIE_SESSION_ID);
 		Session session;
-		User user;
+		final User user;
+		
+		Cookie sessionIdCookie = request.getCookie(COOKIE_SESSION_ID);
 		if (sessionIdCookie != null && (session = main.sessionManager.fromCookie(sessionIdCookie)) != null) {
 			// Session is open
 			session = main.sessionManager.renewSession(session);
@@ -127,40 +127,29 @@ public class Task implements Runnable {
 			session = null;
 			user = null;
 		}
-			responseHeaders(ResponseFormat.HTML, 200);
-			PrintStream body = response.getPrintStream();
-			
-			ParsedTemplate.Context context = main.rootContext.clone();
-			context.setLoopHandler(new ParsedTemplate.LoopHandler() {
-				private int threeCounter = 3;
-				
-				@Override
-				public boolean next(ParsedTemplate.Context context, String argument) {
-					if (argument.equals("three")) {
-						threeCounter--;
-						if (threeCounter >= 0) {
-							context.setVariableValue("buttonTitle", "Push me " + threeCounter);
-							return true;
-						}
-					}
-					return false;
-				}
-			});
-			context.setIfHandler(new ParsedTemplate.IfHandler() {
-				
-				@Override
-				public boolean choose(Context context, String argument) {
-					if (argument.equals("truth")) {
-						return true;
-					} else {
-						return false;
-					}
-				}
-			});
-
-			main.indexTemplate.process(context, body);
-			body.close();
+		
+		responseHeaders(ResponseFormat.HTML, 200);
+		PrintStream body = response.getPrintStream();
+		
+		ParsedTemplate.Context context = main.rootContext.clone();
+		if (user != null) {
+			context.setVariableValue("userName", user.name);
 		}
+		context.setIfHandler(new ParsedTemplate.IfHandler() {
+			
+			@Override
+			public boolean choose(Context context, String argument) {
+				if (argument.equals("loggedIn")) {
+					return (user != null);
+				} else {
+					throw new RuntimeException("Invalid if argument");
+				}
+			}
+		});
+
+		main.indexTemplate.process(context, body);
+		body.close();
+	}
 
 	/*private void responseUILogin() throws IOException {
 		PrintStream body = response.getPrintStream();

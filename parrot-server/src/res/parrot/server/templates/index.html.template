@@ -2,18 +2,57 @@
 <html>
 	<head>
 		<title>Parrot @{parrotVersion} (Zetes @{zetesVersion})</title>
+		<style>
+			div.visible {
+					display: block;
+			}
+			div.hidden {
+					display: none;
+			}
+		</style>
+		</script>
+		
+		<script>
+			function login() {
+				loginInput = document.getElementById("loginInput");
+				passwordInput = document.getElementById("passwordInput");
+
+				var xmlhttp = new XMLHttpRequest();
+				xmlhttp.onreadystatechange = function()
+				{
+					if (xmlhttp.readyState == 4 && xmlhttp.status == 200)
+    				{
+    					//document.getElementById("myDiv").innerHTML=xmlhttp.responseText;
+						loggedIn = document.getElementById("loggedIn");
+						loginForm = document.getElementById("loginForm");
+						loggedIn.className = "visible";
+						loginForm.className = "hidden";
+    					
+    				}
+			  	}
+				
+				xmlhttp.open("GET","/api/login?login=" + loginInput.value + "&password=" + passwordInput.value, true);
+				xmlhttp.send();
+			}
+		</script>
 	</head>
 	<body>
-		@if{truth}
-			<p>It's true @{parrotVersion}</p>
-		@else
-			<p>It's false @{parrotVersion} Wooo</p>
-		@end
-	
-		@loop{three}
-			<p>Hello! Cooool!
-				<button type="button" onclick="alert('&amp#151;&#151;')">Button</button>
-			</p>
-		@end
+	@if{loggedIn}
+		<div id="loggedIn" class="visible">
+	@else	
+		<div id="loggedIn" class="hidden">
+	@end
+			<p>User is logged in</p>
+		</div>
+	@if{loggedIn}
+		<div id="loginForm" class="hidden">
+	@else	
+		<div id="loginForm" class="visible">
+	@end
+			<p>Log in, please:<br/>
+			Login: <input id="loginInput" type="text"/><br/>
+			Password: <input id="passwordInput" type="password"/><br/>
+			<button id="loginButton" onclick="login()">Log in</button></p>
+		</div>
 	</body>
 </html>
