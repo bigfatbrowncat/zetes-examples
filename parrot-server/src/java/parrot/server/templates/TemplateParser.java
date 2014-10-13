@@ -106,12 +106,56 @@ public class TemplateParser {
 				this.argument = argument;
 			}
 			
+			private String simpleEscape(String input) {
+			    StringBuilder out = new StringBuilder(Math.max(16, input.length()));
+			    for (int i = 0; i < input.length(); i++) {
+			        char c = input.charAt(i);
+			        switch(c) {
+			        case '"':
+			        	out.append("&quot;");
+			        	break;
+			        case '\'':
+			        	out.append("&apos;");
+			        	break;
+			        case '<':
+			        	out.append("&lt;");
+			        	break;
+			        case '>':
+			        	out.append("&gt;");
+			        	break;
+			        case '&':
+			        	out.append("&amp;");
+			        	break;
+			        case '(':
+			        	out.append("&lpar;");
+			        	break;
+			        case ')':
+			        	out.append("&rpar;");
+			        	break;
+			        case '{':
+			        	out.append("&lbrace;");
+			        	break;
+			        case '}':
+			        	out.append("&rbrace;");
+			        	break;
+			        case '[':
+			        	out.append("&lbrack;");
+			        	break;
+			        case ']':
+			        	out.append("&rbrack;");
+			        	break;
+		        	default:
+		        		out.append(c);
+			        }
+			    }
+			    return out.toString();
+		    }
+			
 			@Override
 			public String process(Context context) {
-				// TODO Here we should escape some characters
 				Object varVal = context.getVariableValue(argument);
 				if (varVal != null) {
-					return varVal.toString();
+					return simpleEscape(varVal.toString());
 				} else {
 					throw new ProcessingError("Variable \"" + argument + "\" hasn't been set");
 				}
