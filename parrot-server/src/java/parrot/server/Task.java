@@ -134,6 +134,8 @@ public class Task implements Runnable {
 		ParsedTemplate.Context context = main.rootContext.clone();
 		if (user != null) {
 			context.setVariableValue("userName", user.name);
+		} else {
+			context.setVariableValue("userName", "");
 		}
 		context.setIfHandler(new ParsedTemplate.IfHandler() {
 			

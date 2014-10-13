@@ -13,6 +13,36 @@
 		</script>
 		
 		<script>
+			function setCookie(cname, cvalue, expirationTimeMillis) {
+    			var d = new Date();
+    			d.setTime(d.getTime() + expirationTimeMillis);
+    			var expires = "expires=" + d.toUTCString();
+    			document.cookie = cname + "=" + cvalue + "; " + expires;
+			}
+
+			
+			function updateUser(login) {
+				loginInput = document.getElementById("loginInput");
+				passwordInput = document.getElementById("passwordInput");
+				userNameSpan = document.getElementById("userName");
+
+				var xmlhttp = new XMLHttpRequest();
+				xmlhttp.onreadystatechange = function()
+				{
+					if (xmlhttp.readyState == 4 && xmlhttp.status == 200)
+    				{
+						userNameSpan = document.getElementById("userName");
+    					
+    					userResponse = JSON.parse(xmlhttp.responseText);
+    					userNameSpan.innerHTML = userResponse.name;
+    				}
+			  	}
+				
+				xmlhttp.open("GET","http://localhost:8080/api/users/" + login);
+				xmlhttp.send();
+			}
+
+
 			function login() {
 				loginInput = document.getElementById("loginInput");
 				passwordInput = document.getElementById("passwordInput");
@@ -22,37 +52,62 @@
 				{
 					if (xmlhttp.readyState == 4 && xmlhttp.status == 200)
     				{
-    					//document.getElementById("myDiv").innerHTML=xmlhttp.responseText;
 						loggedIn = document.getElementById("loggedIn");
 						loginForm = document.getElementById("loginForm");
 						loggedIn.className = "visible";
 						loginForm.className = "hidden";
     					
+    					loginResponse = JSON.parse(xmlhttp.responseText);
+    					setCookie("sessionId", loginResponse.id, loginResponse.expirationTimeMillis);
+    					updateUser(loginResponse.login);
     				}
 			  	}
 				
 				xmlhttp.open("GET","/api/login?login=" + loginInput.value + "&password=" + passwordInput.value, true);
 				xmlhttp.send();
 			}
+			function register() {
+				userNameInput = document.getElementById("userNameInput");
+				regLoginInput = document.getElementById("regLoginInput");
+				regPasswordInput = document.getElementById("regPasswordInput");
+				regPasswordInput2 = document.getElementById("regPasswordInput2");
+
+				var xmlhttp = new XMLHttpRequest();
+				xmlhttp.onreadystatechange = function()
+				{
+					if (xmlhttp.readyState == 4 && xmlhttp.status == 200)
+    				{
+						loggedIn = document.getElementById("loggedIn");
+						loginForm = document.getElementById("loginForm");
+						loggedIn.className = "visible";
+						loginForm.className = "hidden";
+						
+    				}
+			  	}
+				
+				xmlhttp.open("GET","/api/register?name=" + userNameInput.value + "&login=" + regLoginInput.value + "&password=" + regPasswordInput.value, true);
+				xmlhttp.send();
+			}
 		</script>
 	</head>
 	<body>
-	@if{loggedIn}
-		<div id="loggedIn" class="visible">
-	@else	
-		<div id="loggedIn" class="hidden">
-	@end
-			<p>User is logged in</p>
+		<div id="loggedIn" @if{loggedIn} class="visible" @else class="hidden" @end >
+			<p>User <span id="userName">@{userName}</span> is logged in</p>
 		</div>
-	@if{loggedIn}
-		<div id="loginForm" class="hidden">
-	@else	
-		<div id="loginForm" class="visible">
-	@end
-			<p>Log in, please:<br/>
-			Login: <input id="loginInput" type="text"/><br/>
+		
+		<div id="loginForm" @if{loggedIn} class="hidden" @else class="visible" @end >
+			<h2>Log in or register</h2>
+			<h3>Login</h3>
+			<p>Login: <input id="loginInput" type="text"/><br/>
 			Password: <input id="passwordInput" type="password"/><br/>
 			<button id="loginButton" onclick="login()">Log in</button></p>
+
+			<h3>Registration</h3>
+			User name: <input id="userNameInput" type="text"/><br/>
+			Login: <input id="regLoginInput" type="text"/><br/>
+			Password: <input id="regPasswordInput" type="password"/><br/>
+			Confirm: <input id="regPasswordInput2" type="password"/><br/>
+			<button id="registerButton" onclick="register()">Register</button></p>
 		</div>
 	</body>
 </html>
