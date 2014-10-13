@@ -42,10 +42,7 @@
 				xmlhttp.send();
 			}
 
-
-			function login() {
-				loginInput = document.getElementById("loginInput");
-				passwordInput = document.getElementById("passwordInput");
+			function loginAPICall(login, password) {
 
 				var xmlhttp = new XMLHttpRequest();
 				xmlhttp.onreadystatechange = function()
@@ -63,30 +60,43 @@
     				}
 			  	}
 				
-				xmlhttp.open("GET","/api/login?login=" + loginInput.value + "&password=" + passwordInput.value, true);
+				xmlhttp.open("GET","/api/login?login=" + login + "&password=" + password, true);
 				xmlhttp.send();
 			}
+			
+			function login() {
+				loginInput = document.getElementById("loginInput");
+				passwordInput = document.getElementById("passwordInput");
+				
+				loginAPICall(loginInput.value, passwordInput.value);
+			}
+			
 			function register() {
 				userNameInput = document.getElementById("userNameInput");
 				regLoginInput = document.getElementById("regLoginInput");
 				regPasswordInput = document.getElementById("regPasswordInput");
 				regPasswordInput2 = document.getElementById("regPasswordInput2");
+				errorMessage = document.getElementById("errorMessage");
 
-				var xmlhttp = new XMLHttpRequest();
-				xmlhttp.onreadystatechange = function()
+				if (regPasswordInput.value == regPasswordInput2.value)
 				{
-					if (xmlhttp.readyState == 4 && xmlhttp.status == 200)
-    				{
-						loggedIn = document.getElementById("loggedIn");
-						loginForm = document.getElementById("loginForm");
-						loggedIn.className = "visible";
-						loginForm.className = "hidden";
-						
-    				}
-			  	}
+					var xmlhttp = new XMLHttpRequest();
+					xmlhttp.onreadystatechange = function()
+					{
+						if (xmlhttp.readyState == 4 && xmlhttp.status == 201)
+   		 				{
+							registerResponse = JSON.parse(xmlhttp.responseText);
+    						loginAPICall(regLoginInput.value, regPasswordInput.value);
+    					}
+				  	}
 				
-				xmlhttp.open("GET","/api/register?name=" + userNameInput.value + "&login=" + regLoginInput.value + "&password=" + regPasswordInput.value, true);
-				xmlhttp.send();
+					xmlhttp.open("GET","/api/register?name=" + userNameInput.value + "&login=" + regLoginInput.value + "&password=" + regPasswordInput.value, true);
+					xmlhttp.send();
+				}
+				else
+				{
+					errorMessage.innerHTML = "Passwords don't match";
+				}
 			}
 		</script>
 	</head>
@@ -108,6 +118,7 @@
 			Password: <input id="regPasswordInput" type="password"/><br/>
 			Confirm: <input id="regPasswordInput2" type="password"/><br/>
 			<button id="registerButton" onclick="register()">Register</button></p>
+			<p id="errorMessage" />
 		</div>
 	</body>
 </html>

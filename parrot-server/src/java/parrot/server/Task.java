@@ -2,6 +2,8 @@ package parrot.server;
 
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.simpleframework.http.Cookie;
 import org.simpleframework.http.Request;
@@ -29,7 +31,7 @@ public class Task implements Runnable {
 
 	private static final String ADDR_API = "api"; 
 	private static final String ADDR_GET_USERS = "users"; 
-	private static final String ADDR_ADD_USER = "useradd"; 
+	private static final String ADDR_REGISTER = "register"; 
 	private static final String ADDR_LOGIN = "login"; 
 
 	private final Main main; 
@@ -74,19 +76,35 @@ public class Task implements Runnable {
 		sendJson(user);
 	}
 	
-	private void responseAPIAddUser() throws IOException, SQLiteException {
+	private static final Pattern LOGIN_PATTERN = Pattern.compile("[a-zA-Z][a-zA-Z0-9]*");
+	private boolean validateLogin(String login) {
+		return LOGIN_PATTERN.matcher(login).matches() && login.length() <= 20;
+	}
+	
+	private void responseAPIRegister() throws IOException, SQLiteException {
 		String login = request.getParameter("login"); 
 		String password = request.getParameter("password"); 
-		String name = request.getParameter("name"); 
+		String name = request.getParameter("name");
+
 		if (login != null && password != null && name != null) {
-			responseHeaders(ResponseFormat.JSON, 201);
-			User user = main.dataConnector.addUser(login, password, name);
-			sendJson(user);
+			// Trying to find the user
+			User user = main.dataConnector.getUser(login);
+			if (user == null) {
+				if (validateLogin(login)) {
+					responseHeaders(ResponseFormat.JSON, 201);
+					user = main.dataConnector.addUser(login, password, name);
+					sendJson(user);
+				} else {
+					responseHeaders(ResponseFormat.JSON, 400);
+					sendJson(new APIErrorResponse(APIErrorResponse.CODE_LOGIN_INVALID, "Login is invalid. It should start with a latin letter and contain only latin letters or digits"));
+				}
+			} else { 
+				responseHeaders(ResponseFormat.JSON, 409);
+				sendJson(new APIErrorResponse(APIErrorResponse.CODE_LOGIN_OCCUPIED, "Login occupied"));
+			}
 		} else {
 			responseHeaders(ResponseFormat.JSON, 400);
-			PrintStream body = response.getPrintStream();
-			body.println("Error: Login, password and user name should be present");
-			body.close();
+			sendJson(new APIErrorResponse(APIErrorResponse.CODE_INCORRECT_REQUEST, "Login, password and username should be present"));
 		}
 		
 	}
@@ -240,9 +258,9 @@ public class Task implements Runnable {
 									return;
 								}
 
-							} else if (requestPathParts[1].equals(ADDR_ADD_USER)) {
-								// Handling "/api/useradd"
-								responseAPIAddUser();
+							} else if (requestPathParts[1].equals(ADDR_REGISTER)) {
+								// Handling "/api/register"
+								responseAPIRegister();
 								return;
 							} else if (requestPathParts[1].equals(ADDR_LOGIN)) {
 								// Handling "/api/login"
