@@ -33,6 +33,7 @@ public class Task implements Runnable {
 	private static final String ADDR_GET_USERS = "users"; 
 	private static final String ADDR_REGISTER = "register"; 
 	private static final String ADDR_LOGIN = "login"; 
+	private static final String ADDR_LOGOUT = "logout"; 
 
 	private final Main main; 
 	private final Response response;
@@ -83,28 +84,34 @@ public class Task implements Runnable {
 	
 	private void responseAPIRegister() throws IOException, SQLiteException {
 		String login = request.getParameter("login"); 
-		String password = request.getParameter("password"); 
+		String password1 = request.getParameter("password1"); 
+		String password2 = request.getParameter("password2"); 
 		String name = request.getParameter("name");
 
-		if (login != null && password != null && name != null) {
-			// Trying to find the user
-			User user = main.dataConnector.getUser(login);
-			if (user == null) {
-				if (validateLogin(login)) {
-					responseHeaders(ResponseFormat.JSON, 201);
-					user = main.dataConnector.addUser(login, password, name);
-					sendJson(user);
-				} else {
-					responseHeaders(ResponseFormat.JSON, 400);
-					sendJson(new APIErrorResponse(APIErrorResponse.CODE_LOGIN_INVALID, "Login is invalid. It should start with a latin letter and contain only latin letters or digits"));
+		if (login != null && password1 != null && password2 != null && name != null) {
+			if (password1.equals(password2)) {
+				// Trying to find the user
+				User user = main.dataConnector.getUser(login);
+				if (user == null) {
+					if (validateLogin(login)) {
+						responseHeaders(ResponseFormat.JSON, 201);
+						user = main.dataConnector.addUser(login, password1, name);
+						sendJson(user);
+					} else {
+						responseHeaders(ResponseFormat.JSON, 400);
+						sendJson(new APIErrorResponse(APIErrorResponse.CODE_LOGIN_INVALID, "Login is invalid. It should start with a latin letter and contain only latin letters or digits"));
+					}
+				} else { 
+					responseHeaders(ResponseFormat.JSON, 409);
+					sendJson(new APIErrorResponse(APIErrorResponse.CODE_LOGIN_OCCUPIED, "Login occupied"));
 				}
 			} else { 
-				responseHeaders(ResponseFormat.JSON, 409);
-				sendJson(new APIErrorResponse(APIErrorResponse.CODE_LOGIN_OCCUPIED, "Login occupied"));
+				responseHeaders(ResponseFormat.JSON, 400);
+				sendJson(new APIErrorResponse(APIErrorResponse.CODE_PASSWORD_CONFIRMATION_ERROR, "Password and confirmation aren't equal"));
 			}
 		} else {
 			responseHeaders(ResponseFormat.JSON, 400);
-			sendJson(new APIErrorResponse(APIErrorResponse.CODE_INCORRECT_REQUEST, "Login, password and username should be present"));
+			sendJson(new APIErrorResponse(APIErrorResponse.CODE_INCORRECT_REQUEST, "Login, two passwords and username should be present"));
 		}
 		
 	}
@@ -130,6 +137,18 @@ public class Task implements Runnable {
 			responseHeaders(ResponseFormat.JSON, 400);
 			sendJson(new APIErrorResponse(APIErrorResponse.CODE_INCORRECT_REQUEST, "Login and password should be present"));
 		}
+	}
+	
+	private void responseAPILogout() throws IOException {
+		Cookie sessionIdCookie = request.getCookie(COOKIE_SESSION_ID);
+		if (sessionIdCookie != null) {
+			Session session = main.sessionManager.fromCookie(sessionIdCookie);
+			if (session != null) {
+				main.sessionManager.eraseSession(session);
+			}
+		}
+		responseHeaders(ResponseFormat.JSON, 200);
+		sendJson(new Object());
 	}
 	
 	private void responseUIRoot() throws IOException {
@@ -265,6 +284,10 @@ public class Task implements Runnable {
 							} else if (requestPathParts[1].equals(ADDR_LOGIN)) {
 								// Handling "/api/login"
 								responseAPILogin();
+								return;
+							} else if (requestPathParts[1].equals(ADDR_LOGOUT)) {
+								// Handling "/api/logout"
+								responseAPILogout();
 								return;
 							}
 						}

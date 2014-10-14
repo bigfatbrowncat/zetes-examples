@@ -69,6 +69,12 @@ public class SessionManager {
 		openSessions.put(oldSession.id, newSession);
 		return newSession;
 	}
+	
+	public synchronized void eraseSession(Session session) {
+		if (openSessions.containsKey(session.id)) {
+			openSessions.remove(session.id);
+		}
+	}
 
 	public synchronized Session fromCookie(Cookie cookie) {
 		return getSession(UUID.fromString(cookie.getValue()));

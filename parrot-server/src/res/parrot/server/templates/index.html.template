@@ -2,123 +2,176 @@
 <html>
 	<head>
 		<title>Parrot @{parrotVersion} (Zetes @{zetesVersion})</title>
-		<style>
-			div.visible {
-					display: block;
-			}
-			div.hidden {
-					display: none;
-			}
-		</style>
-		</script>
-		
 		<script>
-			function setCookie(cname, cvalue, expirationTimeMillis) {
-    			var d = new Date();
-    			d.setTime(d.getTime() + expirationTimeMillis);
-    			var expires = "expires=" + d.toUTCString();
-    			document.cookie = cname + "=" + cvalue + "; " + expires;
+	@if{loggedIn}
+			function clearCookie(cname) {
+ 				document.cookie = cname + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
 			}
 
+			function logout() {
+				logoutButton = document.getElementById("logoutButton");
+				logoutButton.disabled = true;
+				
+				var xmlhttp = new XMLHttpRequest();
+				xmlhttp.onreadystatechange = function()
+				{
+					if (xmlhttp.readyState == 4)
+    				{
+    					if (xmlhttp.status == 200) {
+    						clearCookie("sessionId");
+    					}
+    					window.location.reload();
+    				}
+			  	}
+				
+				xmlhttp.open("GET", "/api/logout", true);
+				xmlhttp.send();
+				
+				return false;	// Don't actually submit anything
+			}
+	@else
+			function setCookie(cname, cvalue, expirationTimeMillis)
+			{
+				var d = new Date();
+				d.setTime(d.getTime() + expirationTimeMillis);
+				var expires = "expires=" + d.toUTCString();
+				document.cookie = cname + "=" + cvalue + "; " + expires;
+			}
 			
-			function updateUser(login) {
+			function loginFormSetEnabled(enabled)
+			{
 				loginInput = document.getElementById("loginInput");
 				passwordInput = document.getElementById("passwordInput");
-				userNameSpan = document.getElementById("userName");
-
-				var xmlhttp = new XMLHttpRequest();
-				xmlhttp.onreadystatechange = function()
-				{
-					if (xmlhttp.readyState == 4 && xmlhttp.status == 200)
-    				{
-						userNameSpan = document.getElementById("userName");
-    					
-    					userResponse = JSON.parse(xmlhttp.responseText);
-    					userNameSpan.innerHTML = userResponse.name;
-    				}
-			  	}
-				
-				xmlhttp.open("GET","http://localhost:8080/api/users/" + login);
-				xmlhttp.send();
-			}
-
-			function loginAPICall(login, password) {
-
-				var xmlhttp = new XMLHttpRequest();
-				xmlhttp.onreadystatechange = function()
-				{
-					if (xmlhttp.readyState == 4 && xmlhttp.status == 200)
-    				{
-						loggedIn = document.getElementById("loggedIn");
-						loginForm = document.getElementById("loginForm");
-						loggedIn.className = "visible";
-						loginForm.className = "hidden";
-    					
-    					loginResponse = JSON.parse(xmlhttp.responseText);
-    					setCookie("sessionId", loginResponse.id, loginResponse.expirationTimeMillis);
-    					updateUser(loginResponse.login);
-    				}
-			  	}
-				
-				xmlhttp.open("GET","/api/login?login=" + login + "&password=" + password, true);
-				xmlhttp.send();
-			}
+				loginButton = document.getElementById("loginButton");
 			
+				loginInput.disabled = !enabled;
+				passwordInput.disabled = !enabled;
+				loginButton.disabled = !enabled;
+			}
+
 			function login() {
 				loginInput = document.getElementById("loginInput");
 				passwordInput = document.getElementById("passwordInput");
+				loginButton = document.getElementById("loginButton");
+				errorMessage = document.getElementById("errorMessage");
+
+				errorMessage.innerHTML = "";
 				
-				loginAPICall(loginInput.value, passwordInput.value);
+				loginFormSetEnabled(false);
+				
+				var xmlhttp = new XMLHttpRequest();
+				xmlhttp.onreadystatechange = function()
+				{
+					if (xmlhttp.readyState == 4)
+    				{
+    					loginResponse = JSON.parse(xmlhttp.responseText);
+    					if (xmlhttp.status == 200) {
+    						setCookie("sessionId", loginResponse.id, loginResponse.expirationTimeMillis);
+    						window.location.reload();
+    					} else {
+    						loginFormSetEnabled(true);
+    						errorMessage.innerHTML = loginResponse.message;
+    					}
+    				}
+			  	}
+				
+				xmlhttp.open("GET", "/api/login?login=" + loginInput.value + "&password=" + passwordInput.value, true);
+				xmlhttp.send();
+				
+				return false;	// Don't actually submit anything
+			}
+			
+			function registrationFormSetEnabled(enabled)
+			{
+				regUserNameInput.disabled = !enabled;
+				regLoginInput.disabled = !enabled;
+				regPasswordInput1.disabled = !enabled;
+				regPasswordInput2.disabled = !enabled;
+				regSubmitButton.disabled = !enabled;
 			}
 			
 			function register() {
-				userNameInput = document.getElementById("userNameInput");
+				regUserNameInput = document.getElementById("regUserNameInput");
 				regLoginInput = document.getElementById("regLoginInput");
-				regPasswordInput = document.getElementById("regPasswordInput");
+				regPasswordInput1 = document.getElementById("regPasswordInput1");
 				regPasswordInput2 = document.getElementById("regPasswordInput2");
-				errorMessage = document.getElementById("errorMessage");
+				regSubmitButton = document.getElementById("regSubmitButton");
+				regErrorMessage = document.getElementById("regErrorMessage");
+			
+				regErrorMessage.innerHTML = "";
 
-				if (regPasswordInput.value == regPasswordInput2.value)
+				registrationFormSetEnabled(false);
+
+				var xmlhttp = new XMLHttpRequest();
+				xmlhttp.onreadystatechange = function()
 				{
-					var xmlhttp = new XMLHttpRequest();
-					xmlhttp.onreadystatechange = function()
-					{
-						if (xmlhttp.readyState == 4 && xmlhttp.status == 201)
-   		 				{
-							registerResponse = JSON.parse(xmlhttp.responseText);
-    						loginAPICall(regLoginInput.value, regPasswordInput.value);
-    					}
-				  	}
-				
-					xmlhttp.open("GET","/api/register?name=" + userNameInput.value + "&login=" + regLoginInput.value + "&password=" + regPasswordInput.value, true);
-					xmlhttp.send();
-				}
-				else
-				{
-					errorMessage.innerHTML = "Passwords don't match";
-				}
+					if (xmlhttp.readyState == 4)
+	 				{
+						registerResponse = JSON.parse(xmlhttp.responseText);
+	 					if (xmlhttp.status == 201)
+	 					{
+	 						loginInput = document.getElementById("loginInput");
+							passwordInput = document.getElementById("passwordInput");
+							loginInput.value = regLoginInput.value;
+							passwordInput.value = regPasswordInput1.value;
+							login();
+						} 
+						else
+						{
+							registrationFormSetEnabled(true);
+							regErrorMessage.innerHTML = registerResponse.message;
+						}
+					}
+			  	}
+			
+				xmlhttp.open("GET", 
+					"/api/register?name=" + regUserNameInput.value + 
+								"&login=" + regLoginInput.value + 
+								"&password1=" + regPasswordInput1.value + 
+								"&password2=" + regPasswordInput2.value, true);
+				xmlhttp.send();
+
+				return false;	// Don't actually submit anything
 			}
+	@end
 		</script>
 	</head>
 	<body>
-		<div id="loggedIn" @if{loggedIn} class="visible" @else class="hidden" @end >
+	
+	@if{loggedIn}
+		<div>
 			<p>User <span id="userName">@{userName}</span> is logged in</p>
+			<form>
+				<p>
+					<input id="logoutButton" type="submit" onclick="return logout();" value="Logout" />
+				</p>
+			</form>
 		</div>
-		
-		<div id="loginForm" @if{loggedIn} class="hidden" @else class="visible" @end >
+	@else	
+		<div>
 			<h2>Log in or register</h2>
 			<h3>Login</h3>
-			<p>Login: <input id="loginInput" type="text"/><br/>
-			Password: <input id="passwordInput" type="password"/><br/>
-			<button id="loginButton" onclick="login()">Log in</button></p>
+			<form>
+				<p>
+					Login: 		<input id="loginInput" type="text"/><br/>
+					Password: 	<input id="passwordInput" type="password"/><br/>
+					<input id="loginButton" type="submit" onclick="return login();" value="Log in" />
+				</p>
+				<p id="errorMessage" />
+			</form>
 
 			<h3>Registration</h3>
-			User name: <input id="userNameInput" type="text"/><br/>
-			Login: <input id="regLoginInput" type="text"/><br/>
-			Password: <input id="regPasswordInput" type="password"/><br/>
-			Confirm: <input id="regPasswordInput2" type="password"/><br/>
-			<button id="registerButton" onclick="register()">Register</button></p>
-			<p id="errorMessage" />
+			<form>
+				<p>
+					User name: 	<input id="regUserNameInput" type="text"/><br/>
+					Login: 		<input id="regLoginInput" type="text"/><br/>
+					Password: 	<input id="regPasswordInput1" type="password"/><br/>
+					Confirm: 	<input id="regPasswordInput2" type="password"/><br/>
+					<input id="regSubmitButton" type="submit" onclick="return register();" value="Register" />
+				</p>
+				<p id="regErrorMessage" />
+			</form>
 		</div>
+	@end
 	</body>
 </html>
