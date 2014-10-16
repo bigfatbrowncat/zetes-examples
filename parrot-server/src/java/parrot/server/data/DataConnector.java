@@ -132,7 +132,37 @@ public class DataConnector implements Closeable {
 		}).complete();
 	}
 	
-	
+	public Message[] getMessages() throws SQLiteException {
+		return queue.execute(new SQLiteJob<Message[]>() {
+			protected Message[] job(SQLiteConnection connection)
+					throws SQLiteException {
+
+				SQLiteStatement st = connection.prepare(
+					"SELECT " + 
+						FIELD_ID + ", " + 
+						FIELD_USER_ID + ", " + 
+						FIELD_TIME_MILLIS + ", " + 
+						FIELD_TEXT +
+					" FROM " + TABLE_MESSAGES + ";"
+				);
+
+				LinkedList<Message> resList = new LinkedList<>();
+
+				while (st.step()) {
+					resList.add(new Message(
+							st.columnLong(0), 
+							st.columnLong(1),
+							st.columnLong(2), 
+							st.columnString(3)
+						)
+					);
+				}
+				Message[] res = resList.toArray(new Message[] {});
+				return res;
+			}
+		}).complete();
+	}
+
 	public User[] getUsers() throws SQLiteException {
 		return queue.execute(new SQLiteJob<User[]>() {
 			protected User[] job(SQLiteConnection connection)
