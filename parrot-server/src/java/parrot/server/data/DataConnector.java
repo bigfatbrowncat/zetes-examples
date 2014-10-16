@@ -20,6 +20,10 @@ public class DataConnector implements Closeable {
 	private static final String FIELD_ID = "_id";
 	private static final String FIELD_NAME = "name";
 	private static final String FIELD_LOGIN = "login";
+	private static final String FIELD_USER_ID = "userId";
+	private static final String FIELD_TIME_MILLIS = "timeMillis";
+	private static final String FIELD_TEXT = "text";
+	
 	private static final String FIELD_PASSWORD = "password";
 
 	private SQLiteConnection connection;
@@ -42,7 +46,16 @@ public class DataConnector implements Closeable {
 							FIELD_NAME + " TEXT" + 
 						");"
 		).step();
-
+		connection.prepare(
+				"CREATE TABLE IF NOT EXISTS " + TABLE_USERS + " " + 
+						"("	+ 
+							FIELD_ID + " INTEGER PRIMARY KEY ASC, " + 
+							FIELD_USER_ID	+ " INTEGER, " + 
+							FIELD_TIME_MILLIS + " INTEGER, " + 
+							FIELD_TEXT + " TEXT" + 
+						");"
+		).step();
+		
 		queue = new SQLiteQueue(databaseFile);
 		queue.start();
 	}

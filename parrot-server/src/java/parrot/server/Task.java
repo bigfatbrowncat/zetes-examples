@@ -49,7 +49,7 @@ public class Task implements Runnable {
 	
 	private void responseHeaders(ResponseFormat format, int code) {
 		response.setValue("Content-Type", format.mime);
-		response.setValue("Server", main.SERVER_NAME);
+		response.setValue("Server", Main.SERVER_NAME);
 		response.setDate("Date", time);
 		response.setDate("Last-Modified", time);
 		response.setCode(code);
