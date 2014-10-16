@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.LinkedList;
 
+import parrot.server.data.objects.Message;
 import parrot.server.data.objects.User;
 import zetes.feet.WinLinMacApi;
 
@@ -16,6 +17,7 @@ import com.almworks.sqlite4java.SQLiteStatement;
 
 public class DataConnector implements Closeable {
 	private static final String TABLE_USERS = "users";
+	private static final String TABLE_MESSAGES = "messages";
 
 	private static final String FIELD_ID = "_id";
 	private static final String FIELD_NAME = "name";
@@ -47,7 +49,7 @@ public class DataConnector implements Closeable {
 						");"
 		).step();
 		connection.prepare(
-				"CREATE TABLE IF NOT EXISTS " + TABLE_USERS + " " + 
+				"CREATE TABLE IF NOT EXISTS " + TABLE_MESSAGES + " " + 
 						"("	+ 
 							FIELD_ID + " INTEGER PRIMARY KEY ASC, " + 
 							FIELD_USER_ID	+ " INTEGER, " + 
@@ -106,6 +108,31 @@ public class DataConnector implements Closeable {
 		}).complete();
 	}
 
+	public Message addMessage(final long userId, final long timeMillis, final String text) {
+		return queue.execute(new SQLiteJob<Message>() {
+			protected Message job(SQLiteConnection connection)	throws SQLiteException {
+				SQLiteStatement st = connection.prepare(
+						"INSERT INTO " + TABLE_MESSAGES + " " + 
+								"(" + 
+									FIELD_USER_ID + ", " + 
+									FIELD_TIME_MILLIS + ", " + 
+									FIELD_TEXT +
+								") VALUES (?, ?, ?);"
+				);
+				
+				st.bind(1, userId);
+				st.bind(2, timeMillis);
+				st.bind(3, text);
+				
+				st.step();
+
+				long newId = connection.getLastInsertId();
+				return new Message(newId, userId, timeMillis, text);
+			}
+		}).complete();
+	}
+	
+	
 	public User[] getUsers() throws SQLiteException {
 		return queue.execute(new SQLiteJob<User[]>() {
 			protected User[] job(SQLiteConnection connection)
