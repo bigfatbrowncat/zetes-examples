@@ -10,6 +10,7 @@ import org.simpleframework.http.Request;
 import org.simpleframework.http.Response;
 
 import parrot.server.SessionManager.Session;
+import parrot.server.data.objects.Message;
 import parrot.server.data.objects.User;
 import parrot.server.templates.TemplateParser.ParsedTemplate;
 import parrot.server.templates.TemplateParser.ParsedTemplate.Context;
@@ -34,6 +35,8 @@ public class Task implements Runnable {
 	private static final String ADDR_REGISTER = "register"; 
 	private static final String ADDR_LOGIN = "login"; 
 	private static final String ADDR_LOGOUT = "logout"; 
+	private static final String ADDR_ADD_MESSAGE = "add_message";
+	private static final String ADDR_GET_MESSAGES = "get_messages";
 
 	private final Main main; 
 	private final Response response;
@@ -77,7 +80,7 @@ public class Task implements Runnable {
 		sendJson(user);
 	}
 	
-	private static final Pattern LOGIN_PATTERN = Pattern.compile("[a-zA-Z][a-zA-Z0-9]*");
+	private static final Pattern LOGIN_PATTERN = Pattern.compile("[a-zA-Z0-9]+");
 	private boolean validateLogin(String login) {
 		return LOGIN_PATTERN.matcher(login).matches() && login.length() <= 20;
 	}
@@ -151,6 +154,45 @@ public class Task implements Runnable {
 		sendJson(new Object());
 	}
 	
+	private void responseAPIAddMessage() throws IOException {
+		String text = request.getParameter("text");
+		Session session;
+		final User user;
+		
+		Cookie sessionIdCookie = request.getCookie(COOKIE_SESSION_ID);
+		if (sessionIdCookie != null && (session = main.sessionManager.fromCookie(sessionIdCookie)) != null) {
+			// Session is open
+			session = main.sessionManager.renewSession(session);
+			user = main.dataConnector.getUser(session.login);
+			if (user != null) {
+				long timeMillis = System.currentTimeMillis();
+				Message message = main.dataConnector.addMessage(user.id, timeMillis, text);
+
+				responseHeaders(ResponseFormat.JSON, 200);
+				sendJson(message);
+				return;
+			}
+		}
+
+		responseHeaders(ResponseFormat.JSON, 403);
+		sendJson(new APIErrorResponse(APIErrorResponse.CODE_LOGIN_REQUIRED, "You should login to write messages"));
+	}
+
+	private void responseAPIGetMessages() throws IOException {
+		Cookie sessionIdCookie = request.getCookie(COOKIE_SESSION_ID);
+		if (sessionIdCookie != null) {
+			Session session = main.sessionManager.fromCookie(sessionIdCookie);
+			if (session != null) {
+				Message[] messages = main.dataConnector.getMessages();
+				sendJson(messages);
+				return;
+			}
+		}
+
+		responseHeaders(ResponseFormat.JSON, 403);
+		sendJson(new APIErrorResponse(APIErrorResponse.CODE_LOGIN_REQUIRED, "You should login to write messages"));
+	}
+
 	private void responseUIRoot() throws IOException {
 		Session session;
 		final User user;
@@ -190,59 +232,6 @@ public class Task implements Runnable {
 		body.close();
 	}
 
-	/*private void responseUILogin() throws IOException {
-		PrintStream body = response.getPrintStream();
-		String login = request.getParameter("login"); 
-		String password = request.getParameter("password"); 
-		
-		if (login != null && password != null) {
-			// Validating login and password
-			User user = dataConnector.getUser(login);
-			if (user != null && user.password.equals(password)) {
-				// Login complete
-				Session session = sessionManager.createSession(login);
-
-				responseHeaders(ResponseFormat.HTML, 200);
-				response.setValue("Refresh", "0; url=/");
-				response.setCookie(session.asCookie(COOKIE_SESSION_ID));
-
-			} else {
-				// Login failed
-				responseHeaders(ResponseFormat.HTML, 401);
-
-				body.println(
-						"<!DOCTYPE HTML>" +
-						"<html>" +
-							"<head>" +
-							"</head>" +
-							"<body>" +
-								"<p>Incorrect user name or password.</p>" +
-							"</body>" +
-						"</html>"
-				);
-				
-			}
-			
-		} else {
-			// Invalid request
-			responseHeaders(ResponseFormat.HTML, 400);
-			body.println(
-					"<!DOCTYPE HTML>" +
-					"<html>" +
-						"<head>" +
-						"</head>" +
-						"<body>" +
-							"<p>Invald request. Missing login or password.</p>" +
-						"</body>" +
-					"</html>"
-			);
-		}
-
-		
-		body.close();
-	}*/
-
-	
 	public void run() {
 
 		try {
@@ -277,6 +266,13 @@ public class Task implements Runnable {
 									return;
 								}
 
+							} else if (requestPathParts[1].equals(ADDR_ADD_MESSAGE)) {
+								// Handling "/api/add_message"
+								responseAPIAddMessage();
+								return;
+							} else if (requestPathParts[1].equals(ADDR_GET_MESSAGES)) {
+								responseAPIGetMessages();
+								return;
 							} else if (requestPathParts[1].equals(ADDR_REGISTER)) {
 								// Handling "/api/register"
 								responseAPIRegister();

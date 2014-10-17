@@ -132,10 +132,9 @@ public class DataConnector implements Closeable {
 		}).complete();
 	}
 	
-	public Message[] getMessages() throws SQLiteException {
+	public Message[] getMessagesOrderedSince(final long timeMillis) {
 		return queue.execute(new SQLiteJob<Message[]>() {
-			protected Message[] job(SQLiteConnection connection)
-					throws SQLiteException {
+			protected Message[] job(SQLiteConnection connection) throws SQLiteException {
 
 				SQLiteStatement st = connection.prepare(
 					"SELECT " + 
@@ -143,8 +142,12 @@ public class DataConnector implements Closeable {
 						FIELD_USER_ID + ", " + 
 						FIELD_TIME_MILLIS + ", " + 
 						FIELD_TEXT +
-					" FROM " + TABLE_MESSAGES + ";"
+					" FROM " + TABLE_MESSAGES + 
+					" WHERE " + FIELD_TIME_MILLIS + " > ?" + 
+					" ORDER BY " + FIELD_TIME_MILLIS + " ASC;"
 				);
+				
+				st.bind(1, timeMillis);
 
 				LinkedList<Message> resList = new LinkedList<>();
 
@@ -161,6 +164,11 @@ public class DataConnector implements Closeable {
 				return res;
 			}
 		}).complete();
+	}
+
+	
+	public Message[] getMessages() {
+		return getMessagesOrderedSince(0);
 	}
 
 	public User[] getUsers() throws SQLiteException {

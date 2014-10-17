@@ -6,6 +6,7 @@ public class APIErrorResponse {
 	public static final int CODE_LOGIN_OCCUPIED = 3;
 	public static final int CODE_LOGIN_INVALID = 4;
 	public static final int CODE_PASSWORD_CONFIRMATION_ERROR = 5;
+	public static final int CODE_LOGIN_REQUIRED = 6;
 	
 	public final int code;
 	public final String message;
