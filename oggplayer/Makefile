@@ -21,12 +21,30 @@ endif
 all: app
 
 native-deps:: libogg libvorbis portaudio
-	
-libogg:
-	(cd ../external/libogg-1.3.2; CFLAGS="-fPIC" CXXFLAGS="-fPIC" ./configure --enable-static=yes --enable-shared=no && make)
-libvorbis: libogg
-	(cd ../external/libvorbis-1.3.4; CFLAGS="-fPIC" CXXFLAGS="-fPIC" ./configure --enable-static=yes --enable-shared=no --with-ogg-libraries=`pwd`/../libogg-1.3.2/src/.libs/ --with-ogg-includes=`pwd`/../libogg-1.3.2/include/ && make)
-portaudio:
-	(cd ../external/portaudio-v19_20140130; CFLAGS="-fPIC" CXXFLAGS="-fPIC" ./configure --with-winapi=wmme,directx --enable-static=yes --enable-shared=no && make)
+
+# libogg
+../external/libogg-1.3.2/Makefile:
+	(cd ../external/libogg-1.3.2; CFLAGS="-fPIC" CXXFLAGS="-fPIC" ./configure --enable-static=yes --enable-shared=no)
+
+libogg: ../external/libogg-1.3.2/Makefile
+	(cd ../external/libogg-1.3.2; make)
+
+# libvorbis
+../external/libvorbis-1.3.4/Makefile:
+	(cd ../external/libvorbis-1.3.4; CFLAGS="-fPIC" CXXFLAGS="-fPIC" ./configure --enable-static=yes --enable-shared=no --with-ogg-libraries=`pwd`/../libogg-1.3.2/src/.libs/ --with-ogg-includes=`pwd`/../libogg-1.3.2/include/)
+
+libvorbis: libogg ../external/libvorbis-1.3.4/Makefile
+	(cd ../external/libvorbis-1.3.4; make)
+
+# portaudio
+../external/portaudio-v19_20140130/Makefile:
+ifeq ($(OS), Windows_NT)	# Windows
+	(cd ../external/portaudio-v19_20140130; CFLAGS="-fPIC" CXXFLAGS="-fPIC" ./configure --with-winapi=wmme,directx --enable-static=yes --enable-shared=no)
+else
+	(cd ../external/portaudio-v19_20140130; CFLAGS="-fPIC" CXXFLAGS="-fPIC" ./configure -enable-static=yes --enable-shared=no)
+endif
+
+portaudio: ../external/portaudio-v19_20140130/Makefile
+	(cd ../external/portaudio-v19_20140130; make)
 
 .PHONY: libogg libvorbis portaudio

@@ -23,7 +23,10 @@ native-deps:: cubex libpng16
 cubex:
 	(cd ../external/cubex; make all)
 	
-libpng16:
-	(cd ../external/libpng-1.6.10; CFLAGS="-fPIC" CXXFLAGS="-fPIC" ./configure && make all)
+../external/libpng-1.6.10/Makefile:
+	(cd ../external/libpng-1.6.10; CFLAGS="-fPIC" CXXFLAGS="-fPIC" ./configure)
+	
+libpng16: ../external/libpng-1.6.10/Makefile
+	(cd ../external/libpng-1.6.10; make)
 
 .PHONY: cubex libpng16
