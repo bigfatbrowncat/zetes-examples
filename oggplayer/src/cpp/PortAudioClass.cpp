@@ -5,7 +5,7 @@
  *      Author: imizus
  */
 
-#include <portaudio/portaudio.h>
+#include <portaudio.h>
 
 #include "PortAudioClass.h"
 

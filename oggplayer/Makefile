@@ -9,7 +9,7 @@ include $(ZETES_HANDS_PATH)/ZetesHands.mk
 
 ifeq ($(UNAME), Darwin)	# OS X
   CUSTOM_INCLUDES = -I../external/libogg-1.3.2/include/ -I../external/libvorbis-1.3.4/include/ -I../external/portaudio-v19_20140130/include/
-  CUSTOM_LIBS = -L../external/libogg-1.3.2/src/.libs/ -L../external/libvorbis-1.3.4/lib/.libs/ -L../external/portaudio-v19_20140130/lib/.libs/ -lvorbisfile -lvorbis -logg -lportaudio
+  CUSTOM_LIBS = -framework CoreAudio -framework AudioToolbox -framework AudioUnit -L../external/libogg-1.3.2/src/.libs/ -L../external/libvorbis-1.3.4/lib/.libs/ -L../external/portaudio-v19_20140130/lib/.libs/ -lvorbisfile -lvorbis -logg -lportaudio
 else ifeq ($(UNAME) $(ARCH), Linux x86_64)	# linux on PC
   CUSTOM_INCLUDES = -I../external/libogg-1.3.2/include/ -I../external/libvorbis-1.3.4/include/ -I../external/portaudio-v19_20140130/include/
   CUSTOM_LIBS = -L../external/libogg-1.3.2/src/.libs/ -L../external/libvorbis-1.3.4/lib/.libs/ -L../external/portaudio-v19_20140130/lib/.libs/ -lvorbisfile -lvorbis -logg -lportaudio

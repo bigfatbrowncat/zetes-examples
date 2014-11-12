@@ -8,7 +8,7 @@
 #ifndef PORTAUDIOCLASS_H_
 #define PORTAUDIOCLASS_H_
 
-#include <portaudio/portaudio.h>
+#include <portaudio.h>
 
 namespace vam
 {
