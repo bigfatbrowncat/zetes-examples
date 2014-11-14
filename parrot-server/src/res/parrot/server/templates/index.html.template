@@ -75,6 +75,12 @@
 			function setOrderedMessages(newMessages)
 			{
 				messages = newMessages;
+
+				// Clearing messagesList
+				while (messagesList.firstChild) {
+					messagesList.removeChild(messagesList.firstChild);
+				}
+				
 				for (var i = 0; i < messages.length; i++)
 				{
 					var msgItem = document.createElement('li');
@@ -339,6 +345,7 @@
 			messageChanged();
 	@if{loggedIn}
 			getAllMessages();
+			setInterval("getAllMessages()", 200);
 	@end
 		</script>
 	</body>
