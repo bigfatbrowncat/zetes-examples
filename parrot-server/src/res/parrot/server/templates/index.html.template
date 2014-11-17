@@ -48,7 +48,9 @@
 			}
 		</style>
 		<script>
-		
+			ajaxTimeout = 10000;
+			messagesLoadInterval = 200;
+			
 			function sortedLocationOf(element, array, start, end) {
 				// quicksort()-like function
 				start = start || 0;
@@ -103,21 +105,33 @@
 				{
 					if (xmlhttp.readyState == 4)
     				{
-						var messagesSliceResponse = JSON.parse(xmlhttp.responseText);
-						
-    					if (xmlhttp.status == 200) {
-							serverTimeMillis = messagesSliceResponse.serverTimeMillis;
-							messages = messagesSliceResponse.messages;
-    						appendOrderedMessages(messages);
-    					}
-						else
-						{
-							sendErrorMessage.innerHTML = messagesSliceResponse.message;
+						if (xmlhttp.responseText != "") {
+							var messagesSliceResponse = JSON.parse(xmlhttp.responseText);
+							
+							if (xmlhttp.status == 200) {
+								serverTimeMillis = messagesSliceResponse.serverTimeMillis;
+								messages = messagesSliceResponse.messages;
+								appendOrderedMessages(messages);
+							}
+							else
+							{
+								sendErrorMessage.innerHTML = messagesSliceResponse.message;
+							}
 						}
+						
+						setTimeout("getLatestMessages()", messagesLoadInterval);
     				}
 			  	}
 				
+				xmlhttp.timeout = ajaxTimeout;
+				xmlhttp.ontimeout = function ()
+				{ 
+					sendErrorMessage.innerHTML = "Can't connect to the server.";
+					setTimeout("getLatestMessages()", messagesLoadInterval * 5);
+				}
+				
 				xmlhttp.open("GET", "/api/get_messages_since?sinceTimeMillis=" + serverTimeMillis, true);
+				
 				xmlhttp.send();
 				
 				return false;	// Don't actually submit anything
@@ -136,6 +150,8 @@
 				logoutButton.disabled = true;
 				
 				var xmlhttp = new XMLHttpRequest();
+				xmlhttp.timeout = ajaxTimeout;
+
 				xmlhttp.onreadystatechange = function()
 				{
 					if (xmlhttp.readyState == 4)
@@ -146,6 +162,12 @@
     					window.location.reload();
     				}
 			  	}
+				
+				xmlhttp.ontimeout = function ()
+				{ 
+					alert("Can't connect to the server.");
+					logoutButton.disabled = false;
+				}
 				
 				xmlhttp.open("GET", "/api/logout", true);
 				xmlhttp.send();
@@ -166,11 +188,17 @@
 				messageTextArea.disabled = true;
 				
 				var xmlhttp = new XMLHttpRequest();
+				xmlhttp.timeout = ajaxTimeout;
+
 				xmlhttp.onreadystatechange = function()
 				{
 					if (xmlhttp.readyState == 4)
     				{
-						var messageResponse = JSON.parse(xmlhttp.responseText);
+						var messageResponse = { message: "No answer from the server" };
+						if (xmlhttp.responseText != "") {
+							messageResponse = JSON.parse(xmlhttp.responseText);
+						}
+						
     					if (xmlhttp.status == 200) {
     						messageTextArea.value = "";
     						sendErrorMessage.innerHTML = "";
@@ -183,6 +211,13 @@
 						messageTextArea.disabled = false;
     				}
 			  	}
+				
+				xmlhttp.ontimeout = function ()
+				{ 
+					alert("Can't connect to the server.");
+					sendMessageButton.disabled = false;
+					messageTextArea.disabled = false;
+				}
 				
 				xmlhttp.open("GET", "/api/add_message?text=" + messageTextArea.value, true);
 				xmlhttp.send();
@@ -220,11 +255,17 @@
 				loginFormSetEnabled(false);
 				
 				var xmlhttp = new XMLHttpRequest();
+				xmlhttp.timeout = ajaxTimeout;
+
 				xmlhttp.onreadystatechange = function()
 				{
 					if (xmlhttp.readyState == 4)
     				{
-    					loginResponse = JSON.parse(xmlhttp.responseText);
+						var loginResponse = { message: "No answer from the server" };
+						if (xmlhttp.responseText != "")	{
+							loginResponse = JSON.parse(xmlhttp.responseText);
+						}
+
     					if (xmlhttp.status == 200) {
     						setCookie("sessionId", loginResponse.id, loginResponse.expirationTimeMillis);
     						window.location.reload();
@@ -234,6 +275,12 @@
     					}
     				}
 			  	}
+				
+				xmlhttp.ontimeout = function ()
+				{ 
+					loginFormSetEnabled(true);
+					errorMessage.innerHTML = "Can't connect to the server.";
+				}
 				
 				xmlhttp.open("GET", "/api/login?login=" + loginInput.value + "&password=" + passwordInput.value, true);
 				xmlhttp.send();
@@ -267,7 +314,11 @@
 				{
 					if (xmlhttp.readyState == 4)
 	 				{
-						registerResponse = JSON.parse(xmlhttp.responseText);
+						var registerResponse = { message: "No answer from the server" };
+						if (xmlhttp.responseText != "") {
+							registerResponse = JSON.parse(xmlhttp.responseText);
+						}
+						
 	 					if (xmlhttp.status == 201)
 	 					{
 	 						loginInput = document.getElementById("loginInput");
@@ -352,7 +403,6 @@
 			messageChanged();
 	@if{loggedIn}
 			getLatestMessages();
-			setInterval("getLatestMessages()", 200);
 	@end
 		</script>
 	</body>
