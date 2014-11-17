@@ -11,6 +11,7 @@ import org.simpleframework.http.Response;
 
 import parrot.server.SessionManager.Session;
 import parrot.server.data.objects.Message;
+import parrot.server.data.objects.MessagesSlice;
 import parrot.server.data.objects.User;
 import parrot.server.templates.TemplateParser.ParsedTemplate;
 import parrot.server.templates.TemplateParser.ParsedTemplate.Context;
@@ -37,6 +38,7 @@ public class Task implements Runnable {
 	private static final String ADDR_LOGOUT = "logout"; 
 	private static final String ADDR_ADD_MESSAGE = "add_message";
 	private static final String ADDR_GET_MESSAGES = "get_messages";
+	private static final String ADDR_GET_MESSAGES_SINCE = "get_messages_since";
 
 	private final Main main; 
 	private final Response response;
@@ -55,6 +57,11 @@ public class Task implements Runnable {
 		response.setValue("Server", Main.SERVER_NAME);
 		response.setDate("Date", time);
 		response.setDate("Last-Modified", time);
+		
+		response.setValue("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1.
+		response.setValue("Pragma", "no-cache"); // HTTP 1.0.
+		response.setDate("Expires", 0); // Proxies.
+		
 		response.setCode(code);
 	}
 	
@@ -178,19 +185,27 @@ public class Task implements Runnable {
 		sendJson(new APIErrorResponse(APIErrorResponse.CODE_LOGIN_REQUIRED, "You should login to write messages"));
 	}
 
-	private void responseAPIGetMessages() throws IOException {
-		Cookie sessionIdCookie = request.getCookie(COOKIE_SESSION_ID);
-		if (sessionIdCookie != null) {
-			Session session = main.sessionManager.fromCookie(sessionIdCookie);
-			if (session != null) {
-				Message[] messages = main.dataConnector.getMessages();
-				sendJson(messages);
-				return;
+	private void responseAPIGetMessagesSince() throws IOException {
+		try {
+			long sinceTimeMillis = Long.parseLong(request.getParameter("sinceTimeMillis"));
+		
+			Cookie sessionIdCookie = request.getCookie(COOKIE_SESSION_ID);
+			if (sessionIdCookie != null) {
+				Session session = main.sessionManager.fromCookie(sessionIdCookie);
+				if (session != null) {
+					Message[] messages = main.dataConnector.getMessagesOrderedSince(sinceTimeMillis);
+					long serverTimeMillis = System.currentTimeMillis();
+					sendJson(new MessagesSlice(messages, serverTimeMillis));
+					return;
+				}
 			}
+	
+			responseHeaders(ResponseFormat.JSON, 403);
+			sendJson(new APIErrorResponse(APIErrorResponse.CODE_LOGIN_REQUIRED, "You should login to write messages"));
+		} catch (NumberFormatException e) {
+			responseHeaders(ResponseFormat.JSON, 400);
+			sendJson(new APIErrorResponse(APIErrorResponse.CODE_INCORRECT_REQUEST, "sinceTimeMillis should be a valid number"));
 		}
-
-		responseHeaders(ResponseFormat.JSON, 403);
-		sendJson(new APIErrorResponse(APIErrorResponse.CODE_LOGIN_REQUIRED, "You should login to write messages"));
 	}
 
 	private void responseUIRoot() throws IOException {
@@ -270,8 +285,8 @@ public class Task implements Runnable {
 								// Handling "/api/add_message"
 								responseAPIAddMessage();
 								return;
-							} else if (requestPathParts[1].equals(ADDR_GET_MESSAGES)) {
-								responseAPIGetMessages();
+							} else if (requestPathParts[1].equals(ADDR_GET_MESSAGES_SINCE)) {
+								responseAPIGetMessagesSince();
 								return;
 							} else if (requestPathParts[1].equals(ADDR_REGISTER)) {
 								// Handling "/api/register"

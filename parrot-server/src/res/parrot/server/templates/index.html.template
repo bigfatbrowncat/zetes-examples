@@ -48,6 +48,7 @@
 			}
 		</style>
 		<script>
+		
 			function sortedLocationOf(element, array, start, end) {
 				// quicksort()-like function
 				start = start || 0;
@@ -72,16 +73,16 @@
 			
 			var messages = [];
 			
-			function setOrderedMessages(newMessages)
+			function appendOrderedMessages(newMessages)
 			{
-				messages = newMessages;
+				messages = messages.concat(newMessages);
 
 				// Clearing messagesList
-				while (messagesList.firstChild) {
-					messagesList.removeChild(messagesList.firstChild);
-				}
+				//while (messagesList.firstChild) {
+				//	messagesList.removeChild(messagesList.firstChild);
+				//}
 				
-				for (var i = 0; i < messages.length; i++)
+				for (var i = 0; i < newMessages.length; i++)
 				{
 					var msgItem = document.createElement('li');
 				    var msgItemText = document.createTextNode( messages[i].userId + " | " +
@@ -92,25 +93,31 @@
 				}
 			}
 			
-			function getAllMessages()
+			
+			
+			serverTimeMillis = 0;
+			function getLatestMessages()
 			{
 				var xmlhttp = new XMLHttpRequest();
 				xmlhttp.onreadystatechange = function()
 				{
 					if (xmlhttp.readyState == 4)
     				{
-						var messageResponse = JSON.parse(xmlhttp.responseText);
+						var messagesSliceResponse = JSON.parse(xmlhttp.responseText);
+						
     					if (xmlhttp.status == 200) {
-    						setOrderedMessages(messageResponse);
+							serverTimeMillis = messagesSliceResponse.serverTimeMillis;
+							messages = messagesSliceResponse.messages;
+    						appendOrderedMessages(messages);
     					}
 						else
 						{
-							alert(messageResponse.message);
+							sendErrorMessage.innerHTML = messagesSliceResponse.message;
 						}
     				}
 			  	}
 				
-				xmlhttp.open("GET", "/api/get_messages", true);
+				xmlhttp.open("GET", "/api/get_messages_since?sinceTimeMillis=" + serverTimeMillis, true);
 				xmlhttp.send();
 				
 				return false;	// Don't actually submit anything
@@ -303,7 +310,7 @@
 		
 		<div>
 			<ul id="messagesList">
-				<li>Message here</li>
+				<!-- Messages go here -->
 			</ul>
 			<form>
 				<textarea id="messageTextArea" style="width: 300pt; resize: none; overflow: hidden;" oninput="messageChanged();" ></textarea>
@@ -344,8 +351,8 @@
 			messagesList = document.getElementById("messagesList");
 			messageChanged();
 	@if{loggedIn}
-			getAllMessages();
-			setInterval("getAllMessages()", 200);
+			getLatestMessages();
+			setInterval("getLatestMessages()", 200);
 	@end
 		</script>
 	</body>
