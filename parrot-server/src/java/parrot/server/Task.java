@@ -6,6 +6,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.text.Normalizer.Form;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Random;
 import java.util.regex.Pattern;
 
@@ -48,7 +50,7 @@ public class Task implements Runnable {
 	private static final String ADDR_LOGIN = "login"; 
 	private static final String ADDR_LOGOUT = "logout"; 
 	private static final String ADDR_ADD_MESSAGE = "add_message";
-	private static final String ADDR_GET_MESSAGES_SINCE = "get_messages_since";
+	private static final String ADDR_GET_MESSAGES_SINCE = "messages_since";
 
 	private static final String ADDR_CSS = "css"; 
 	private static final String ADDR_IMAGES = "images"; 
@@ -92,8 +94,21 @@ public class Task implements Runnable {
 	
 	private void responseAPIGetUsers() throws IOException, SQLiteException {
 		responseHeaders(ResponseFormat.JSON, true, 200);
-		User[] users = main.dataConnector.getUsers();
-		sendJson(users);
+		
+		String ids = request.getParameter("ids");
+		String[] idsStr = ids.split(",");
+		long[] idsArr = new long[idsStr.length];
+		for (int i = 0; i < idsArr.length; i++) {
+			idsArr[i] = Long.parseLong(idsStr[i]);
+		}
+		
+		User[] users = main.dataConnector.getUsers(idsArr);
+		HashMap<Long, User> usersMap = new HashMap<>();
+		for (int i = 0; i < users.length; i++) {
+			usersMap.put(users[i].id, users[i]);
+		}
+		
+		sendJson(usersMap);
 	}
 
 	private void responseAPIGetUser(String login) throws IOException, SQLiteException {

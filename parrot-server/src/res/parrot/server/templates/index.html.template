@@ -31,7 +31,7 @@
 			
 			var messages = [];
 			
-			function appendOrderedMessages(newMessages)
+			function appendOrderedMessages(newMessages, users)
 			{
 				messages = messages.concat(newMessages);
 
@@ -43,15 +43,93 @@
 				for (var i = 0; i < newMessages.length; i++)
 				{
 					var msgItem = document.createElement('li');
-				    var msgItemText = document.createTextNode( messages[i].userId + " | " +
-						messages[i].timeMillis + " | " +
-						messages[i].text);
-				    msgItem.appendChild(msgItemText);
+					msgItem.className = "message";
+					{
+						var msgUser = document.createElement('span');
+						msgUser.className = "msgUser";
+						{
+					    	var msgUserText = document.createTextNode(users[messages[i].userId].name);
+					    	msgUser.appendChild(msgUserText);
+					    }
+						var msgTime = document.createElement('span');
+						msgTime.className = "msgTime";
+						{
+					    	var msgTimeText = document.createTextNode(new Date(messages[i].timeMillis).toTimeString());
+					    	msgTime.appendChild(msgTimeText);
+					    }
+						var msgText = document.createElement('div');
+						msgText.className = "msgText";
+						{
+					    	var msgTextText = document.createTextNode(messages[i].text);
+					    	msgText.appendChild(msgTextText);
+					    }
+					    	
+					    msgItem.appendChild(msgUser);
+					    msgItem.appendChild(msgTime);
+					    msgItem.appendChild(msgText);
+				    }
 					messagesList.appendChild(msgItem);
 				}
 			}
 			
+			function getUsersForMessages(msgs)
+			{
+				if (msgs.length > 0)
+				{
+					
+					// Collecting user ids
+					var userIds = [];
+					for (var i = 0; i < msgs.length; i++)
+					{
+						if (userIds.indexOf(msgs[i].userId) == -1)
+						{
+							userIds.push(msgs[i].userId);
+						}
+					}
+					
+					var userIdsStr = "";
+					for (var i = 0; i < userIds.length - 1; i++)
+					{
+						userIdsStr += userIds[i] + ",";
+					}
+					if (userIds.length > 0)
+					{
+						userIdsStr += userIds[userIds.length - 1];
+					}
 			
+					var xmlhttp = new XMLHttpRequest();
+					xmlhttp.onreadystatechange = function()
+					{
+						if (xmlhttp.readyState == 4)
+   		 				{
+							var usersResponse = { message: "No answer from the server" };
+							if (xmlhttp.responseText != "") {
+								usersResponse = JSON.parse(xmlhttp.responseText);
+							}
+
+							if (xmlhttp.status == 200) {
+								appendOrderedMessages(msgs, usersResponse);
+							}
+							else
+							{
+								sendErrorMessage.innerHTML = usersResponse.message;
+							}
+    					}
+				  	}
+				
+					xmlhttp.timeout = ajaxTimeout;
+					xmlhttp.ontimeout = function ()
+					{ 
+						sendErrorMessage.innerHTML = "Can't connect to the server.";
+					}
+				
+					xmlhttp.open("GET", "/api/users?ids=" + userIdsStr, true);
+				
+					xmlhttp.send();
+				}
+				
+				return false;	// Don't actually submit anything
+			}
 			
 			serverTimeMillis = 0;
 			function getLatestMessages()
@@ -67,7 +145,7 @@
 							if (xmlhttp.status == 200) {
 								serverTimeMillis = messagesSliceResponse.serverTimeMillis;
 								messages = messagesSliceResponse.messages;
-								appendOrderedMessages(messages);
+								getUsersForMessages(messages);
 							}
 							else
 							{
@@ -86,7 +164,7 @@
 					setTimeout("getLatestMessages()", messagesLoadInterval * 5);
 				}
 				
-				xmlhttp.open("GET", "/api/get_messages_since?sinceTimeMillis=" + serverTimeMillis, true);
+				xmlhttp.open("GET", "/api/messages_since?sinceTimeMillis=" + serverTimeMillis, true);
 				
 				xmlhttp.send();
 				
@@ -342,7 +420,7 @@
 		</div>
 	@end
 		<div>
-			<ul id="messagesList">
+			<ul class="messages" id="messagesList">
 				<!-- Messages go here -->
 			</ul>
 	@if{loggedIn}

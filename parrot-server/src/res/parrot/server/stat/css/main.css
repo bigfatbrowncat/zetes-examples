@@ -41,3 +41,37 @@ input[type=submit]:disabled {
 	background: rgba(0, 0, 0, 0.20);
 	color: rgba(255, 255, 255, 0.4);
 }
+
+ul.messages {
+	list-style-type: none;
+	padding: 5pt;
+	max-width: 500pt;
+	margin: auto;
+}
+
+li.message {
+	margin: 5pt;
+	padding: 5pt;
+	background: #f4f4f4;
+}
+
+span.msgUser {
+	color: #444444;
+	padding: 0pt 5pt;
+	font-weight: bold;
+	font-size: 105%;
+	font-family: sans-serif;
+}
+
+span.msgTime {
+	color: #888888;
+	padding: 0pt 5pt;
+	float: right;
+	font-size: 80%;
+}
+
+div.msgText {
+	color: #000000;
+	padding: 1pt 5pt 0pt 5pt;
+	font-size: 90%;
+}

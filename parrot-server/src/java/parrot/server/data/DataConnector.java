@@ -171,19 +171,40 @@ public class DataConnector implements Closeable {
 		return getMessagesOrderedSince(0);
 	}
 
-	public User[] getUsers() throws SQLiteException {
+	public User[] getUsers(final long[] ids) throws SQLiteException {
 		return queue.execute(new SQLiteJob<User[]>() {
 			protected User[] job(SQLiteConnection connection)
 					throws SQLiteException {
 
-				SQLiteStatement st = connection.prepare(
-					"SELECT " + 
-						FIELD_ID + ", " + 
-						FIELD_LOGIN + ", " + 
-						FIELD_PASSWORD + ", " + 
-						FIELD_NAME + 
-					" FROM " + TABLE_USERS + ";"
-				);
+				SQLiteStatement st;
+				if (ids == null || ids.length == 0) {
+					st = connection.prepare(
+						"SELECT " + 
+							FIELD_ID + ", " + 
+							FIELD_LOGIN + ", " + 
+							FIELD_PASSWORD + ", " + 
+							FIELD_NAME + 
+						" FROM " + TABLE_USERS + ";"
+					);
+				} else {
+					StringBuilder sb = new StringBuilder();
+					for (int i = 0; i < ids.length - 1; i++) {
+						sb.append("" + ids[i] + ",");
+					}
+					if (ids.length > 0) {
+						sb.append(ids[ids.length - 1]);
+					}
+					
+					st = connection.prepare(
+							"SELECT " + 
+								FIELD_ID + ", " + 
+								FIELD_LOGIN + ", " + 
+								FIELD_PASSWORD + ", " + 
+								FIELD_NAME + 
+							" FROM " + TABLE_USERS + " WHERE " + FIELD_ID + " IN (" + sb.toString() + ");"
+					);
+					
+				}
 
 				LinkedList<User> resList = new LinkedList<>();
 
