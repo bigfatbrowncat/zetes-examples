@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.text.Normalizer.Form;
+import java.util.Random;
 import java.util.regex.Pattern;
 
 import org.apache.commons.io.IOUtils;
@@ -19,13 +20,20 @@ import parrot.server.data.objects.MessagesSlice;
 import parrot.server.data.objects.User;
 import parrot.server.templates.TemplateParser.ParsedTemplate;
 import parrot.server.templates.TemplateParser.ParsedTemplate.Context;
+import ar.com.hjg.pngj.IImageLine;
+import ar.com.hjg.pngj.ImageLineHelper;
+import ar.com.hjg.pngj.ImageLineInt;
+import ar.com.hjg.pngj.PngReader;
+import ar.com.hjg.pngj.PngWriter;
+import ar.com.hjg.pngj.chunks.ChunkCopyBehaviour;
+import ar.com.hjg.pngj.chunks.PngChunkTextVar;
 
 import com.almworks.sqlite4java.SQLiteException;
 import com.google.gson.Gson;
 
 public class Task implements Runnable {
 	private static enum ResponseFormat {
-		JSON("application/json"), HTML("text/html"), PNG("image/png");
+		JSON("application/json"), TEXT("text/plain"), HTML("text/html"), PNG("image/png"), CSS("text/css");
 		public final String mime; 
 		ResponseFormat(String mime) {
 			this.mime = mime;
@@ -41,7 +49,10 @@ public class Task implements Runnable {
 	private static final String ADDR_LOGOUT = "logout"; 
 	private static final String ADDR_ADD_MESSAGE = "add_message";
 	private static final String ADDR_GET_MESSAGES_SINCE = "get_messages_since";
-	private static final String ADDR_IMAGE = "images"; 
+
+	private static final String ADDR_CSS = "css"; 
+	private static final String ADDR_IMAGES = "images"; 
+	private static final String ADDR_PARROT_COLOR = "parrot_color"; 
 
 	private final Main main; 
 	private final Response response;
@@ -113,6 +124,81 @@ public class Task implements Runnable {
 			if (os != null) os.close();
 		}
 	}
+
+	private void responseParrot() throws IOException {
+		int r, g, b;
+		int avg = 0;
+		Random rnd = new Random();
+		do {
+			r = rnd.nextInt(256);
+			g = rnd.nextInt(256);
+			b = (int) Math.sqrt(65535 - r*r - g*g);
+			avg = (r + g + b) / 3;
+			if (Math.abs(r - avg) > 40 && Math.abs(g - avg) > 40 && Math.abs(b - avg) > 40) break;
+		} while (true);
+		
+		//int r = Integer.parseInt(request.getParameter("r")); 
+		//int g = Integer.parseInt(request.getParameter("g")); 
+		//int b = Integer.parseInt(request.getParameter("b")); 
+
+		InputStream mask = null;
+		OutputStream os = null;
+		try {
+			responseHeaders(ResponseFormat.PNG, false, 200);
+
+			mask = getClass().getClassLoader().getResourceAsStream("parrot/server/templates/images/parrot_color.png");
+			os = response.getOutputStream();
+			
+			PngReader pngr = new PngReader(mask);
+			
+			int channels = pngr.imgInfo.channels;
+            if (channels < 3 || pngr.imgInfo.bitDepth != 8)
+                    throw new RuntimeException("This method is for RGB8/RGBA8 images");
+            
+            PngWriter pngw = new PngWriter(os, pngr.imgInfo);
+            
+            pngw.copyChunksFrom(pngr.getChunksList(), ChunkCopyBehaviour.COPY_ALL_SAFE);
+            pngw.getMetadata().setText(PngChunkTextVar.KEY_Description, "Colored");
+            for (int row = 0; row < pngr.imgInfo.rows; row++) { // also: while(pngr.hasMoreRows()) 
+                    IImageLine l1 = pngr.readRow();
+                    int[] scanline = ((ImageLineInt) l1).getScanline(); // to save typing
+                    for (int j = 0; j < pngr.imgInfo.cols; j++) {
+                            double maskR = (double)scanline[j * channels] / 255;
+                            double maskG = (double)scanline[j * channels + 1] / 255;
+                            double maskB = (double)scanline[j * channels + 2] / 255;
+                            
+                            double newR = maskR * 1.5 * r + (255 - r) * (maskG + maskB) / 2;
+                            double newG = maskR * 1.5 * g + (255 - g) * (maskG + maskB) / 2;
+                            double newB = maskR * 1.5 * b + (255 - b) * (maskG + maskB) / 2;
+                            
+                            scanline[j * channels] = ImageLineHelper.clampTo_0_255((int)newR);
+                            scanline[j * channels + 1] = ImageLineHelper.clampTo_0_255((int)newG);
+                            scanline[j * channels + 2] = ImageLineHelper.clampTo_0_255((int)newB);
+                            
+                            //scanline[j * channels + 1] = ImageLineHelper.clampTo_0_255(scanline[j * channels + 1] + 20);
+                    }
+                    pngw.writeRow(l1);
+            }
+            pngr.end(); // it's recommended to end the reader first, in case there are trailing chunks to read
+            pngw.end();
+            
+            pngr.close();
+            pngw.close();
+
+		} catch (FileNotFoundException e) {
+			responseHeaders(ResponseFormat.TEXT, false, 404);
+			e.printStackTrace(response.getPrintStream());
+			response.getPrintStream().close();
+		} catch (Exception e) {
+			responseHeaders(ResponseFormat.TEXT, false, 500);
+			e.printStackTrace(response.getPrintStream());
+			response.getPrintStream().close();
+		} finally {
+			if (mask != null) mask.close();
+			if (os != null) os.close();
+		}
+	}
+	
 	
 	private static final Pattern LOGIN_PATTERN = Pattern.compile("[a-zA-Z0-9]+");
 	private boolean validateLogin(String login) {
@@ -329,9 +415,19 @@ public class Task implements Runnable {
 								return;
 							}
 						}
-					} else if (requestPathParts[0].equals(ADDR_IMAGE)) {
+					} else if (requestPathParts[0].equals(ADDR_PARROT_COLOR)) {
+						// Static images
+						responseParrot();
+						return;
+					} else if (requestPathParts[0].equals(ADDR_IMAGES)) {
+						// Static images
 						String filename = requestPathParts[1];
-						responseStaticFile(filename, ResponseFormat.PNG);
+						responseStaticFile("images/" + filename, ResponseFormat.PNG);
+						return;
+					} else if (requestPathParts[0].equals(ADDR_CSS)) {
+						// Static CSS
+						String filename = requestPathParts[1];
+						responseStaticFile("css/" + filename, ResponseFormat.CSS);
 						return;
 					}
 
