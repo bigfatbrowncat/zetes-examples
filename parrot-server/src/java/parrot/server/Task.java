@@ -1,10 +1,14 @@
 package parrot.server;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.PrintStream;
-import java.util.regex.Matcher;
+import java.text.Normalizer.Form;
 import java.util.regex.Pattern;
 
+import org.apache.commons.io.IOUtils;
 import org.simpleframework.http.Cookie;
 import org.simpleframework.http.Request;
 import org.simpleframework.http.Response;
@@ -18,11 +22,10 @@ import parrot.server.templates.TemplateParser.ParsedTemplate.Context;
 
 import com.almworks.sqlite4java.SQLiteException;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 public class Task implements Runnable {
 	private static enum ResponseFormat {
-		JSON("application/json"), HTML("text/html");
+		JSON("application/json"), HTML("text/html"), PNG("image/png");
 		public final String mime; 
 		ResponseFormat(String mime) {
 			this.mime = mime;
@@ -37,8 +40,8 @@ public class Task implements Runnable {
 	private static final String ADDR_LOGIN = "login"; 
 	private static final String ADDR_LOGOUT = "logout"; 
 	private static final String ADDR_ADD_MESSAGE = "add_message";
-	private static final String ADDR_GET_MESSAGES = "get_messages";
 	private static final String ADDR_GET_MESSAGES_SINCE = "get_messages_since";
+	private static final String ADDR_IMAGE = "images"; 
 
 	private final Main main; 
 	private final Response response;
@@ -52,15 +55,16 @@ public class Task implements Runnable {
 		this.request = request;
 	}
 	
-	private void responseHeaders(ResponseFormat format, int code) {
+	private void responseHeaders(ResponseFormat format, boolean noCache, int code) {
 		response.setValue("Content-Type", format.mime);
 		response.setValue("Server", Main.SERVER_NAME);
 		response.setDate("Date", time);
 		response.setDate("Last-Modified", time);
-		
-		response.setValue("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1.
-		response.setValue("Pragma", "no-cache"); // HTTP 1.0.
-		response.setDate("Expires", 0); // Proxies.
+		if (noCache) {
+			response.setValue("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1.
+			response.setValue("Pragma", "no-cache"); // HTTP 1.0.
+			response.setDate("Expires", 0); // Proxies.
+		}
 		
 		response.setCode(code);
 	}
@@ -76,15 +80,38 @@ public class Task implements Runnable {
 	}
 	
 	private void responseAPIGetUsers() throws IOException, SQLiteException {
-		responseHeaders(ResponseFormat.JSON, 200);
+		responseHeaders(ResponseFormat.JSON, true, 200);
 		User[] users = main.dataConnector.getUsers();
 		sendJson(users);
 	}
 
 	private void responseAPIGetUser(String login) throws IOException, SQLiteException {
-		responseHeaders(ResponseFormat.JSON, 200);
+		responseHeaders(ResponseFormat.JSON, true, 200);
 		User user = main.dataConnector.getUser(login);
 		sendJson(user);
+	}
+	
+	private void responseStaticFile(String filename, ResponseFormat format) throws IOException {
+		InputStream is = null;
+		OutputStream os = null;
+		try {
+			is = getClass().getClassLoader().getResourceAsStream("parrot/server/stat/" + filename);
+			responseHeaders(format, false, 200);
+			os = response.getOutputStream();
+			IOUtils.copy(is, os);
+
+		} catch (FileNotFoundException e) {
+			responseHeaders(format, false, 404);
+			e.printStackTrace(response.getPrintStream());
+			response.getPrintStream().close();
+		} catch (Exception e) {
+			responseHeaders(format, false, 500);
+			e.printStackTrace(response.getPrintStream());
+			response.getPrintStream().close();
+		} finally {
+			if (is != null) is.close();
+			if (os != null) os.close();
+		}
 	}
 	
 	private static final Pattern LOGIN_PATTERN = Pattern.compile("[a-zA-Z0-9]+");
@@ -104,23 +131,23 @@ public class Task implements Runnable {
 				User user = main.dataConnector.getUser(login);
 				if (user == null) {
 					if (validateLogin(login)) {
-						responseHeaders(ResponseFormat.JSON, 201);
+						responseHeaders(ResponseFormat.JSON, true, 201);
 						user = main.dataConnector.addUser(login, password1, name);
 						sendJson(user);
 					} else {
-						responseHeaders(ResponseFormat.JSON, 400);
+						responseHeaders(ResponseFormat.JSON, true, 400);
 						sendJson(new APIErrorResponse(APIErrorResponse.CODE_LOGIN_INVALID, "Login is invalid. It should start with a latin letter and contain only latin letters or digits"));
 					}
 				} else { 
-					responseHeaders(ResponseFormat.JSON, 409);
+					responseHeaders(ResponseFormat.JSON, true, 409);
 					sendJson(new APIErrorResponse(APIErrorResponse.CODE_LOGIN_OCCUPIED, "Login occupied"));
 				}
 			} else { 
-				responseHeaders(ResponseFormat.JSON, 400);
+				responseHeaders(ResponseFormat.JSON, true, 400);
 				sendJson(new APIErrorResponse(APIErrorResponse.CODE_PASSWORD_CONFIRMATION_ERROR, "Password and confirmation aren't equal"));
 			}
 		} else {
-			responseHeaders(ResponseFormat.JSON, 400);
+			responseHeaders(ResponseFormat.JSON, true, 400);
 			sendJson(new APIErrorResponse(APIErrorResponse.CODE_INCORRECT_REQUEST, "Login, two passwords and username should be present"));
 		}
 		
@@ -136,15 +163,15 @@ public class Task implements Runnable {
 				// Login complete
 				Session session = main.sessionManager.createSession(login);
 
-				responseHeaders(ResponseFormat.JSON, 200);
+				responseHeaders(ResponseFormat.JSON, true, 200);
 				//response.setCookie(session.asCookie(COOKIE_SESSION_ID));
 				sendJson(session);
 			} else {
-				responseHeaders(ResponseFormat.JSON, 401);
+				responseHeaders(ResponseFormat.JSON, true, 401);
 				sendJson(new APIErrorResponse(APIErrorResponse.CODE_INVALID_CREDENTIALS, "Invalid user name or password"));
 			}
 		} else {
-			responseHeaders(ResponseFormat.JSON, 400);
+			responseHeaders(ResponseFormat.JSON, true, 400);
 			sendJson(new APIErrorResponse(APIErrorResponse.CODE_INCORRECT_REQUEST, "Login and password should be present"));
 		}
 	}
@@ -157,7 +184,7 @@ public class Task implements Runnable {
 				main.sessionManager.eraseSession(session);
 			}
 		}
-		responseHeaders(ResponseFormat.JSON, 200);
+		responseHeaders(ResponseFormat.JSON, true, 200);
 		sendJson(new Object());
 	}
 	
@@ -175,13 +202,13 @@ public class Task implements Runnable {
 				long timeMillis = System.currentTimeMillis();
 				Message message = main.dataConnector.addMessage(user.id, timeMillis, text);
 
-				responseHeaders(ResponseFormat.JSON, 200);
+				responseHeaders(ResponseFormat.JSON, true, 200);
 				sendJson(message);
 				return;
 			}
 		}
 
-		responseHeaders(ResponseFormat.JSON, 403);
+		responseHeaders(ResponseFormat.JSON, true, 403);
 		sendJson(new APIErrorResponse(APIErrorResponse.CODE_LOGIN_REQUIRED, "You should login to write messages"));
 	}
 
@@ -189,21 +216,21 @@ public class Task implements Runnable {
 		try {
 			long sinceTimeMillis = Long.parseLong(request.getParameter("sinceTimeMillis"));
 		
-			Cookie sessionIdCookie = request.getCookie(COOKIE_SESSION_ID);
-			if (sessionIdCookie != null) {
-				Session session = main.sessionManager.fromCookie(sessionIdCookie);
-				if (session != null) {
+//			Cookie sessionIdCookie = request.getCookie(COOKIE_SESSION_ID);
+//			if (sessionIdCookie != null) {
+//				Session session = main.sessionManager.fromCookie(sessionIdCookie);
+//				if (session != null) {
 					Message[] messages = main.dataConnector.getMessagesOrderedSince(sinceTimeMillis);
 					long serverTimeMillis = System.currentTimeMillis();
 					sendJson(new MessagesSlice(messages, serverTimeMillis));
 					return;
-				}
-			}
+//				}
+//			}
 	
-			responseHeaders(ResponseFormat.JSON, 403);
-			sendJson(new APIErrorResponse(APIErrorResponse.CODE_LOGIN_REQUIRED, "You should login to write messages"));
+			//responseHeaders(ResponseFormat.JSON, 403);
+			//sendJson(new APIErrorResponse(APIErrorResponse.CODE_LOGIN_REQUIRED, "You should login to write messages"));
 		} catch (NumberFormatException e) {
-			responseHeaders(ResponseFormat.JSON, 400);
+			responseHeaders(ResponseFormat.JSON, true, 400);
 			sendJson(new APIErrorResponse(APIErrorResponse.CODE_INCORRECT_REQUEST, "sinceTimeMillis should be a valid number"));
 		}
 	}
@@ -222,7 +249,7 @@ public class Task implements Runnable {
 			user = null;
 		}
 		
-		responseHeaders(ResponseFormat.HTML, 200);
+		responseHeaders(ResponseFormat.HTML, true, 200);
 		PrintStream body = response.getPrintStream();
 		
 		ParsedTemplate.Context context = main.rootContext.clone();
@@ -302,10 +329,11 @@ public class Task implements Runnable {
 								return;
 							}
 						}
-					} /*else if (requestPathParts[0].equals(ADDR_LOGIN)) {
-						responseUILogin();
+					} else if (requestPathParts[0].equals(ADDR_IMAGE)) {
+						String filename = requestPathParts[1];
+						responseStaticFile(filename, ResponseFormat.PNG);
 						return;
-					}*/
+					}
 
 				} else {
 					responseUIRoot();

@@ -348,7 +348,7 @@
 		</script>
 	</head>
 	<body>
-	
+		<img src="/images/parrot64.png" />
 	@if{loggedIn}
 		<div>
 			<p>User <span id="userName">@{userName}</span> is logged in</p>
@@ -359,16 +359,6 @@
 			</form>
 		</div>
 		
-		<div>
-			<ul id="messagesList">
-				<!-- Messages go here -->
-			</ul>
-			<form>
-				<textarea id="messageTextArea" style="width: 300pt; resize: none; overflow: hidden;" oninput="messageChanged();" ></textarea>
-				<input id="sendMessageButton" type="submit" onclick="return sendMessage();" value="Send" />
-			</form>
-			<p id="sendErrorMessage" />
-		</div>
 	@else	
 		<div>
 			<h2>Log in or register</h2>
@@ -395,15 +385,29 @@
 			</form>
 		</div>
 	@end
+		<div>
+			<ul id="messagesList">
+				<!-- Messages go here -->
+			</ul>
+	@if{loggedIn}
+			<form>
+				<textarea id="messageTextArea" style="width: 300pt; resize: none; overflow: hidden;" oninput="messageChanged();" ></textarea>
+				<input id="sendMessageButton" type="submit" onclick="return sendMessage();" value="Send" />
+			</form>
+			<p id="sendErrorMessage" />
+	@end
+		</div>
+	
+	
 		<script type="text/javascript">
+	@if{loggedIn}
 			messageTextArea = document.getElementById("messageTextArea");
 			messageTextArea_basicStyle = messageTextArea.getAttribute("style");
 			sendErrorMessage = document.getElementById("sendErrorMessage");
-			messagesList = document.getElementById("messagesList");
 			messageChanged();
-	@if{loggedIn}
-			getLatestMessages();
 	@end
+			messagesList = document.getElementById("messagesList");
+			getLatestMessages();
 		</script>
 	</body>
 </html>
