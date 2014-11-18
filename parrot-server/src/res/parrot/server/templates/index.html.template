@@ -382,14 +382,12 @@
 		</script>
 	</head>
 	<body>
-		<img style="background-image: url('/parrot_color')" src="/images/parrot_bw.png" />
-	@if{loggedIn}
 		<div>
-			<p>User <span id="userName">@{userName}</span> is logged in</p>
-			<form>
-				<p>
-					<input id="logoutButton" type="submit" onclick="return logout();" value="Logout" />
-				</p>
+			<img class="userIcon" style="background-image: url('/parrot_color')" src="/images/parrot_bw.png" />
+	@if{loggedIn}
+			<form class="logoutForm">
+				<span class="userLoggedIn">User <span class="userName" id="userName">@{userName}</span> is logged in</span>
+				<input class="logout" id="logoutButton" type="submit" onclick="return logout();" value="Logout" />
 			</form>
 		</div>
 		

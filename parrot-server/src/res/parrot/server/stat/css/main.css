@@ -17,7 +17,6 @@ input[type=submit],
 input[type=submit]:active,
 input[type=submit]:hover
 {
-	margin: 10pt 0pt; 
 	padding: 3pt 10pt; 
 	margin-bottom: 0pt;
 	border-radius: 5pt;
@@ -74,4 +73,28 @@ div.msgText {
 	color: #000000;
 	padding: 1pt 5pt 0pt 5pt;
 	font-size: 90%;
+}
+
+input.logout {
+	float: right;
+	margin: 15pt;
+}
+
+span.userLoggedIn {
+	font-family: sans-serif;
+	margin: 15pt;
+	display: inline-block;
+}
+
+span.userName {
+	color: #444444;
+	font-weight: bold;
+}
+
+img.userIcon {
+	vertical-align: middle;
+}
+
+form.logoutForm {
+	display: inline;
 }
