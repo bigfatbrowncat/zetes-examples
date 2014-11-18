@@ -98,3 +98,7 @@ img.userIcon {
 form.logoutForm {
 	display: inline;
 }
+
+div.logoutPanel {
+	background: #f4f4f4;
+}
