@@ -117,14 +117,13 @@
     					}
 				  	}
 				
-					xmlhttp.timeout = ajaxTimeout;
 					xmlhttp.ontimeout = function ()
 					{ 
 						sendErrorMessage.innerHTML = "Can't connect to the server.";
 					}
 				
 					xmlhttp.open("GET", "/api/users?ids=" + userIdsStr, true);
-				
+					xmlhttp.timeout = ajaxTimeout;
 					xmlhttp.send();
 				}
 				
@@ -157,7 +156,6 @@
     				}
 			  	}
 				
-				xmlhttp.timeout = ajaxTimeout;
 				xmlhttp.ontimeout = function ()
 				{ 
 					sendErrorMessage.innerHTML = "Can't connect to the server.";
@@ -165,7 +163,7 @@
 				}
 				
 				xmlhttp.open("GET", "/api/messages_since?sinceTimeMillis=" + serverTimeMillis, true);
-				
+				xmlhttp.timeout = ajaxTimeout;
 				xmlhttp.send();
 				
 				return false;	// Don't actually submit anything
@@ -184,7 +182,6 @@
 				logoutButton.disabled = true;
 				
 				var xmlhttp = new XMLHttpRequest();
-				xmlhttp.timeout = ajaxTimeout;
 
 				xmlhttp.onreadystatechange = function()
 				{
@@ -204,6 +201,7 @@
 				}
 				
 				xmlhttp.open("GET", "/api/logout", true);
+				xmlhttp.timeout = ajaxTimeout;
 				xmlhttp.send();
 				
 				return false;	// Don't actually submit anything
@@ -222,7 +220,6 @@
 				messageTextArea.disabled = true;
 				
 				var xmlhttp = new XMLHttpRequest();
-				xmlhttp.timeout = ajaxTimeout;
 
 				xmlhttp.onreadystatechange = function()
 				{
@@ -254,6 +251,7 @@
 				}
 				
 				xmlhttp.open("GET", "/api/add_message?text=" + messageTextArea.value, true);
+				xmlhttp.timeout = ajaxTimeout;
 				xmlhttp.send();
 				
 				return false;	// Don't actually submit anything
@@ -289,7 +287,6 @@
 				loginFormSetEnabled(false);
 				
 				var xmlhttp = new XMLHttpRequest();
-				xmlhttp.timeout = ajaxTimeout;
 
 				xmlhttp.onreadystatechange = function()
 				{
@@ -317,6 +314,7 @@
 				}
 				
 				xmlhttp.open("GET", "/api/login?login=" + loginInput.value + "&password=" + passwordInput.value, true);
+				xmlhttp.timeout = ajaxTimeout;
 				xmlhttp.send();
 				
 				return false;	// Don't actually submit anything
@@ -382,16 +380,20 @@
 		</script>
 	</head>
 	<body>
-		<div class="logoutPanel">
-			<img class="userIcon" style="background-image: url('/parrot_color')" src="/images/parrot_bw.png" />
+		<img class="userIcon shadowed" style="background-image: url('/parrot_color')" src="/images/parrot_bw.png" />
+		<div class="titlePanel">
 	@if{loggedIn}
 			<form class="logoutForm">
-				<span class="userLoggedIn">User <span class="userName" id="userName">@{userName}</span> is logged in</span>
+				<span class="titlePanelText">User <span class="userName" id="userName">@{userName}</span> is logged in</span>
 				<input class="logout" id="logoutButton" type="submit" onclick="return logout();" value="Logout" />
 			</form>
 	@else	
-			<h2>Log in or register</h2>
+			<span class="titlePanelText">Log in or register</span>
+	@end
 		</div>
+		
+	@if{loggedIn}
+	@else
 		<div>
 			<h3>Login</h3>
 			<form>

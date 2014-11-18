@@ -4,13 +4,13 @@ input, textarea, select {
 	border-width: 1pt;
 	padding: 3pt;
 
-	background: -webkit-linear-gradient(rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.35)); /* For Safari */
-	background: -o-linear-gradient(rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.35)); /* For Opera 11.1 to 12.0 */
-	background: -moz-linear-gradient(rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.35)); /* For Firefox 3.6 to 15 */
-	background: linear-gradient(rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.35)); /* Standard syntax */
-
+	background: -webkit-linear-gradient(rgba(240, 240, 240, 0.8), rgba(250, 250, 250, 0.8)); /* For Safari */
+	background: -o-linear-gradient(rgba(240, 240, 240, 0.8), rgba(250, 250, 250, 0.8)); /* For Opera 11.1 to 12.0 */
+	background: -moz-linear-gradient(rgba(240, 240, 240, 0.8), rgba(250, 250, 250, 0.8)); /* For Firefox 3.6 to 15 */
+	background: linear-gradient(rgba(240, 240, 240, 0.8), rgba(250, 250, 250, 0.8)); /* Standard syntax */
 	font-family: sans-serif;
 	font-size: 9pt;
+	border-radius: 2pt;
 }
 
 input[type=submit],
@@ -19,7 +19,7 @@ input[type=submit]:hover
 {
 	padding: 3pt 10pt; 
 	margin-bottom: 0pt;
-	border-radius: 5pt;
+	border-radius: 2pt;
 	border-color: rgba(0, 0, 0, 0);
 	font-size: 9pt;
 }
@@ -39,6 +39,18 @@ input[type=submit]:active {
 input[type=submit]:disabled {
 	background: rgba(0, 0, 0, 0.20);
 	color: rgba(255, 255, 255, 0.4);
+}
+
+body {
+	min-width: 300pt;
+	margin: 0;
+}
+
+.shadowed {
+    -webkit-filter: drop-shadow(1px 2px 1px rgba(0, 0, 0, 0.4));
+    filter: url(#drop-shadow);
+    -ms-filter: "progid:DXImageTransform.Microsoft.Dropshadow(OffX=1, OffY=2, Color='#444')";
+    filter: "progid:DXImageTransform.Microsoft.Dropshadow(OffX=1, OffY=2, Color='#444')";
 }
 
 ul.messages {
@@ -77,13 +89,14 @@ div.msgText {
 
 input.logout {
 	float: right;
-	margin: 15pt;
+	margin: 13pt;
 }
 
-span.userLoggedIn {
+span.titlePanelText {
 	font-family: sans-serif;
-	margin: 15pt;
 	display: inline-block;
+    margin: 15pt 11pt;
+	text-shadow: 0px 0px 10px #888888;
 }
 
 span.userName {
@@ -92,13 +105,19 @@ span.userName {
 }
 
 img.userIcon {
-	vertical-align: middle;
+	float: left;
 }
 
 form.logoutForm {
 	display: inline;
 }
 
-div.logoutPanel {
-	background: #f4f4f4;
+div.titlePanel {
+	background: rgb(230, 230, 230);
+	box-shadow: 0px 0px 5px #444444;
+	
+	background: -webkit-linear-gradient(rgb(235, 235, 235), rgb(224, 224, 224));
+	background: -o-linear-gradient(rgb(235, 235, 235), rgb(224, 224, 224));
+	background: -moz-linear-gradient(rgb(235, 235, 235), rgb(224, 224, 224));
+	background: linear-gradient(rgb(235, 235, 235), rgb(224, 224, 224));
 }
