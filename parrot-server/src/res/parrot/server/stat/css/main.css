@@ -46,11 +46,15 @@ body {
 	margin: 0;
 }
 
+div.page {
+	margin-top: 50pt;
+}
+
 .shadowed {
     -webkit-filter: drop-shadow(1px 2px 1px rgba(0, 0, 0, 0.4));
-    filter: url(#drop-shadow);
-    -ms-filter: "progid:DXImageTransform.Microsoft.Dropshadow(OffX=1, OffY=2, Color='#444')";
-    filter: "progid:DXImageTransform.Microsoft.Dropshadow(OffX=1, OffY=2, Color='#444')";
+    filter: url(/#drop-shadow);
+    -ms-filter: progid:DXImageTransform.Microsoft.Dropshadow(OffX=1, OffY=2, Color='#444');
+    filter: progid:DXImageTransform.Microsoft.Dropshadow(OffX=1, OffY=2, Color='#444');
 }
 
 ul.messages {
@@ -89,13 +93,13 @@ div.msgText {
 
 input.logout {
 	float: right;
-	margin: 13pt;
+	margin: 10pt;
 }
 
 span.titlePanelText {
 	font-family: sans-serif;
 	display: inline-block;
-    margin: 15pt 11pt;
+    margin: 13pt 11pt;
 	text-shadow: 0px 0px 10px #888888;
 }
 
@@ -113,11 +117,19 @@ form.logoutForm {
 }
 
 div.titlePanel {
-	background: rgb(230, 230, 230);
+	min-width: 300pt;
+	
+	background: rgb(240, 240, 240);
 	box-shadow: 0px 0px 5px #444444;
 	
-	background: -webkit-linear-gradient(rgb(235, 235, 235), rgb(224, 224, 224));
-	background: -o-linear-gradient(rgb(235, 235, 235), rgb(224, 224, 224));
-	background: -moz-linear-gradient(rgb(235, 235, 235), rgb(224, 224, 224));
-	background: linear-gradient(rgb(235, 235, 235), rgb(224, 224, 224));
+	background: -webkit-linear-gradient(rgb(245, 245, 245), rgb(234, 234, 234));
+	background: -o-linear-gradient(rgb(245, 245, 245), rgb(234, 234, 234));
+	background: -moz-linear-gradient(rgb(245, 245, 245), rgb(234, 234, 234));
+	background: linear-gradient(rgb(245, 245, 245), rgb(234, 234, 234));
+	
+	position: fixed;
+	top: 0;
+	right: 0;
+	left: 0;
+	height: 38pt;
 }

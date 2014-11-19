@@ -380,8 +380,8 @@
 		</script>
 	</head>
 	<body>
-		<img class="userIcon shadowed" style="background-image: url('/parrot_color')" src="/images/parrot_bw.png" />
 		<div class="titlePanel">
+			<img class="userIcon shadowed" style="background-image: url('/parrot_color')" src="/images/parrot_bw.png" />
 	@if{loggedIn}
 			<form class="logoutForm">
 				<span class="titlePanelText">User <span class="userName" id="userName">@{userName}</span> is logged in</span>
@@ -392,9 +392,9 @@
 	@end
 		</div>
 		
+		<div class="page">
 	@if{loggedIn}
 	@else
-		<div>
 			<h3>Login</h3>
 			<form>
 				<p>
@@ -416,9 +416,7 @@
 				</p>
 				<p id="regErrorMessage" />
 			</form>
-		</div>
 	@end
-		<div>
 			<ul class="messages" id="messagesList">
 				<!-- Messages go here -->
 			</ul>
@@ -442,5 +440,18 @@
 			messagesList = document.getElementById("messagesList");
 			getLatestMessages();
 		</script>
+		
+		<svg height="0" xmlns="http://www.w3.org/2000/svg">
+			<filter id="drop-shadow">
+				<feGaussianBlur in="SourceAlpha" stdDeviation="3"/>
+				<feOffset dx="1" dy="2" result="offsetblur"/>
+				<feFlood flood-color="rgba(0,0,0,0.4)"/>
+				<feComposite in2="offsetblur" operator="in"/>
+				<feMerge>
+					<feMergeNode/>
+					<feMergeNode in="SourceGraphic"/>
+				</feMerge>
+			</filter>
+		</svg>
 	</body>
 </html>
