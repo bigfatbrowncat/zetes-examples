@@ -3,6 +3,7 @@
 	<head>
 		<title>Parrot @{parrotVersion} (Zetes @{zetesVersion})</title>
 		<link rel="stylesheet" type="text/css" href="/css/main.css"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/> <!--320-->
 		<script>
 			ajaxTimeout = 10000;
 			messagesLoadInterval = 200;
@@ -45,19 +46,27 @@
 					var msgItem = document.createElement('li');
 					msgItem.className = "message";
 					{
-						var msgUser = document.createElement('span');
-						msgUser.className = "msgUser";
+						var msgTitle = document.createElement('div');
+						msgTitle.className = "msgTitle";
 						{
-					    	var msgUserText = document.createTextNode(users[messages[i].userId].name);
-					    	msgUser.appendChild(msgUserText);
-					    }
-						var msgTime = document.createElement('span');
-						msgTime.className = "msgTime";
-						{
-							var date = new Date(messages[i].timeMillis);
-					    	var msgTimeText = document.createTextNode(date.toLocaleDateString() + " " + date.toLocaleTimeString());
-					    	msgTime.appendChild(msgTimeText);
-					    }
+					
+							var msgUser = document.createElement('span');
+							msgUser.className = "msgUser";
+							{
+								var msgUserText = document.createTextNode(users[messages[i].userId].name);
+								msgUser.appendChild(msgUserText);
+							}
+							var msgTime = document.createElement('span');
+							msgTime.className = "msgTime";
+							{
+								var date = new Date(messages[i].timeMillis);
+								var msgTimeText = document.createTextNode(date.toLocaleDateString() + " " + date.toLocaleTimeString());
+								msgTime.appendChild(msgTimeText);
+							}
+							msgTitle.appendChild(msgUser);
+							msgTitle.appendChild(msgTime);
+						}
+						
 						var msgText = document.createElement('div');
 						msgText.className = "msgText";
 						{
@@ -65,8 +74,7 @@
 					    	msgText.appendChild(msgTextText);
 					    }
 					    	
-					    msgItem.appendChild(msgUser);
-					    msgItem.appendChild(msgTime);
+					    msgItem.appendChild(msgTitle);
 					    msgItem.appendChild(msgText);
 				    }
 					messagesList.appendChild(msgItem);
@@ -389,35 +397,51 @@
 		<div class="pageOut">
 	@end
 	@if{loggedIn}
-			<div class="messagesContainerCenter">
+			<div class="messagesContainerIn">
 	@else
 			<div class="regLogContainer">
 				<div class="regLogPanel panel">
 					<h3>Login</h3>
 					<form>
-						<p>
-							Login: 		<input id="loginInput" type="text"/><br/>
-							Password: 	<input id="passwordInput" type="password"/><br/>
-							<input id="loginButton" type="submit" onclick="return login();" value="Log in" />
-						</p>
-						<p id="errorMessage" />
+						<table>
+							<tr>
+								<td>Login:</td><td><input id="loginInput" type="text"/></td>
+							</tr>
+							<tr>
+								<td>Password:</td><td><input id="passwordInput" type="password"/></td>
+							</tr>
+							<tr>
+								<td><input class="regLogPanelButton" id="loginButton" type="submit" onclick="return login();" value="Log in" /></td>
+								<td><div class="errorMessage" id="errorMessage" /></td>
+							</tr>
+						</table>
 					</form>
 				</div>
 				<div class="regLogPanel panel">
 					<h3>Registration</h3>
 					<form>
-						<p>
-							User name: 	<input id="regUserNameInput" type="text"/><br/>
-							Login: 		<input id="regLoginInput" type="text"/><br/>
-							Password: 	<input id="regPasswordInput1" type="password"/><br/>
-							Confirm: 	<input id="regPasswordInput2" type="password"/><br/>
-							<input id="regSubmitButton" type="submit" onclick="return register();" value="Register" />
-						</p>
-						<p id="regErrorMessage" />
+						<table>
+							<tr>
+								<td>User name:</td><td><input id="regUserNameInput" type="text"/></td>
+							</tr>
+							<tr>
+								<td>Login:</td><td><input id="regLoginInput" type="text"/></td>
+							</tr>
+							<tr>
+								<td>Password:</td><td><input id="regPasswordInput1" type="password"/></td>
+							</tr>
+							<tr>
+								<td>Confirm:</td><td><input id="regPasswordInput2" type="password"/></td>
+							</tr>
+							<tr>
+								<td><input class="regLogPanelButton" id="regSubmitButton" type="submit" onclick="return register();" value="Register" /></td><td><div class="errorMessage" id="regErrorMessage" /></td>
+							</tr>
+						</table>
+						
 					</form>
 				</div>
 			</div>
-			<div class="messagesContainerLeft">
+			<div class="messagesContainerOut">
 	@end
 				<ul class="messages" id="messagesList">
 					<!-- Messages go here -->
