@@ -1,5 +1,6 @@
 package parrot.server;
 
+import java.awt.font.NumericShaper;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -54,7 +55,7 @@ public class Task implements Runnable {
 
 	private static final String ADDR_CSS = "css"; 
 	private static final String ADDR_IMAGES = "images"; 
-	private static final String ADDR_PARROT_COLOR = "parrot_color"; 
+	private static final String ADDR_MASKED_IMAGE = "masked"; 
 
 	private final Main main; 
 	private final Response response;
@@ -140,8 +141,8 @@ public class Task implements Runnable {
 		}
 	}
 
-	private void responseParrot() throws IOException {
-		int r, g, b;
+	private void responseMasked(String maskName) throws IOException {
+		/*int r, g, b;
 		int avg = 0;
 		Random rnd = new Random();
 		do {
@@ -150,18 +151,26 @@ public class Task implements Runnable {
 			b = (int) Math.sqrt(65535 - r*r - g*g);
 			avg = (r + g + b) / 3;
 			if (Math.abs(r - avg) > 40 && Math.abs(g - avg) > 40 && Math.abs(b - avg) > 40) break;
-		} while (true);
-		
-		//int r = Integer.parseInt(request.getParameter("r")); 
-		//int g = Integer.parseInt(request.getParameter("g")); 
-		//int b = Integer.parseInt(request.getParameter("b")); 
+		} while (true);*/
 
+		int r, g, b;
+		try {
+			r = Integer.parseInt(request.getParameter("r")); 
+			g = Integer.parseInt(request.getParameter("g")); 
+			b = Integer.parseInt(request.getParameter("b"));
+		} catch (NumberFormatException e) {
+			responseHeaders(ResponseFormat.TEXT, false, 400);
+			e.printStackTrace(response.getPrintStream());
+			response.getPrintStream().close();
+			return;
+		}
+		
 		InputStream mask = null;
 		OutputStream os = null;
 		try {
 			responseHeaders(ResponseFormat.PNG, false, 200);
 
-			mask = getClass().getClassLoader().getResourceAsStream("parrot/server/templates/images/parrot_color.png");
+			mask = getClass().getClassLoader().getResourceAsStream("parrot/server/" + maskName);
 			os = response.getOutputStream();
 			
 			PngReader pngr = new PngReader(mask);
@@ -430,9 +439,10 @@ public class Task implements Runnable {
 								return;
 							}
 						}
-					} else if (requestPathParts[0].equals(ADDR_PARROT_COLOR)) {
-						// Static images
-						responseParrot();
+					} else if (requestPathParts[0].equals(ADDR_MASKED_IMAGE)) {
+						// Masked images
+						String filename = requestPathParts[1];
+						responseMasked("masks/" + filename);
 						return;
 					} else if (requestPathParts[0].equals(ADDR_IMAGES)) {
 						// Static images

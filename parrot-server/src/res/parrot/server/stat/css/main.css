@@ -42,12 +42,33 @@ input[type=submit]:disabled {
 }
 
 body {
-	min-width: 300pt;
 	margin: 0;
+	background: #bbb8a7;
 }
 
-div.page {
-	margin-top: 50pt;
+body.in {
+	min-width: 500px;
+}
+
+body.out {
+	min-width: 710px;
+}
+
+div.pageIn {
+	padding-top: 50pt;
+	background-image: url('/images/papertexture.png');
+	background-repeat: repeat-x;
+	background-size: contain;
+	min-height: 200pt;
+}
+
+div.pageOut {
+	padding-top: 65pt;
+	background-image: url('/images/papertexture.png');
+	background-repeat: repeat-x;
+	position: relative;
+	background-size: contain;
+	min-height: 200pt;
 }
 
 .shadowed {
@@ -57,11 +78,19 @@ div.page {
     filter: progid:DXImageTransform.Microsoft.Dropshadow(OffX=1, OffY=2, Color='#444');
 }
 
+div.messagesContainerLeft {
+    margin-right: 210pt;
+}
+
+div.messagesContainerCenter {
+}
+
 ul.messages {
 	list-style-type: none;
 	padding: 5pt;
 	max-width: 500pt;
 	margin: auto;
+	clear: left;
 }
 
 li.message {
@@ -116,9 +145,7 @@ form.logoutForm {
 	display: inline;
 }
 
-div.titlePanel {
-	min-width: 300pt;
-	
+.panel {
 	background: rgb(240, 240, 240);
 	box-shadow: 0px 0px 5px #444444;
 	
@@ -126,10 +153,47 @@ div.titlePanel {
 	background: -o-linear-gradient(rgb(245, 245, 245), rgb(234, 234, 234));
 	background: -moz-linear-gradient(rgb(245, 245, 245), rgb(234, 234, 234));
 	background: linear-gradient(rgb(245, 245, 245), rgb(234, 234, 234));
-	
+}
+
+div.titlePanelIn {
 	position: fixed;
 	top: 0;
 	right: 0;
 	left: 0;
 	height: 38pt;
+	white-space: nowrap;
+}
+
+div.titlePanelOut {
+	position: fixed;
+	top: 0;
+	right: 0;
+	left: 0;
+	height: 55pt;
+	white-space: nowrap;
+}
+
+div.regLogContainer {
+	text-align: center;
+	right: 7pt;
+	width: 205pt;
+	position: absolute;
+}
+
+div.regLogPanel {
+	margin: 5pt;
+	font-family: sans-serif;
+	font-size: 90%;
+	padding: 10pt;
+	display: inline-block;
+	text-align: left;
+	vertical-align: top;
+}
+
+div.regLogPanel > h3 {
+	margin-top: 0pt;
+}
+
+span.welcome {
+	font-size: 110%;
 }

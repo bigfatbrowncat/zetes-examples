@@ -54,7 +54,8 @@
 						var msgTime = document.createElement('span');
 						msgTime.className = "msgTime";
 						{
-					    	var msgTimeText = document.createTextNode(new Date(messages[i].timeMillis).toTimeString());
+							var date = new Date(messages[i].timeMillis);
+					    	var msgTimeText = document.createTextNode(date.toLocaleDateString() + " " + date.toLocaleTimeString());
 					    	msgTime.appendChild(msgTimeText);
 					    }
 						var msgText = document.createElement('div');
@@ -379,56 +380,70 @@
 	@end
 		</script>
 	</head>
-	<body>
-		<div class="titlePanel">
-			<img class="userIcon shadowed" style="background-image: url('/parrot_color')" src="/images/parrot_bw.png" />
 	@if{loggedIn}
-			<form class="logoutForm">
-				<span class="titlePanelText">User <span class="userName" id="userName">@{userName}</span> is logged in</span>
-				<input class="logout" id="logoutButton" type="submit" onclick="return logout();" value="Logout" />
-			</form>
-	@else	
-			<span class="titlePanelText">Log in or register</span>
-	@end
-		</div>
-		
-		<div class="page">
-	@if{loggedIn}
-	@else
-			<h3>Login</h3>
-			<form>
-				<p>
-					Login: 		<input id="loginInput" type="text"/><br/>
-					Password: 	<input id="passwordInput" type="password"/><br/>
-					<input id="loginButton" type="submit" onclick="return login();" value="Log in" />
-				</p>
-				<p id="errorMessage" />
-			</form>
+	<body class="in">
 
-			<h3>Registration</h3>
-			<form>
-				<p>
-					User name: 	<input id="regUserNameInput" type="text"/><br/>
-					Login: 		<input id="regLoginInput" type="text"/><br/>
-					Password: 	<input id="regPasswordInput1" type="password"/><br/>
-					Confirm: 	<input id="regPasswordInput2" type="password"/><br/>
-					<input id="regSubmitButton" type="submit" onclick="return register();" value="Register" />
-				</p>
-				<p id="regErrorMessage" />
-			</form>
+		<div class="pageIn">
+	@else	
+	<body class="out">
+		<div class="pageOut">
 	@end
-			<ul class="messages" id="messagesList">
-				<!-- Messages go here -->
-			</ul>
+	@if{loggedIn}
+			<div class="messagesContainerCenter">
+	@else
+			<div class="regLogContainer">
+				<div class="regLogPanel panel">
+					<h3>Login</h3>
+					<form>
+						<p>
+							Login: 		<input id="loginInput" type="text"/><br/>
+							Password: 	<input id="passwordInput" type="password"/><br/>
+							<input id="loginButton" type="submit" onclick="return login();" value="Log in" />
+						</p>
+						<p id="errorMessage" />
+					</form>
+				</div>
+				<div class="regLogPanel panel">
+					<h3>Registration</h3>
+					<form>
+						<p>
+							User name: 	<input id="regUserNameInput" type="text"/><br/>
+							Login: 		<input id="regLoginInput" type="text"/><br/>
+							Password: 	<input id="regPasswordInput1" type="password"/><br/>
+							Confirm: 	<input id="regPasswordInput2" type="password"/><br/>
+							<input id="regSubmitButton" type="submit" onclick="return register();" value="Register" />
+						</p>
+						<p id="regErrorMessage" />
+					</form>
+				</div>
+			</div>
+			<div class="messagesContainerLeft">
+	@end
+				<ul class="messages" id="messagesList">
+					<!-- Messages go here -->
+				</ul>
+			</div>
 	@if{loggedIn}
 			<form>
 				<textarea id="messageTextArea" style="width: 300pt; resize: none; overflow: hidden;" oninput="messageChanged();" ></textarea>
 				<input id="sendMessageButton" type="submit" onclick="return sendMessage();" value="Send" />
 			</form>
 			<p id="sendErrorMessage" />
-	@end
+			<div class="titlePanelIn panel">
+				<img class="userIcon shadowed" style="background-image: url('/masked/parrot_mid_color.png?r=192&g=10&b=10')" src="/images/parrot_mid_bw.png" />
+				<form class="logoutForm">
+					<span class="titlePanelText">User <span class="userName" id="userName">@{userName}</span> is logged in</span>
+					<input class="logout" id="logoutButton" type="submit" onclick="return logout();" value="Logout" />
+				</form>
+			</div>
 		</div>
-	
+	@else
+			<div class="titlePanelOut panel">
+				<img class="userIcon shadowed" style="background-image: url('/masked/parrot_big_color.png?r=192&g=10&b=10')" src="/images/parrot_big_bw.png" />
+				<span class="titlePanelText"><span class="welcome">Welcome to this <b>Parrot</b>-powered chat!</span><br/>Please, log in or register. Or you may just read the conversation anonymously...</span>
+			</div>
+		</div>
+	@end
 	
 		<script type="text/javascript">
 	@if{loggedIn}
