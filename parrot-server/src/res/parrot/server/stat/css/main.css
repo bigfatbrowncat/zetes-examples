@@ -34,29 +34,41 @@ input[type=submit]:hover
 input[type=submit] {
 	background: rgba(170, 170, 170, 1);
 	color: rgba(70, 70, 70, 1);
-	box-shadow: 0px 1px 2px #909090;
+	box-shadow: 0px 1px 5px #ccc;
+	background: -webkit-linear-gradient(rgb(240, 240, 240), rgb(204, 204, 204));
+	background: -o-linear-gradient(rgb(240, 240, 240), rgb(204, 204, 204));
+	background: -moz-linear-gradient(rgb(240, 240, 240), rgb(204, 204, 204));
 	background: linear-gradient(rgb(240, 240, 240), rgb(204, 204, 204));
 	text-shadow: 0px 0px 6px rgb(250, 250, 250);
 	font-weight: bold;
 	padding-top: 3.5pt;
 }
 input[type=submit]:hover {
-	color: rgba(250, 250, 250, 1);
-	box-shadow: 0px 1px 2px rgb(96,96,96);
+	color: rgba(70, 70, 70, 1);
+	box-shadow: 0px 1px 5px #eee;
 	background: rgba(180, 180, 180, 1);
-	background: linear-gradient(rgb(210, 210, 210), rgb(164, 164, 164));
+	background: -webkit-linear-gradient(#fafafa, #dddddd);
+	background: -o-linear-gradient(#fafafa, #dddddd);
+	background: -moz-linear-gradient(#fafafa, #dddddd);
+	background: linear-gradient(#fafafa, #dddddd);
 	padding-top: 3.5pt;
 }
 input[type=submit]:active {
 	color: rgba(250, 250, 250, 1);
-	box-shadow:0px 0px 1px rgb(128,128,128) inset;
+	box-shadow: 0px 0px 5px rgb(128,128,128) inset;
 	background: rgba(180, 180, 180, 1);
+	background: -webkit-linear-gradient(rgb(210, 210, 210), rgb(164, 164, 164));
+	background: -o-linear-gradient(rgb(210, 210, 210), rgb(164, 164, 164));
+	background: -moz-linear-gradient(rgb(210, 210, 210), rgb(164, 164, 164));
 	background: linear-gradient(rgb(210, 210, 210), rgb(164, 164, 164));
 	padding-top: 4pt;
 }
 input[type=submit]:disabled {
-	background: rgba(0, 0, 0, 0.20);
+	background: rgba(200, 200, 200, 1);
 	color: rgba(255, 255, 255, 0.4);
+	box-shadow: 1px 1px 5px #909090 inset;
+	color: rgb(120, 120, 120);
+	padding-top: 3.5pt;
 }
 
 table {
@@ -199,7 +211,6 @@ img.userIconOut {
 div.titlePanelIn {
 	font-size: 100%;
 	height: 38pt;
-	min-width: 450px;
 }
 
 div.titlePanelOut {
@@ -249,6 +260,10 @@ div.sendMessagePanel {
 
 input.sendMessageButton {
 	float: right;
+}
+
+textarea.messageTextArea {
+	font-size: 10pt;
 }
 
 /* For large screens */

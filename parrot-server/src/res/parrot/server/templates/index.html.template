@@ -229,6 +229,7 @@
 			}
 
 			function messageChanged() {
+				sendMessageButton.disabled = (messageTextArea.value == "");
 				messageTextArea.setAttribute("style", messageTextArea_basicStyle + "; height: 0px;");
 				messageTextArea.setAttribute("style", messageTextArea_basicStyle + "; height: " + messageTextArea.scrollHeight + "px;");
 				scrollDown();
@@ -470,7 +471,7 @@
 					<table>
 						<tr>
 							<td colspan="2">
-								<textarea id="messageTextArea" style="resize: none; overflow: hidden;" oninput="messageChanged();"></textarea>
+								<textarea class="messageTextArea" id="messageTextArea" style="resize: none; overflow: hidden;" oninput="messageChanged();"></textarea>
 							</td>
 						</tr>
 						<tr>
