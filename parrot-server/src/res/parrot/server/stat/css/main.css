@@ -81,14 +81,19 @@ body {
 	background: #FFFCF8;
 }
 
+body {
+	background: -webkit-linear-gradient(#DCC, #EEE);
+	background: -o-linear-gradient(#DCC, #EEE);
+	background: -moz-linear-gradient(#DCC, #EEE);
+	background: linear-gradient(#DCC, #EEE);
+}
+
 body.in {
 	min-width: 300px;
-	background: linear-gradient(#DCC, #EEE);
 }
 
 body.out {
 	min-width: 300px;
-	background: linear-gradient(#DCC, #EEE);
 }
 
 div.pageIn {
@@ -240,6 +245,7 @@ div.titlePanelTextIn {
 .vcenter {
 	display: table-cell;
 	vertical-align: middle;
+	padding-top: 3pt;
 }
 
 div.regLogContainer {
