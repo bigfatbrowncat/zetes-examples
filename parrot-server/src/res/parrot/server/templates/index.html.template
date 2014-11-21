@@ -6,7 +6,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/> <!--320-->
 		<script>
 			ajaxTimeout = 10000;
-			messagesLoadInterval = 200;
+			messagesLoadInterval = 300;
 			lastMessageIsOurs = false;
 			
 			function sortedLocationOf(element, array, start, end) {
@@ -475,7 +475,7 @@
 						</tr>
 						<tr>
 							<td>
-								<div class="errorMessage" id="sendErrorMessage">qweqwe</div>
+								<div class="errorMessage" id="sendErrorMessage" />
 							</td>
 							<td>
 								<input class="sendMessageButton" id="sendMessageButton" type="submit" onclick="return sendMessage();" value="Send" />

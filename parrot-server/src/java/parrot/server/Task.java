@@ -334,6 +334,7 @@ public class Task implements Runnable {
 //			if (sessionIdCookie != null) {
 //				Session session = main.sessionManager.fromCookie(sessionIdCookie);
 //				if (session != null) {
+					responseHeaders(ResponseFormat.JSON, true, 200);
 					Message[] messages = main.dataConnector.getMessagesOrderedSince(sinceTimeMillis);
 					long serverTimeMillis = System.currentTimeMillis();
 					sendJson(new MessagesSlice(messages, serverTimeMillis));
