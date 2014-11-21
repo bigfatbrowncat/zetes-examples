@@ -1,15 +1,11 @@
 package parrot.server;
 
-import java.awt.font.NumericShaper;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.text.Normalizer.Form;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Random;
 import java.util.regex.Pattern;
 
 import org.apache.commons.io.IOUtils;
@@ -36,7 +32,12 @@ import com.google.gson.Gson;
 
 public class Task implements Runnable {
 	private static enum ResponseFormat {
-		JSON("application/json"), TEXT("text/plain"), HTML("text/html"), PNG("image/png"), CSS("text/css");
+		JSON("application/json; charset=UTF-8"), 
+		TEXT("text/plain; charset=UTF-8"), 
+		HTML("text/html; charset=UTF-8"), 
+		PNG("image/png"), 
+		CSS("text/css; charset=UTF-8");
+		
 		public final String mime; 
 		ResponseFormat(String mime) {
 			this.mime = mime;
@@ -299,7 +300,7 @@ public class Task implements Runnable {
 	}
 	
 	private void responseAPIAddMessage() throws IOException {
-		String text = request.getParameter("text");
+		
 		Session session;
 		final User user;
 		
@@ -310,7 +311,10 @@ public class Task implements Runnable {
 			user = main.dataConnector.getUser(session.login);
 			if (user != null) {
 				long timeMillis = System.currentTimeMillis();
-				Message message = main.dataConnector.addMessage(user.id, timeMillis, text);
+				//String encodedBase64Message = request.getContent();
+				String decodedMessage = request.getContent(); //new String(org.apache.commons.codec.binary.Base64.decodeBase64(encodedBase64Message));
+				
+				Message message = main.dataConnector.addMessage(user.id, timeMillis, decodedMessage);
 
 				responseHeaders(ResponseFormat.JSON, true, 200);
 				sendJson(message);
@@ -388,8 +392,8 @@ public class Task implements Runnable {
 
 		try {
 			
+			String[] requestPathParts = request.getPath().getSegments();
 			if (request.getMethod().equals("GET")) {
-				String[] requestPathParts = request.getPath().getSegments();
 				
 				// Not just "/"
 				if (requestPathParts.length > 0) {
@@ -418,10 +422,6 @@ public class Task implements Runnable {
 									return;
 								}
 
-							} else if (requestPathParts[1].equals(ADDR_ADD_MESSAGE)) {
-								// Handling "/api/add_message"
-								responseAPIAddMessage();
-								return;
 							} else if (requestPathParts[1].equals(ADDR_GET_MESSAGES_SINCE)) {
 								responseAPIGetMessagesSince();
 								return;
@@ -459,6 +459,25 @@ public class Task implements Runnable {
 				} else {
 					responseUIRoot();
 					return;
+				}
+			} else if (request.getMethod().equals("POST")) {
+				
+				// Not just "/"
+				if (requestPathParts.length > 0) {
+
+					// API ("/api")
+					if (requestPathParts[0].equals(ADDR_API)) {
+						// Not just "/api"
+						if (requestPathParts.length > 1) {
+							// "/api/users"
+
+							if (requestPathParts[1].equals(ADDR_ADD_MESSAGE)) {
+								// Handling "/api/add_message"
+								responseAPIAddMessage();
+								return;
+							}
+						}
+					}
 				}
 			}
 

@@ -7,6 +7,7 @@
 		<script>
 			ajaxTimeout = 10000;
 			messagesLoadInterval = 200;
+			lastMessageIsOurs = false;
 			
 			function sortedLocationOf(element, array, start, end) {
 				// quicksort()-like function
@@ -118,6 +119,13 @@
 
 							if (xmlhttp.status == 200) {
 								appendOrderedMessages(msgs, usersResponse);
+								if (lastMessageIsOurs) {
+									lastMessageIsOurs = false;
+									scrollDown();
+									if (typeof messageTextArea !== 'undefined') { 
+										messageTextArea.focus();
+									}
+								}
 							}
 							else
 							{
@@ -172,12 +180,16 @@
 				}
 				
 				xmlhttp.open("GET", "/api/messages_since?sinceTimeMillis=" + serverTimeMillis, true);
+				xmlhttp.overrideMimeType("application/json; charset=UTF-8");
 				xmlhttp.timeout = ajaxTimeout;
 				xmlhttp.send();
 				
 				return false;	// Don't actually submit anything
 			}
 			
+			function scrollDown() {
+				window.scrollTo(0,document.body.scrollHeight);
+			}
 		</script>	
 		<script>
 
@@ -216,10 +228,11 @@
 				return false;	// Don't actually submit anything
 			}
 
-			function messageChanged()
-			{
+			function messageChanged() {
 				messageTextArea.setAttribute("style", messageTextArea_basicStyle + "; height: 0px;");
 				messageTextArea.setAttribute("style", messageTextArea_basicStyle + "; height: " + messageTextArea.scrollHeight + "px;");
+				scrollDown();
+				
 				return false;
 			}
 
@@ -242,6 +255,8 @@
     					if (xmlhttp.status == 200) {
     						messageTextArea.value = "";
     						sendErrorMessage.innerHTML = "";
+							messageChanged();
+							lastMessageIsOurs = true;
     					}
 						else
 						{
@@ -259,9 +274,10 @@
 					messageTextArea.disabled = false;
 				}
 				
-				xmlhttp.open("GET", "/api/add_message?text=" + messageTextArea.value, true);
+				xmlhttp.open("POST", "/api/add_message", true);
+				xmlhttp.setRequestHeader("Content-type","text/plain; charset=UTF-8");
 				xmlhttp.timeout = ajaxTimeout;
-				xmlhttp.send();
+				xmlhttp.send(messageTextArea.value);
 				
 				return false;	// Don't actually submit anything
 			}
@@ -448,11 +464,27 @@
 				</ul>
 			</div>
 	@if{loggedIn}
-			<form>
-				<textarea id="messageTextArea" style="width: 300pt; resize: none; overflow: hidden;" oninput="messageChanged();" ></textarea>
-				<input id="sendMessageButton" type="submit" onclick="return sendMessage();" value="Send" />
-			</form>
-			<p id="sendErrorMessage" />
+			<div class="sendMessagePanel panel">
+				<form>
+					
+					<table>
+						<tr>
+							<td colspan="2">
+								<textarea id="messageTextArea" style="resize: none; overflow: hidden;" oninput="messageChanged();"></textarea>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<div class="errorMessage" id="sendErrorMessage">qweqwe</div>
+							</td>
+							<td>
+								<input class="sendMessageButton" id="sendMessageButton" type="submit" onclick="return sendMessage();" value="Send" />
+							</td>
+						</tr>
+					</table>
+				</form>
+			</div>
+			
 			<div class="titlePanelIn panel">
 				<img class="userIconIn shadowed" style="background-image: url('/masked/parrot_mid_color.png?r=192&g=10&b=10')" src="/images/parrot_mid_bw.png" />
 				<form class="logoutForm">
