@@ -83,26 +83,26 @@ body {
 
 body.in {
 	min-width: 300px;
+	background: linear-gradient(#DCC, #EEE);
 }
 
 body.out {
 	min-width: 300px;
+	background: linear-gradient(#DCC, #EEE);
 }
 
 div.pageIn {
-	padding-top: 40pt;
-	background-image: url('/images/papertexture.png');
-	background-repeat: repeat-x;
-	background-size: contain;
+	padding-top: 30pt;
+	background-image: url('/images/diag.png');
+	background-repeat: repeat;
 	min-height: 200pt;
 }
 
 div.pageOut {
-	padding-top: 65pt;
-	background-image: url('/images/papertexture.png');
-	background-repeat: repeat-x;
+	padding-top: 40pt;
+	background-image: url('/images/diag.png');
+	background-repeat: repeat;
 	position: relative;
-	background-size: contain;
 	min-height: 200pt;
 }
 
@@ -115,7 +115,7 @@ div.pageOut {
 
 ul.messages {
 	list-style-type: none;
-	padding: 5pt;
+	padding: 0pt 5pt 5pt;
 	max-width: 500pt;
 	margin: auto;
 	clear: left;
@@ -125,7 +125,7 @@ li.message {
 	margin: 5pt;
 	padding: 7pt 5pt 6pt 5pt;
 	background: #FFFCF8;
-	background-color: rgba(255,255,255,0.5);
+	background-color: rgba(255,255,255,0.65);
 }
 
 div.msgTitle {
@@ -281,6 +281,10 @@ textarea.messageTextArea {
 	div.titlePanelOut {
 		font-size: 100%;
 		height: 55pt;
+	}
+	
+	div.pageOut {
+		padding-top: 55pt;
 	}
 	
 	img.userIconOut {

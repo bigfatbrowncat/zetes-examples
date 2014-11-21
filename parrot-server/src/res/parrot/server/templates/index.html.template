@@ -4,6 +4,18 @@
 		<title>Parrot @{parrotVersion} (Zetes @{zetesVersion})</title>
 		<link rel="stylesheet" type="text/css" href="/css/main.css"/>
 		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/> <!--320-->
+		<svg height="0" xmlns="http://www.w3.org/2000/svg">
+			<filter id="drop-shadow">
+				<feGaussianBlur in="SourceAlpha" stdDeviation="3"/>
+				<feOffset dx="1" dy="2" result="offsetblur"/>
+				<feFlood flood-color="rgba(0,0,0,0.4)"/>
+				<feComposite in2="offsetblur" operator="in"/>
+				<feMerge>
+					<feMergeNode/>
+					<feMergeNode in="SourceGraphic"/>
+				</feMerge>
+			</filter>
+		</svg>
 		<script>
 			ajaxTimeout = 10000;
 			messagesLoadInterval = 300;
@@ -112,7 +124,7 @@
 					{
 						if (xmlhttp.readyState == 4)
    		 				{
-							var usersResponse = { message: "No answer from the server" };
+							var usersResponse = { message: "No response from the server" };
 							if (xmlhttp.responseText != "") {
 								usersResponse = JSON.parse(xmlhttp.responseText);
 							}
@@ -248,7 +260,7 @@
 				{
 					if (xmlhttp.readyState == 4)
     				{
-						var messageResponse = { message: "No answer from the server" };
+						var messageResponse = { message: "No response from the server" };
 						if (xmlhttp.responseText != "") {
 							messageResponse = JSON.parse(xmlhttp.responseText);
 						}
@@ -318,7 +330,7 @@
 				{
 					if (xmlhttp.readyState == 4)
     				{
-						var loginResponse = { message: "No answer from the server" };
+						var loginResponse = { message: "No response from the server" };
 						if (xmlhttp.responseText != "")	{
 							loginResponse = JSON.parse(xmlhttp.responseText);
 						}
@@ -372,7 +384,7 @@
 				{
 					if (xmlhttp.readyState == 4)
 	 				{
-						var registerResponse = { message: "No answer from the server" };
+						var registerResponse = { message: "No response from the server" };
 						if (xmlhttp.responseText != "") {
 							registerResponse = JSON.parse(xmlhttp.responseText);
 						}
@@ -521,18 +533,5 @@
 			messagesList = document.getElementById("messagesList");
 			getLatestMessages();
 		</script>
-		
-		<svg height="0" xmlns="http://www.w3.org/2000/svg">
-			<filter id="drop-shadow">
-				<feGaussianBlur in="SourceAlpha" stdDeviation="3"/>
-				<feOffset dx="1" dy="2" result="offsetblur"/>
-				<feFlood flood-color="rgba(0,0,0,0.4)"/>
-				<feComposite in2="offsetblur" operator="in"/>
-				<feMerge>
-					<feMergeNode/>
-					<feMergeNode in="SourceGraphic"/>
-				</feMerge>
-			</filter>
-		</svg>
 	</body>
 </html>

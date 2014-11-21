@@ -87,9 +87,7 @@ public class Task implements Runnable {
 	private void sendJson(Object object) throws IOException {
 		PrintStream body = response.getPrintStream();
 		Gson gg = main.gsonBuilder.create();
-		System.out.println(object);
 		String responseJson = gg.toJson(object);
-		System.out.println(responseJson);
 		body.println(responseJson);
 		body.close();
 	}
