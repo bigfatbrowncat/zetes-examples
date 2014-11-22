@@ -1,4 +1,4 @@
-input, textarea, select {
+input, textarea, select, button {
 	color: rgba(0, 0, 0, 0.9);
 	border-color: rgba(0, 0, 0, 0.3);
 	border-width: 1px;
@@ -16,13 +16,16 @@ input, textarea, select {
 	box-sizing: border-box;
 }
 
-input[type=submit] {
+input[type=submit], button {
 	width: auto;
 }
 
 input[type=submit],
 input[type=submit]:active,
-input[type=submit]:hover
+input[type=submit]:hover,
+button,
+button:active,
+button:hover
 {
 	padding: 3pt 10pt; 
 	border-radius: 2pt;
@@ -31,7 +34,7 @@ input[type=submit]:hover
 	font-size: 9pt;
 }
 
-input[type=submit] {
+input[type=submit], button {
 	background: rgba(170, 170, 170, 1);
 	color: rgba(70, 70, 70, 1);
 	box-shadow: 0px 1px 5px #ccc;
@@ -41,9 +44,10 @@ input[type=submit] {
 	background: linear-gradient(rgb(240, 240, 240), rgb(204, 204, 204));
 	text-shadow: 0px 0px 6px rgb(250, 250, 250);
 	font-weight: bold;
-	padding-top: 3.5pt;
+	padding-top: 3pt;
+	padding-bottom: 3pt;
 }
-input[type=submit]:hover {
+input[type=submit]:hover, button:hover {
 	color: rgba(70, 70, 70, 1);
 	box-shadow: 0px 1px 5px #eee;
 	background: rgba(180, 180, 180, 1);
@@ -51,9 +55,10 @@ input[type=submit]:hover {
 	background: -o-linear-gradient(#fafafa, #dddddd);
 	background: -moz-linear-gradient(#fafafa, #dddddd);
 	background: linear-gradient(#fafafa, #dddddd);
-	padding-top: 3.5pt;
+	padding-top: 3pt;
+	padding-bottom: 3pt;
 }
-input[type=submit]:active {
+input[type=submit]:active, button:active {
 	color: rgba(250, 250, 250, 1);
 	box-shadow: 0px 0px 5px rgb(128,128,128) inset;
 	background: rgba(180, 180, 180, 1);
@@ -61,14 +66,16 @@ input[type=submit]:active {
 	background: -o-linear-gradient(rgb(210, 210, 210), rgb(164, 164, 164));
 	background: -moz-linear-gradient(rgb(210, 210, 210), rgb(164, 164, 164));
 	background: linear-gradient(rgb(210, 210, 210), rgb(164, 164, 164));
-	padding-top: 4pt;
+	padding-top: 3.5pt;
+	padding-bottom: 2.5pt;
 }
-input[type=submit]:disabled {
+input[type=submit]:disabled, button:disabled {
 	background: rgba(200, 200, 200, 1);
 	color: rgba(255, 255, 255, 0.4);
 	box-shadow: 1px 1px 5px #909090 inset;
 	color: rgb(120, 120, 120);
-	padding-top: 3.5pt;
+	padding-top: 3pt;
+	padding-bottom: 3pt;
 }
 
 table {
@@ -257,8 +264,15 @@ div.sendMessagePanel {
 	margin: auto;
 }
 
-input.sendMessageButton {
+.sendMessageButton {
 	float: right;
+	width: 100pt;
+}
+
+.btnShortcut {
+	font-size: 90%;
+	font-weight: normal;
+	font-variant: small-caps;
 }
 
 textarea.messageTextArea {

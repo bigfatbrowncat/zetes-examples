@@ -259,6 +259,14 @@
 				
 				return false;
 			}
+			
+			function messageKeyDown(e) {
+				if ((e.keyCode == 10 || e.keyCode == 13) && e.ctrlKey)
+        		{
+        			event.preventDefault();
+            		if (!sendMessageButton.disabled) sendMessage();
+        		}
+			}
 
 			function sendMessage() {
 				sendMessageButton = document.getElementById("sendMessageButton");
@@ -275,6 +283,9 @@
 						if (xmlhttp.responseText != "") {
 							messageResponse = JSON.parse(xmlhttp.responseText);
 						}
+
+						sendMessageButton.disabled = false;
+						messageTextArea.disabled = false;
 						
     					if (xmlhttp.status == 200) {
     						messageTextArea.value = "";
@@ -286,8 +297,6 @@
 						{
 							sendErrorMessage.innerHTML = messageResponse.message;
 						}
-						sendMessageButton.disabled = false;
-						messageTextArea.disabled = false;
     				}
 			  	}
 				
@@ -494,7 +503,7 @@
 					<table>
 						<tr>
 							<td colspan="2">
-								<textarea class="messageTextArea" id="messageTextArea" style="resize: none; overflow: hidden;" oninput="messageChanged();"></textarea>
+								<textarea class="messageTextArea" id="messageTextArea" style="resize: none; overflow: hidden;" oninput="messageChanged();" onkeydown="messageKeyDown(event);"></textarea>
 							</td>
 						</tr>
 						<tr>
@@ -502,7 +511,7 @@
 								<div class="errorMessage" id="sendErrorMessage" />
 							</td>
 							<td>
-								<input class="sendMessageButton" id="sendMessageButton" type="submit" onclick="return sendMessage();" value="Send" />
+								<button class="sendMessageButton" id="sendMessageButton" onclick="return sendMessage();">Send <span class="btnShortcut">(Ctrl+Enter)</span></button>
 							</td>
 						</tr>
 					</table>
