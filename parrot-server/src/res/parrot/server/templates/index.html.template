@@ -131,7 +131,7 @@
 
 							if (xmlhttp.status == 200) {
 								appendOrderedMessages(msgs, usersResponse);
-								if (lastMessageIsOurs) {
+								if (msgs.length > 0 && lastMessageIsOurs) {
 									lastMessageIsOurs = false;
 									scrollDown();
 									if (typeof messageTextArea !== 'undefined') { 
@@ -240,11 +240,15 @@
 				return false;	// Don't actually submit anything
 			}
 
+			savedScrollHeight = 0;
 			function messageChanged() {
 				sendMessageButton.disabled = (messageTextArea.value == "");
-				messageTextArea.setAttribute("style", messageTextArea_basicStyle + "; height: 0px;");
+				if (savedScrollHeight > messageTextArea.scrollHeight) {
+					messageTextArea.setAttribute("style", messageTextArea_basicStyle + "; height: auto;");
+				}
+				savedScrollHeight = messageTextArea.scrollHeight;
 				messageTextArea.setAttribute("style", messageTextArea_basicStyle + "; height: " + messageTextArea.scrollHeight + "px;");
-				scrollDown();
+				//scrollDown();
 				
 				return false;
 			}
