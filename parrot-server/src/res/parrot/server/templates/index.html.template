@@ -83,8 +83,16 @@
 						var msgText = document.createElement('div');
 						msgText.className = "msgText";
 						{
-					    	var msgTextText = document.createTextNode(messages[i].text);
-					    	msgText.appendChild(msgTextText);
+					    	var splittedMsg = messages[i].text.split("\n");
+					    	for (var l = 0; l < splittedMsg.length; l++) {
+								var msgTextPar = document.createElement('p');
+								
+						    	var msgTextParText = document.createTextNode(splittedMsg[l]);
+					    		msgTextPar.appendChild(msgTextParText);
+					    		msgText.appendChild(msgTextPar);
+					    	}
+					    	
+					    	
 					    }
 					    	
 					    msgItem.appendChild(msgTitle);
@@ -192,7 +200,6 @@
 				}
 				
 				xmlhttp.open("GET", "/api/messages_since?sinceTimeMillis=" + serverTimeMillis, true);
-				xmlhttp.overrideMimeType("application/json; charset=UTF-8");
 				xmlhttp.timeout = ajaxTimeout;
 				xmlhttp.send();
 				

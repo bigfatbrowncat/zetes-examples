@@ -78,29 +78,22 @@ table {
 body {
 	font-size: 11pt;
 	margin: 0;
-	background: #FFFCF8;
-}
-
-body {
 	background: -webkit-linear-gradient(#DCC, #EEE);
 	background: -o-linear-gradient(#DCC, #EEE);
 	background: -moz-linear-gradient(#DCC, #EEE);
 	background: linear-gradient(#DCC, #EEE);
-}
-
-body.in {
 	min-width: 300px;
 }
 
-body.out {
-	min-width: 300px;
+p {
+	margin: 5pt 0;
 }
 
 div.pageIn {
 	padding-top: 30pt;
 	background-image: url('/images/diag.png');
 	background-repeat: repeat;
-	min-height: 200pt;
+	min-height: 100vh;
 }
 
 div.pageOut {
@@ -108,7 +101,7 @@ div.pageOut {
 	background-image: url('/images/diag.png');
 	background-repeat: repeat;
 	position: relative;
-	min-height: 200pt;
+	min-height: 100vh;
 }
 
 .shadowed {
