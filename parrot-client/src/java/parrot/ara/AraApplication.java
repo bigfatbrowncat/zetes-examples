@@ -4,12 +4,23 @@ import java.io.IOException;
 
 import org.eclipse.swt.graphics.Point;
 
+import parrot.client.APIClient;
 import zetes.wings.DefaultAboutBox;
 import zetes.wings.base.ApplicationBase;
 
 
 public class AraApplication extends ApplicationBase<DefaultAboutBox, AraDocument, AraViewWindow, AraMenuConstructor, AraViewWindowsManager>
 {
+	private APIClient apiClient;
+
+	public AraApplication() {
+		apiClient = new APIClient("http://localhost:8080");	// TODO Make address customizable
+	}
+	
+	public APIClient getAPIClient() {
+		return apiClient;
+	}
+	
 	@Override
 	public String getTitle()
 	{
@@ -45,7 +56,7 @@ public class AraApplication extends ApplicationBase<DefaultAboutBox, AraDocument
 	@Override
 	public AraViewWindowsManager createViewWindowsManager()
 	{
-		return new AraViewWindowsManager();
+		return new AraViewWindowsManager(apiClient);
 	}
 
 	@Override

@@ -5,7 +5,10 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
+import java.security.Provider;
+import java.security.Security;
 import java.util.Locale;
+import java.util.Set;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -51,6 +54,7 @@ public class Main implements Container {
 	}
 		
 	public Main(int size, int port, String databaseFile) throws IOException, SQLiteException {
+		
 		Locale.setDefault(Locale.US);
 		
 		rootContext = new Context();

@@ -273,7 +273,7 @@ public class Task implements Runnable {
 				Session session = main.sessionManager.createSession(login);
 
 				responseHeaders(ResponseFormat.JSON, true, 200);
-				//response.setCookie(session.asCookie(COOKIE_SESSION_ID));
+				response.setCookie(session.asCookie(COOKIE_SESSION_ID));
 				sendJson(session);
 			} else {
 				responseHeaders(ResponseFormat.JSON, true, 401);
@@ -388,7 +388,11 @@ public class Task implements Runnable {
 	}
 
 	public void run() {
-
+		/*System.out.println("Request: " + request.getHeader() + "; cookies: ");
+		for (Cookie c : request.getCookies()) {
+			System.out.println(c.getName() + " = " + c.getValue());
+		}*/
+		
 		try {
 			
 			String[] requestPathParts = request.getPath().getSegments();
@@ -484,16 +488,15 @@ public class Task implements Runnable {
 								
 		} catch (Exception e) {
 			try {
-				PrintStream body = response.getPrintStream();
-				e.printStackTrace(body);
-				body.close();
-
 				response.setValue("Content-Type", "text/plain");
 				response.setValue("Server", main.SERVER_NAME);
 				response.setDate("Date", time);
 				response.setDate("Last-Modified", time);
 				response.setCode(500);
 
+				PrintStream body = response.getPrintStream();
+				e.printStackTrace(body);
+				body.close();
 				
 			} catch (IOException ioException) {
 				System.out.println("Connection is closed by peer");
