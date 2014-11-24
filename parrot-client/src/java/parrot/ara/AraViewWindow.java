@@ -6,11 +6,13 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.wb.swt.SWTResourceManager;
@@ -22,6 +24,8 @@ import parrot.client.data.objects.Message;
 import zetes.wings.base.ViewWindowBase;
 
 import org.eclipse.swt.widgets.Label;
+import org.mihalis.opal.flatButton.FlatButton;
+import org.mihalis.opal.obutton.OButton;
 
 public class AraViewWindow extends ViewWindowBase<AraDocument>
 {
@@ -80,6 +84,8 @@ public class AraViewWindow extends ViewWindowBase<AraDocument>
 	@Override
 	protected Shell constructShell()
 	{
+		Color backColor = Display.getCurrent().getSystemColor(SWT.COLOR_LIST_BACKGROUND);
+		
 		Shell shell = new Shell(SWT.TITLE | SWT.CLOSE | SWT.MIN | SWT.MAX | SWT.RESIZE | SWT.BORDER | SWT.DOUBLE_BUFFERED);
 		shell.setSize(401, 361);
 
@@ -91,19 +97,25 @@ public class AraViewWindow extends ViewWindowBase<AraDocument>
 				SWTResourceManager.getImage(AraViewWindow.class, "/flyer/flyer16.png")		// Necessary in Windows (for taskbar)
 		});
 		shell.setLayout(new GridLayout(2, false));
+		shell.setBackground(backColor);
 		
-		styledText = new StyledText(shell, SWT.BORDER);
+		styledText = new StyledText(shell, SWT.NONE);
 		styledText.setEditable(false);
 		styledText.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1));
+		styledText.setBackground(backColor);
 		
-		text = new Text(shell, SWT.BORDER);
-		GridData gd_text = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 2);
+		Label label = new Label(shell, SWT.SEPARATOR | SWT.HORIZONTAL);
+		label.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 2, 1));
+		
+		text = new Text(shell, SWT.NONE);
+		GridData gd_text = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 3);
 		gd_text.heightHint = 67;
 		text.setLayoutData(gd_text);
+		text.setBackground(backColor);
 		
-		Button sendButton = new Button(shell, SWT.NONE);
+		OButton sendButton = new OButton(shell, SWT.PUSH);
 		sendButton.addSelectionListener(sendSelectionAdapter);
-		sendButton.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
+		sendButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 2));
 		sendButton.setText("Send");
 		
 		Button btnNewButton = new Button(shell, SWT.NONE);
