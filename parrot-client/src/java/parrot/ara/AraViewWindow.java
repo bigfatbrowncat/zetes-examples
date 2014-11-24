@@ -26,13 +26,12 @@ import zetes.wings.base.ViewWindowBase;
 import org.eclipse.swt.widgets.Label;
 import org.mihalis.opal.flatButton.FlatButton;
 import org.mihalis.opal.obutton.OButton;
+import org.eclipse.swt.widgets.Composite;
 
 public class AraViewWindow extends ViewWindowBase<AraDocument>
 {
 	private APIClient apiClient;
 	private Session session;
-	
-	private Text text;
 	private StyledText styledText;
 	
 	private SelectionAdapter sendSelectionAdapter = new SelectionAdapter() {
@@ -61,6 +60,7 @@ public class AraViewWindow extends ViewWindowBase<AraDocument>
 			}
 		}
 	};
+	private Text text;
 
 	
 	private void openSession() {
@@ -87,7 +87,7 @@ public class AraViewWindow extends ViewWindowBase<AraDocument>
 		Color backColor = Display.getCurrent().getSystemColor(SWT.COLOR_LIST_BACKGROUND);
 		
 		Shell shell = new Shell(SWT.TITLE | SWT.CLOSE | SWT.MIN | SWT.MAX | SWT.RESIZE | SWT.BORDER | SWT.DOUBLE_BUFFERED);
-		shell.setSize(401, 361);
+		shell.setSize(401, 404);
 
 		shell.setMinimumSize(new Point(250, 200));
 
@@ -96,29 +96,59 @@ public class AraViewWindow extends ViewWindowBase<AraDocument>
 				SWTResourceManager.getImage(AraViewWindow.class, "/flyer/flyer64.png"),		// Necessary in Windows (for Alt-Tab)
 				SWTResourceManager.getImage(AraViewWindow.class, "/flyer/flyer16.png")		// Necessary in Windows (for taskbar)
 		});
-		shell.setLayout(new GridLayout(2, false));
 		shell.setBackground(backColor);
+		GridLayout gl_shell = new GridLayout(1, false);
+		gl_shell.marginWidth = 0;
+		gl_shell.marginHeight = 0;
+		shell.setLayout(gl_shell);
 		
-		styledText = new StyledText(shell, SWT.NONE);
+		styledText = new StyledText(shell, SWT.READ_ONLY | SWT.WRAP | SWT.V_SCROLL);
+		GridData gd_styledText = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
+		gd_styledText.heightHint = 280;
+		styledText.setLayoutData(gd_styledText);
 		styledText.setEditable(false);
-		styledText.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1));
 		styledText.setBackground(backColor);
 		
-		Label label = new Label(shell, SWT.SEPARATOR | SWT.HORIZONTAL);
-		label.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 2, 1));
+		Label label = new Label(shell, SWT.HORIZONTAL | SWT.SHADOW_NONE);
+		label.setBackground(SWTResourceManager.getColor(0, 102, 204));
+		GridData gd_label = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
+		gd_label.heightHint = 1;
+		label.setLayoutData(gd_label);
 		
-		text = new Text(shell, SWT.NONE);
-		GridData gd_text = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 3);
-		gd_text.heightHint = 67;
-		text.setLayoutData(gd_text);
-		text.setBackground(backColor);
+		Composite composite = new Composite(shell, SWT.NO_BACKGROUND);
+		composite.setLayout(new GridLayout(2, false));
+		composite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 		
-		OButton sendButton = new OButton(shell, SWT.PUSH);
-		sendButton.addSelectionListener(sendSelectionAdapter);
-		sendButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 2));
-		sendButton.setText("Send");
+		text = new Text(composite, SWT.WRAP | SWT.MULTI | SWT.V_SCROLL);
+		text.setBackground(SWTResourceManager.getColor(255, 255, 255));
+		text.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 2));
 		
-		Button btnNewButton = new Button(shell, SWT.NONE);
+		OButton button = new OButton(composite, SWT.NONE);
+		GridData gd_button = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+		gd_button.widthHint = 109;
+		button.setLayoutData(gd_button);
+		button.setText(" ");
+		GridLayout gl_button = new GridLayout(2, false);
+		gl_button.marginHeight = 1;
+		gl_button.horizontalSpacing = 0;
+		button.setLayout(gl_button);
+		
+		Label label_1 = new Label(button, SWT.NONE);
+		label_1.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, true, false, 1, 1));
+		label_1.setText("Send");
+		label_1.setForeground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
+		label_1.setFont(SWTResourceManager.getFont("Lucida Grande", 11, SWT.BOLD));
+		label_1.setEnabled(false);
+		
+		Label label_2 = new Label(button, SWT.NONE);
+		label_2.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true, 1, 1));
+		label_2.setText("(Ctrl+Enter)");
+		label_2.setForeground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
+		label_2.setFont(SWTResourceManager.getFont("Lucida Grande", 9, SWT.NORMAL));
+		label_2.setEnabled(false);
+		
+		Button btnNewButton = new Button(composite, SWT.NONE);
+		btnNewButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 		btnNewButton.addSelectionListener(updateSelectionAdapter);
 		btnNewButton.setText("Update");
 	
