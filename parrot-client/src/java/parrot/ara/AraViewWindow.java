@@ -1,11 +1,7 @@
 package parrot.ara;
 
-import java.util.Date;
-
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.PaintObjectEvent;
-import org.eclipse.swt.custom.PaintObjectListener;
-import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
@@ -15,13 +11,17 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.RowData;
+import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.wb.swt.SWTResourceManager;
+import org.mihalis.opal.obutton.OButton;
 
 import parrot.client.APIClient;
 import parrot.client.ClientConnectionProblemException;
@@ -29,16 +29,13 @@ import parrot.client.Session;
 import parrot.client.data.objects.Message;
 import zetes.wings.base.ViewWindowBase;
 
-import org.eclipse.swt.widgets.Label;
-import org.mihalis.opal.flatButton.FlatButton;
-import org.mihalis.opal.obutton.OButton;
-import org.eclipse.swt.widgets.Composite;
-
 public class AraViewWindow extends ViewWindowBase<AraDocument> {
 	private APIClient apiClient;
 	private Session session;
-	private StyledText styledText;
 
+	private Text text;
+	private ScrolledComposite messagesScrolledComposite;
+	
 	private SelectionAdapter sendSelectionAdapter = new SelectionAdapter() {
 		@Override
 		public void widgetSelected(SelectionEvent arg0) {
@@ -57,17 +54,16 @@ public class AraViewWindow extends ViewWindowBase<AraDocument> {
 			try {
 				Message[] newMessages = session.getLatestMessages();
 				for (int i = 0; i < newMessages.length; i++) {
-					styledText.append("["
-							+ new Date(newMessages[i].getTimeMillis()) + "] "
-							+ newMessages[i].getText() + "\n");
+					MessageView newMessageView = new MessageView(messagesListComposite, SWT.NONE);
+					newMessageView.setLayoutData(new RowData(SWT.DEFAULT, SWT.DEFAULT));
+					newMessageView.setMessage(newMessages[i]);
 				}
-				text.setText("");
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
 	};
-	private Text text;
+	private Composite messagesListComposite;
 
 	private void openSession() {
 		try {
@@ -95,7 +91,7 @@ public class AraViewWindow extends ViewWindowBase<AraDocument> {
 
 		final Shell shell = new Shell(SWT.TITLE | SWT.CLOSE | SWT.MIN | SWT.MAX
 				| SWT.RESIZE | SWT.BORDER | SWT.DOUBLE_BUFFERED);
-		shell.setSize(401, 404);
+		shell.setSize(401, 358);
 
 		shell.setMinimumSize(new Point(250, 200));
 
@@ -114,50 +110,27 @@ public class AraViewWindow extends ViewWindowBase<AraDocument> {
 		gl_shell.verticalSpacing = 0;
 		gl_shell.marginWidth = 0;
 		gl_shell.marginHeight = 0;
+		gl_shell.horizontalSpacing = 0;
 		shell.setLayout(gl_shell);
+		
+		messagesScrolledComposite = new ScrolledComposite(shell, SWT.V_SCROLL);
+		messagesScrolledComposite.setExpandHorizontal(true);
+		GridData gd_messagesScrolledComposite = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
+		gd_messagesScrolledComposite.heightHint = 205;
+		messagesScrolledComposite.setLayoutData(gd_messagesScrolledComposite);
+		messagesScrolledComposite.setExpandVertical(true);
+		
+		messagesListComposite = new Composite(messagesScrolledComposite, SWT.NONE);
+		RowLayout rl_messagesListComposite = new RowLayout(SWT.VERTICAL);
+		rl_messagesListComposite.wrap = false;
+		rl_messagesListComposite.pack = false;
+		rl_messagesListComposite.center = true;
+		messagesListComposite.setLayout(rl_messagesListComposite);
+		messagesScrolledComposite.setContent(messagesListComposite);
+		messagesScrolledComposite.setMinSize(messagesListComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 
-		styledText = new StyledText(shell, SWT.READ_ONLY | SWT.WRAP
-				| SWT.V_SCROLL | SWT.NO_BACKGROUND);
-		GridData gd_styledText = new GridData(SWT.FILL, SWT.FILL, true, true,
-				1, 1);
-		gd_styledText.heightHint = 280;
-		styledText.setLayoutData(gd_styledText);
-		styledText.setEditable(false);
-		styledText.setBackground(backColor);
-		styledText.setBottomMargin(5);
-		styledText.setRightMargin(5);
-		styledText.setLeftMargin(5);
-		styledText.setTopMargin(5);
-
-		styledText.setForeground(display.getSystemColor(SWT.COLOR_BLUE));
-		styledText.addListener(SWT.Resize, new Listener() {
-			private Image oldImage = null;
-			public void handleEvent(Event event) {
-				Rectangle rect = styledText.getClientArea();
-				Image newImage = new Image(display, 1, Math.max(1, rect.height));
-				GC gc = new GC(newImage);
-				gc.setForeground(display.getSystemColor(SWT.COLOR_WHITE));
-				gc.setBackground(display.getSystemColor(SWT.COLOR_YELLOW));
-				gc.fillGradientRectangle(rect.x, rect.y, 1, rect.height, true);
-				gc.dispose();
-				styledText.setBackgroundImage(newImage);
-				if (oldImage != null)
-					oldImage.dispose();
-				oldImage = newImage;
-			}
-		});
-		styledText.addListener(SWT.Paint, new Listener() {
-		      public void handleEvent(Event event) {
-					Rectangle rect = styledText.getClientArea();
-					GC gc = event.gc;
-					gc.setForeground(display.getSystemColor(SWT.COLOR_RED));
-					gc.setBackground(display.getSystemColor(SWT.COLOR_YELLOW));
-					gc.fillGradientRectangle(rect.x, rect.y, 1, rect.height, true);
-					gc.dispose();
-		      }
-		});
-
-		final Composite composite = new Composite(shell, SWT.NO_BACKGROUND);
+		final Composite composite = new Composite(shell, SWT.NONE);
+		composite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		GridLayout gl_composite = new GridLayout(2, false);
 		gl_composite.marginBottom = 5;
 		gl_composite.marginLeft = 5;
@@ -166,8 +139,6 @@ public class AraViewWindow extends ViewWindowBase<AraDocument> {
 		gl_composite.marginRight = 5;
 		gl_composite.marginHeight = 0;
 		composite.setLayout(gl_composite);
-		composite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false,
-				false, 1, 1));
 		composite.addListener(SWT.Resize, new Listener() {
 			private Image oldImage = null;
 			public void handleEvent(Event event) {
@@ -204,35 +175,64 @@ public class AraViewWindow extends ViewWindowBase<AraDocument> {
 			}
 		});
 		text.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 2));
+		
+		Listener scrollBarListener = new Listener () {
+			private boolean recursiveLock = false;
+			private float maxHeightPart = 0.4f;
+			
+		    @Override
+		    public void handleEvent(Event event) {
+		    	if (!recursiveLock) {
+		    		int maxHeight = (int)(shell.getClientArea().height * maxHeightPart);
+			        Text t = (Text)event.widget;
+			        // use r1.x as wHint instead of SWT.DEFAULT
+			        char[] chars = t.getTextChars();
+			        int caretPos = t.getCaretPosition(); 
+			        boolean spaceWorkaround = false;
+			        if (chars.length == 0 || chars[chars.length - 1] == 10 /* return */) {
+			        	recursiveLock = true;
+			        	t.append(" ");
+			        	recursiveLock = false;
+			        	spaceWorkaround = true;
+			        }
+			        Rectangle r1 = t.getClientArea();
+			        Rectangle r2 = t.computeTrim(r1.x, r1.y, r1.width, r1.height);
+			        Point p = t.computeSize(r1.x, SWT.DEFAULT, false);
+			        getShell().setText("x: " + r2.x + ", y: " + r2.y);
+			        if (p.y > maxHeight) {
+			        	p = t.computeSize(r1.x, maxHeight, true);
+			        	t.getVerticalBar().setVisible(r2.height <= p.y);
+			        } else {
+			        	p = t.computeSize(r1.x, SWT.DEFAULT, true);
+			        	t.getShell().layout(true);
+			        	t.showSelection();
+			        	t.getVerticalBar().setVisible(false);
+			        }
+			        
+			        if (spaceWorkaround) {
+			        	recursiveLock = true;
+			        	t.setTextChars(chars);
+			        	t.setSelection(caretPos);
+			        	recursiveLock = false;
+			        }
+			        
+
+		    	}
+		    }
+		};
+		text.addListener(SWT.Resize, scrollBarListener);
+		text.addListener(SWT.Modify, scrollBarListener);
 
 		OButton sendButton = new OButton(composite, SWT.NONE);
 		GridData gd_button = new GridData(SWT.CENTER, SWT.CENTER, false, false,
 				1, 1);
 		gd_button.widthHint = 109;
 		sendButton.setLayoutData(gd_button);
-		sendButton.setText(" ");
-		GridLayout gl_button = new GridLayout(2, false);
+		sendButton.setText("Send");
+		GridLayout gl_button = new GridLayout(1, false);
 		gl_button.marginHeight = 1;
 		gl_button.horizontalSpacing = 0;
 		sendButton.setLayout(gl_button);
-
-		Label label_1 = new Label(sendButton, SWT.NONE);
-		label_1.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, true, false,
-				1, 1));
-		label_1.setText("Send");
-		label_1.setForeground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
-		label_1.setFont(SWTResourceManager.getFont("Lucida Grande", 11,
-				SWT.BOLD));
-		label_1.setEnabled(false);
-
-		Label label_2 = new Label(sendButton, SWT.NONE);
-		label_2.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true, 1,
-				1));
-		label_2.setText("(Ctrl+Enter)");
-		label_2.setForeground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
-		label_2.setFont(SWTResourceManager.getFont("Lucida Grande", 9,
-				SWT.NORMAL));
-		label_2.setEnabled(false);
 		sendButton.addSelectionListener(sendSelectionAdapter);
 
 		Button updateButton = new Button(composite, SWT.NONE);
