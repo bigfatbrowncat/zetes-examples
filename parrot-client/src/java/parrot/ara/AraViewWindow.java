@@ -33,7 +33,7 @@ public class AraViewWindow extends ViewWindowBase<AraDocument> {
 	private APIClient apiClient;
 	private Session session;
 
-	private Text text;
+	private InputComposite text;
 	private ScrolledComposite messagesScrolledComposite;
 	
 	private SelectionAdapter sendSelectionAdapter = new SelectionAdapter() {
@@ -139,7 +139,9 @@ public class AraViewWindow extends ViewWindowBase<AraDocument> {
 		gl_composite.marginRight = 5;
 		gl_composite.marginHeight = 0;
 		composite.setLayout(gl_composite);
-		composite.addListener(SWT.Resize, new Listener() {
+		
+		/*composite.addListener(SWT.Resize, new Listener() {
+			
 			private Image oldImage = null;
 			public void handleEvent(Event event) {
 				Rectangle rect = composite.getClientArea();
@@ -154,10 +156,11 @@ public class AraViewWindow extends ViewWindowBase<AraDocument> {
 					oldImage.dispose();
 				oldImage = newImage;
 			}
-		});
+		});*/
+		
+		text = new InputComposite(composite, SWT.BORDER | SWT.DOUBLE_BUFFERED);
 
-		text = new Text(composite, SWT.BORDER | SWT.WRAP | SWT.V_SCROLL | SWT.MULTI);
-		text.setBackground(SWTResourceManager.getColor(255, 255, 255));
+		/*text.setBackground(SWTResourceManager.getColor(255, 255, 255));
 		text.addListener(SWT.Resize, new Listener() {
 			private Image oldImage = null;
 			public void handleEvent(Event event) {
@@ -173,59 +176,11 @@ public class AraViewWindow extends ViewWindowBase<AraDocument> {
 					oldImage.dispose();
 				oldImage = newImage;
 			}
-		});
+		});*/
 		text.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 2));
 		
-		Listener scrollBarListener = new Listener () {
-			private boolean recursiveLock = false;
-			private float maxHeightPart = 0.4f;
-			
-		    @Override
-		    public void handleEvent(Event event) {
-		    	if (!recursiveLock) {
-		    		int maxHeight = (int)(shell.getClientArea().height * maxHeightPart);
-			        Text t = (Text)event.widget;
-			        // use r1.x as wHint instead of SWT.DEFAULT
-			        char[] chars = t.getTextChars();
-			        int caretPos = t.getCaretPosition(); 
-			        boolean spaceWorkaround = false;
-			        if (chars.length == 0 || chars[chars.length - 1] == 10 /* return */) {
-			        	recursiveLock = true;
-			        	t.append(" ");
-			        	recursiveLock = false;
-			        	spaceWorkaround = true;
-			        }
-			        Rectangle r1 = t.getClientArea();
-			        Rectangle r2 = t.computeTrim(r1.x, r1.y, r1.width, r1.height);
-			        Point p = t.computeSize(r1.x, SWT.DEFAULT, false);
-			        getShell().setText("x: " + r2.x + ", y: " + r2.y);
-			        if (p.y > maxHeight) {
-			        	p = t.computeSize(r1.x, maxHeight, true);
-			        	t.getVerticalBar().setVisible(r2.height <= p.y);
-			        } else {
-			        	p = t.computeSize(r1.x, SWT.DEFAULT, true);
-			        	t.getShell().layout(true);
-			        	t.showSelection();
-			        	t.getVerticalBar().setVisible(false);
-			        }
-			        
-			        if (spaceWorkaround) {
-			        	recursiveLock = true;
-			        	t.setTextChars(chars);
-			        	t.setSelection(caretPos);
-			        	recursiveLock = false;
-			        }
-			        
-
-		    	}
-		    }
-		};
-		text.addListener(SWT.Resize, scrollBarListener);
-		text.addListener(SWT.Modify, scrollBarListener);
-
 		OButton sendButton = new OButton(composite, SWT.NONE);
-		GridData gd_button = new GridData(SWT.CENTER, SWT.CENTER, false, false,
-				1, 1);
+		GridData gd_button = new GridData(SWT.CENTER, SWT.CENTER, false, false,	1, 1);
 		gd_button.widthHint = 109;
 		sendButton.setLayoutData(gd_button);
 		sendButton.setText("Send");
@@ -241,6 +196,14 @@ public class AraViewWindow extends ViewWindowBase<AraDocument> {
 		updateButton.addSelectionListener(updateSelectionAdapter);
 		updateButton.setText("Update");
 
+		shell.addListener(SWT.Resize, new Listener() {
+			
+			@Override
+			public void handleEvent(Event arg0) {
+				shell.layout();
+			}
+		});
+		
 		return shell;
 	}
 
