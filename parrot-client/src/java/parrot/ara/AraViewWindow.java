@@ -140,15 +140,28 @@ public class AraViewWindow extends ViewWindowBase<AraDocument> {
 		gl_composite.marginHeight = 0;
 		composite.setLayout(gl_composite);
 		
-		/*composite.addListener(SWT.Resize, new Listener() {
+		Color base = display.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
+		final Color light = new Color(display, 
+				(int)Math.min(base.getRed() * 1.1, 255),
+				(int)Math.min(base.getGreen() * 1.1, 255),
+				(int)Math.min(base.getBlue() * 1.1, 255));
+				
+		final Color dark = new Color(display, 
+				(int)(base.getRed() * 0.9),
+				(int)(base.getGreen() * 0.9),
+				(int)(base.getBlue() * 0.9));
+
+		
+		composite.addListener(SWT.Resize, new Listener() {
 			
 			private Image oldImage = null;
 			public void handleEvent(Event event) {
 				Rectangle rect = composite.getClientArea();
 				Image newImage = new Image(display, 1, Math.max(1, rect.height));
 				GC gc = new GC(newImage);
-				gc.setForeground(display.getSystemColor(SWT.COLOR_WHITE));
-				gc.setBackground(display.getSystemColor(SWT.COLOR_YELLOW));
+				
+				gc.setForeground(light);
+				gc.setBackground(dark);
 				gc.fillGradientRectangle(rect.x, rect.y, 1, rect.height, true);
 				gc.dispose();
 				composite.setBackgroundImage(newImage);
@@ -156,7 +169,7 @@ public class AraViewWindow extends ViewWindowBase<AraDocument> {
 					oldImage.dispose();
 				oldImage = newImage;
 			}
-		});*/
+		});
 		
 		text = new InputComposite(composite, SWT.BORDER | SWT.DOUBLE_BUFFERED);
 
@@ -204,6 +217,15 @@ public class AraViewWindow extends ViewWindowBase<AraDocument> {
 			}
 		});
 		
+		shell.addListener(SWT.Dispose, new Listener() {
+			
+			@Override
+			public void handleEvent(Event arg0) {
+				light.dispose();
+				dark.dispose();
+			}
+		});
+		
 		return shell;
 	}
 
@@ -222,4 +244,5 @@ public class AraViewWindow extends ViewWindowBase<AraDocument> {
 	public boolean supportsMaximizing() {
 		return true;
 	}
+	
 }
