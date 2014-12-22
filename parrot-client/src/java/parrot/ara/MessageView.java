@@ -3,6 +3,7 @@ package parrot.ara;
 import java.util.Date;
 
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.SWT;
@@ -23,24 +24,25 @@ public class MessageView extends Composite {
 	 * @param parent
 	 * @param style
 	 */
-	public MessageView(Composite parent, int style) {
-		super(parent, SWT.BORDER);
+	public MessageView(Composite parent, Listener paintOverListener, int style) {
+		super(parent, style);
 		setLayout(new GridLayout(2, false));
 		
-		userNameLabel = new Label(this, SWT.NONE);
+		userNameLabel = new Label(this, SWT.NONE | SWT.NO_BACKGROUND);
 		userNameLabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		userNameLabel.setFont(SWTResourceManager.getFont("Segoe UI", 9, SWT.BOLD));
 		userNameLabel.setText("User Name");
 		
-		dateTimeLabel = new Label(this, SWT.NONE);
+		dateTimeLabel = new Label(this, SWT.NONE | SWT.NO_BACKGROUND);
 		dateTimeLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		dateTimeLabel.setAlignment(SWT.RIGHT);
 		dateTimeLabel.setText("00.00.00 12:34");
 		
 		textLabel = new CLabel(this, SWT.NONE);
+		textLabel.addListener(SWT.Paint, paintOverListener);
 		textLabel.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, true, 1, 1));
 		textLabel.setText("New Label");
-		new Label(this, SWT.NONE);
+		//new Label(this, SWT.NONE);
 	}
 
 	@Override

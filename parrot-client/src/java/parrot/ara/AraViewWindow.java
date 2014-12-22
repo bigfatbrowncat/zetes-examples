@@ -35,6 +35,68 @@ public class AraViewWindow extends ViewWindowBase<AraDocument> {
 
 	private InputComposite text;
 	private ScrolledComposite messagesScrolledComposite;
+	private Composite messagesListComposite;
+
+	private Image messagesListCompositeImage = null;
+	
+	private Color light, dark;
+
+	private Listener shadowPaintListener = new Listener() {
+		
+		@Override
+		public void handleEvent(Event event) {
+			GC gc = event.gc;
+
+			Rectangle msgListRect = messagesListComposite.getClientArea();
+			Rectangle thisRect = ((Composite)event.widget).getBounds();
+			
+			Rectangle rect = new Rectangle(
+					msgListRect.x - thisRect.x, 
+					msgListRect.y - thisRect.y, 
+					msgListRect.width, 
+					msgListRect.height);
+			
+//			Rectangle rect = ((Composite)event.widget).getClientArea();
+
+			gc.setAdvanced(true);
+			
+			/*gc.setForeground(dark);
+			gc.setBackground(light);
+			gc.fillGradientRectangle(rect.x, rect.y, 1, rect.height, true);*/
+
+			// Shadow
+			int shadowHeight = 20;
+			for (int y = 0; y < shadowHeight; y++) {
+				gc.setAlpha((int)(128 * Math.pow((double)y / shadowHeight, 5)));
+				gc.setBackground(getShell().getDisplay().getSystemColor(SWT.COLOR_BLACK));
+				gc.fillRectangle(rect.x, rect.y + rect.height - shadowHeight + y, rect.width, 1);
+			}
+			
+			gc.dispose();
+
+		}
+	};
+	
+	private Listener lightDarkGradientListener = new Listener() {
+		
+		//private Image oldImage = null;
+		public void handleEvent(Event event) {
+			Composite composite = ((Composite)event.widget);
+			
+			Rectangle rect = composite.getClientArea();
+			//Image newImage = new Image(getShell().getDisplay(), 1, Math.max(1, rect.height));
+			GC gc = event.gc; //new GC(newImage);
+			
+			gc.setForeground(light);
+			gc.setBackground(dark);
+			gc.fillGradientRectangle(rect.x, rect.y, rect.width, rect.height, true);
+			//gc.dispose();
+			/*composite.setBackgroundImage(newImage);
+			if (oldImage != null)
+				oldImage.dispose();
+			oldImage = newImage;*/
+		}
+	};
 	
 	private SelectionAdapter sendSelectionAdapter = new SelectionAdapter() {
 		@Override
@@ -54,16 +116,17 @@ public class AraViewWindow extends ViewWindowBase<AraDocument> {
 			try {
 				Message[] newMessages = session.getLatestMessages();
 				for (int i = 0; i < newMessages.length; i++) {
-					MessageView newMessageView = new MessageView(messagesListComposite, SWT.NONE);
-					newMessageView.setLayoutData(new RowData(SWT.DEFAULT, SWT.DEFAULT));
+					MessageView newMessageView = new MessageView(messagesListComposite, shadowPaintListener, SWT.NONE);
+					newMessageView.setLayoutData(new RowData(messagesScrolledComposite.getSize().x, SWT.DEFAULT));
 					newMessageView.setMessage(newMessages[i]);
+					newMessageView.addListener(SWT.Paint, lightDarkGradientListener);
+					newMessageView.addListener(SWT.Paint, shadowPaintListener);
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
 	};
-	private Composite messagesListComposite;
 
 	private void openSession() {
 		try {
@@ -141,35 +204,55 @@ public class AraViewWindow extends ViewWindowBase<AraDocument> {
 		composite.setLayout(gl_composite);
 		
 		Color base = display.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
-		final Color light = new Color(display, 
+		
+		light = new Color(display, 
 				(int)Math.min(base.getRed() * 1.1, 255),
 				(int)Math.min(base.getGreen() * 1.1, 255),
 				(int)Math.min(base.getBlue() * 1.1, 255));
 				
-		final Color dark = new Color(display, 
+		dark = new Color(display, 
 				(int)(base.getRed() * 0.9),
 				(int)(base.getGreen() * 0.9),
 				(int)(base.getBlue() * 0.9));
 
 		
-		composite.addListener(SWT.Resize, new Listener() {
+		composite.addListener(SWT.Paint, lightDarkGradientListener);
+		
+		
+		/*
+		messagesListComposite.addListener(SWT.Resize, new Listener() {
 			
-			private Image oldImage = null;
 			public void handleEvent(Event event) {
-				Rectangle rect = composite.getClientArea();
+				Rectangle rect = messagesListComposite.getClientArea();
 				Image newImage = new Image(display, 1, Math.max(1, rect.height));
 				GC gc = new GC(newImage);
+
+				gc.setAdvanced(true);
 				
-				gc.setForeground(light);
-				gc.setBackground(dark);
+				gc.setForeground(dark);
+				gc.setBackground(light);
 				gc.fillGradientRectangle(rect.x, rect.y, 1, rect.height, true);
+
+				// Shadow
+				gc.setForeground(dark);
+				
+				int shadowHeight = 20;
+				for (int y = 0; y < shadowHeight; y++) {
+					gc.setAlpha((int)(128 * Math.pow((double)y / shadowHeight, 5)));
+					gc.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
+					gc.fillRectangle(rect.x, rect.y + rect.height - shadowHeight + y, rect.width, 1);
+				}
+				
 				gc.dispose();
-				composite.setBackgroundImage(newImage);
-				if (oldImage != null)
-					oldImage.dispose();
-				oldImage = newImage;
+				//messagesListComposite.setBackgroundImage(newImage);
+				if (messagesListCompositeImage != null)
+					messagesListCompositeImage.dispose();
+				messagesListCompositeImage = newImage;
 			}
-		});
+
+		});*/
+		
+		messagesListComposite.addListener(SWT.Paint, shadowPaintListener);
 		
 		text = new InputComposite(composite, SWT.BORDER | SWT.DOUBLE_BUFFERED);
 
