@@ -1,74 +1,24 @@
 package parrot.ara;
 
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.layout.FillLayout;
 
-public class InputComposite extends Composite {
+public class InputTextComposite extends Composite {
 
 	private boolean recursiveLock = false;
 
 	private float maxHeightPart = 0.4f;
 	private Text textInputWidget;
 
-	public InputComposite(Composite arg0, int arg1) {
+	public InputTextComposite(Composite arg0, int arg1) {
 		super(arg0, arg1);
 		setLayout(new FillLayout(SWT.HORIZONTAL));
 		textInputWidget = new Text(this, SWT.V_SCROLL | SWT.WRAP | SWT.MULTI | SWT.DOUBLE_BUFFERED);
-		
-		/*Listener scrollBarListener = new Listener () {
-			private boolean recursiveLock = false;
-			private float maxHeightPart = 0.4f;
-			
-		    @Override
-		    public void handleEvent(Event event) {
-		    	if (!recursiveLock) {
-		    		int maxHeight = (int)(getShell().getClientArea().height * maxHeightPart);
-			        Text t = textInputWidget;
-			        // use r1.x as wHint instead of SWT.DEFAULT
-			        char[] chars = t.getTextChars();
-			        int caretPos = t.getCaretPosition(); 
-			        boolean spaceWorkaround = false;
-			        if (chars.length == 0 || chars[chars.length - 1] == 10) {
-			        	recursiveLock = true;
-			        	t.append(" ");
-			        	recursiveLock = false;
-			        	spaceWorkaround = true;
-			        }
-			        
-			        Rectangle clientArea = t.getClientArea();
-			        //Rectangle trim = t.t(clientArea.x, clientArea.y, clientArea.width, clientArea.height);
-			        Point size = t.computeSize(clientArea.x, SWT.DEFAULT, false);
-			        if (size.y > maxHeight) {
-			        	size = computeSize(clientArea.x, maxHeight, true);
-			        	t.getVerticalBar().setVisible(true);
-			        } else {
-			        	size = computeSize(clientArea.x, SWT.DEFAULT, true);
-			        	getShell().layout(true);
-			        	t.showSelection();
-			        	t.getVerticalBar().setVisible(false);
-			        }
-			        
-			        if (spaceWorkaround) {
-			        	recursiveLock = true;
-			        	t.setTextChars(chars);
-			        	t.setSelection(caretPos);
-			        	recursiveLock = false;
-			        }
-			        
-
-		    	}
-		    }
-		};*/
-		
-		//addListener(SWT.Resize, scrollBarListener);
-		//textInputWidget.addListener(SWT.Modify, scrollBarListener);
-		
 		
 		textInputWidget.addListener(SWT.Modify, new Listener() {
 			

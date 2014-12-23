@@ -18,11 +18,12 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Rectangle;
 
 import parrot.client.data.objects.Message;
+import org.eclipse.swt.custom.StyledText;
 
 public class MessageView extends Composite {
 	private Label userNameLabel;
 	private Label dateTimeLabel;
-	private CLabel textLabel;
+	private StyledText styledText;
 
 	/**
 	 * Create the composite.
@@ -31,6 +32,7 @@ public class MessageView extends Composite {
 	 */
 	public MessageView(Composite parent, List<PaintOverListener> paintOverListeners, int style) {
 		super(parent, style);
+		setBackground(SWTResourceManager.getColor(SWT.COLOR_LIST_BACKGROUND));
 		setLayout(new GridLayout(2, false));
 		
 		Color base = getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
@@ -50,6 +52,7 @@ public class MessageView extends Composite {
 				public void handleEvent(Event event, Rectangle thisRect) {
 					GC gc = event.gc;
 					gc.setAdvanced(true);
+
 					gc.setAlpha(32);
 
 					gc.setForeground(getDisplay().getSystemColor(SWT.COLOR_WHITE));
@@ -60,38 +63,42 @@ public class MessageView extends Composite {
 		};
 		paintOverListeners.add(0, lightDarkGradientListener);
 		
-		userNameLabel = new Label(this, SWT.NONE | SWT.NO_BACKGROUND);
+		userNameLabel = new Label(this, SWT.NONE);
+		userNameLabel.setBackground(SWTResourceManager.getColor(SWT.COLOR_LIST_BACKGROUND));
 		userNameLabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		userNameLabel.setFont(SWTResourceManager.getFont("Segoe UI", 9, SWT.BOLD));
 		userNameLabel.setText("User Name");
+		for (PaintOverListener pol : paintOverListeners) {
+			userNameLabel.addListener(SWT.Paint, pol);
+		}
 		
-		dateTimeLabel = new Label(this, SWT.NONE | SWT.NO_BACKGROUND);
+		dateTimeLabel = new Label(this, SWT.NONE);
+		dateTimeLabel.setBackground(SWTResourceManager.getColor(SWT.COLOR_LIST_BACKGROUND));
 		dateTimeLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		dateTimeLabel.setAlignment(SWT.RIGHT);
 		dateTimeLabel.setText("00.00.00 12:34");
-		
-		textLabel = new CLabel(this, SWT.NONE);
 		for (PaintOverListener pol : paintOverListeners) {
-			textLabel.addListener(SWT.Paint, pol);
+			dateTimeLabel.addListener(SWT.Paint, pol);
 		}
 		
-		textLabel.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, true, 1, 1));
-		textLabel.setText("New Label");
+		styledText = new StyledText(this, SWT.NONE | SWT.NO_BACKGROUND);
+		styledText.setBackground(SWTResourceManager.getColor(SWT.COLOR_LIST_BACKGROUND));
+		styledText.setEditable(false);
+		styledText.setWordWrap(true);
+		styledText.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1));
+		for (PaintOverListener pol : paintOverListeners) {
+			styledText.addListener(SWT.Paint, pol);
+		}
 		
 		for (PaintOverListener pol : paintOverListeners) {
 			this.addListener(SWT.Paint, pol);
 		}
 	}
-
-	@Override
-	protected void checkSubclass() {
-		// Disable the check that prevents subclassing of SWT components
-	}
 	
 	void setMessage(Message message) {
 		userNameLabel.setText(((Long)(message.getUserId())).toString());
 		dateTimeLabel.setText(new Date(message.getTimeMillis()).toString());
-		textLabel.setText(message.getText());
+		styledText.setText(message.getText());
 	}
 
 }

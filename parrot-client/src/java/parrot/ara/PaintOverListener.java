@@ -1,8 +1,8 @@
 package parrot.ara;
 
-import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
@@ -18,8 +18,8 @@ public abstract class PaintOverListener implements Listener {
 	public void handleEvent(Event event) {
 		Rectangle msgListRect = root.getBounds();
 		
-		Composite parent = ((Composite)event.widget);
-		Rectangle thisRect = ((Composite)event.widget).getBounds();
+		Control parent = ((Control)event.widget);
+		Rectangle thisRect = ((Control)event.widget).getBounds();
 		while (parent != root) {
 			parent = parent.getParent();
 			thisRect.x += parent.getBounds().x;
