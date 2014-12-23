@@ -53,17 +53,16 @@ public class MessageView extends Composite {
 					GC gc = event.gc;
 					gc.setAdvanced(true);
 
-					gc.setAlpha(32);
+					gc.setAlpha(24);
 
-					gc.setForeground(getDisplay().getSystemColor(SWT.COLOR_WHITE));
 					gc.setBackground(getDisplay().getSystemColor(SWT.COLOR_BLACK));
-					gc.fillGradientRectangle(thisRect.x, thisRect.y, thisRect.width, thisRect.height, true);
+					gc.fillRectangle(thisRect.x, thisRect.y, thisRect.width, thisRect.height);
 				}
 
 		};
 		paintOverListeners.add(0, lightDarkGradientListener);
 		
-		userNameLabel = new Label(this, SWT.NONE);
+		userNameLabel = new Label(this, SWT.DOUBLE_BUFFERED);
 		userNameLabel.setBackground(SWTResourceManager.getColor(SWT.COLOR_LIST_BACKGROUND));
 		userNameLabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		userNameLabel.setFont(SWTResourceManager.getFont("Segoe UI", 9, SWT.BOLD));
@@ -72,7 +71,7 @@ public class MessageView extends Composite {
 			userNameLabel.addListener(SWT.Paint, pol);
 		}
 		
-		dateTimeLabel = new Label(this, SWT.NONE);
+		dateTimeLabel = new Label(this, SWT.DOUBLE_BUFFERED);
 		dateTimeLabel.setBackground(SWTResourceManager.getColor(SWT.COLOR_LIST_BACKGROUND));
 		dateTimeLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		dateTimeLabel.setAlignment(SWT.RIGHT);
@@ -81,7 +80,7 @@ public class MessageView extends Composite {
 			dateTimeLabel.addListener(SWT.Paint, pol);
 		}
 		
-		styledText = new StyledText(this, SWT.NONE | SWT.NO_BACKGROUND);
+		styledText = new StyledText(this, SWT.DOUBLE_BUFFERED);
 		styledText.setBackground(SWTResourceManager.getColor(SWT.COLOR_LIST_BACKGROUND));
 		styledText.setEditable(false);
 		styledText.setWordWrap(true);
@@ -93,6 +92,15 @@ public class MessageView extends Composite {
 		for (PaintOverListener pol : paintOverListeners) {
 			this.addListener(SWT.Paint, pol);
 		}
+		
+		addListener(SWT.Dispose, new Listener() {
+			
+			@Override
+			public void handleEvent(Event arg0) {
+				light.dispose();
+				dark.dispose();
+			}
+		});
 	}
 	
 	void setMessage(Message message) {

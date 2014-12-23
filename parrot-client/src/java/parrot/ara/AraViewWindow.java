@@ -126,15 +126,12 @@ public class AraViewWindow extends ViewWindowBase<AraDocument> {
 		gl_shell.horizontalSpacing = 0;
 		shell.setLayout(gl_shell);
 		
-		messagesScrolledComposite = new ScrolledComposite(shell, SWT.V_SCROLL);
-		messagesScrolledComposite.setAlwaysShowScrollBars(true);
+		messagesScrolledComposite = new ScrolledComposite(shell, SWT.V_SCROLL | SWT.DOUBLE_BUFFERED);
 		messagesScrolledComposite.setExpandVertical(true);
 		messagesScrolledComposite.setExpandHorizontal(true);
-		GridData gd_messagesScrolledComposite = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
-		gd_messagesScrolledComposite.heightHint = 236;
-		messagesScrolledComposite.setLayoutData(gd_messagesScrolledComposite);
+		messagesScrolledComposite.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, true, 1, 1));
 		
-		messagesListComposite = new Composite(messagesScrolledComposite, SWT.NONE);
+		messagesListComposite = new Composite(messagesScrolledComposite, SWT.DOUBLE_BUFFERED);
 		messagesListComposite.setBackground(SWTResourceManager.getColor(SWT.COLOR_LIST_BACKGROUND));
 		messagesScrolledComposite.setContent(messagesListComposite);
 		messagesScrolledComposite.setMinSize(messagesListComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
@@ -181,16 +178,6 @@ public class AraViewWindow extends ViewWindowBase<AraDocument> {
 		};
 		messagesListComposite.setLayout(new GridLayout(1, false));
 		messagesListComposite.addListener(SWT.Paint, messagesListComposite_shadowPaintListener);
-		messagesListComposite.addListener(SWT.Resize, new Listener() {
-			
-			@Override
-			public void handleEvent(Event arg0) {
-				for (MessageView mv : messageViews) {
-					mv.redraw();
-				}
-				
-			}
-		});
 
 		inputPanelComposite_lightDarkGradientListener = new PaintOverListener(inputPanelComposite) {
 
@@ -224,7 +211,15 @@ public class AraViewWindow extends ViewWindowBase<AraDocument> {
 		updateButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 		updateButton.addSelectionListener(updateSelectionAdapter);
 		updateButton.setText("Update");
-
+		
+		messagesListComposite.addListener(SWT.Resize, new Listener() {
+			
+			@Override
+			public void handleEvent(Event arg0) {
+				messagesListComposite.redraw(0, 0, shell.getSize().x, shell.getSize().y, true);
+			}
+		});
+		
 		shell.addListener(SWT.Resize, new Listener() {
 			
 			@Override
