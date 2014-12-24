@@ -1,5 +1,6 @@
 package parrot.ara;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -60,6 +61,7 @@ public class MessageView extends Composite {
 				}
 
 		};
+		if (paintOverListeners == null) paintOverListeners = new ArrayList<PaintOverListener>();
 		paintOverListeners.add(0, lightDarkGradientListener);
 		
 		userNameLabel = new Label(this, SWT.DOUBLE_BUFFERED);
@@ -108,5 +110,7 @@ public class MessageView extends Composite {
 		dateTimeLabel.setText(new Date(message.getTimeMillis()).toString());
 		styledText.setText(message.getText());
 	}
+	
+	
 
 }

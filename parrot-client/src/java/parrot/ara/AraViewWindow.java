@@ -36,9 +36,9 @@ public class AraViewWindow extends ViewWindowBase<AraDocument> {
 	private APIClient apiClient;
 	private Session session;
 
+	private Composite messagesListComposite;
 	private InputTextComposite text;
 	private ScrolledComposite messagesScrolledComposite;
-	private Composite messagesListComposite;
 
 	private Color light, dark;
 
@@ -67,15 +67,21 @@ public class AraViewWindow extends ViewWindowBase<AraDocument> {
 				for (int i = 0; i < newMessages.length; i++) {
 
 					ArrayList<PaintOverListener> pols = new ArrayList<PaintOverListener>();
-					pols.add(messagesListComposite_shadowPaintListener);
+					//pols.add(messagesListComposite_shadowPaintListener);
 					
-					MessageView newMessageView = new MessageView(messagesListComposite, pols, SWT.DOUBLE_BUFFERED);
-					newMessageView.setLayoutData(new GridData(GridData.FILL, SWT.DEFAULT, true, false));
+					MessageView newMessageView = new MessageView(messagesListComposite, pols, SWT.NONE);
+					newMessageView.setLayoutData(new RowData(100, 100));
+					newMessageView.setSize(newMessageView.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+					newMessageView.layout();
 					newMessageView.setMessage(newMessages[i]);
 					
 					messageViews.add(newMessageView);
 				}
-				
+				String hh = "height: " + messagesListComposite.getSize().y;
+				messagesListComposite.setSize(messagesListComposite.computeSize(SWT.DEFAULT, 1000));
+				hh += ", height: " + messagesListComposite.getSize().y;
+				messagesListComposite.layout();
+				getShell().setText(hh);
 				
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -108,7 +114,7 @@ public class AraViewWindow extends ViewWindowBase<AraDocument> {
 				SWT.COLOR_LIST_BACKGROUND);
 
 		final Shell shell = new Shell(SWT.TITLE | SWT.CLOSE | SWT.MIN | SWT.MAX | SWT.RESIZE | SWT.BORDER | SWT.DOUBLE_BUFFERED);
-		shell.setSize(401, 358);
+		shell.setSize(401, 347);
 
 		shell.setMinimumSize(new Point(250, 200));
 
@@ -126,13 +132,19 @@ public class AraViewWindow extends ViewWindowBase<AraDocument> {
 		gl_shell.horizontalSpacing = 0;
 		shell.setLayout(gl_shell);
 		
-		messagesScrolledComposite = new ScrolledComposite(shell, SWT.V_SCROLL | SWT.DOUBLE_BUFFERED);
+		messagesScrolledComposite = new ScrolledComposite(shell, SWT.V_SCROLL);
 		messagesScrolledComposite.setExpandVertical(true);
 		messagesScrolledComposite.setExpandHorizontal(true);
-		messagesScrolledComposite.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, true, 1, 1));
+		GridData gd_messagesScrolledComposite = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
+		gd_messagesScrolledComposite.heightHint = 257;
+		gd_messagesScrolledComposite.minimumWidth = 10;
+		gd_messagesScrolledComposite.minimumHeight = 10;
+		messagesScrolledComposite.setLayoutData(gd_messagesScrolledComposite);
 		
-		messagesListComposite = new Composite(messagesScrolledComposite, SWT.DOUBLE_BUFFERED);
-		messagesListComposite.setBackground(SWTResourceManager.getColor(SWT.COLOR_LIST_BACKGROUND));
+		messagesListComposite = new Composite(messagesScrolledComposite, SWT.NONE);
+		RowLayout rl_messagesListComposite = new RowLayout(SWT.VERTICAL);
+		rl_messagesListComposite.wrap = false;
+		messagesListComposite.setLayout(rl_messagesListComposite);
 		messagesScrolledComposite.setContent(messagesListComposite);
 		messagesScrolledComposite.setMinSize(messagesListComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 
@@ -158,26 +170,6 @@ public class AraViewWindow extends ViewWindowBase<AraDocument> {
 				(int)(base.getRed() * 0.9),
 				(int)(base.getGreen() * 0.9),
 				(int)(base.getBlue() * 0.9));
-
-		messagesListComposite_shadowPaintListener = new PaintOverListener(messagesListComposite) {
-			@Override
-			public void handleEvent(Event event, Rectangle thisRect) {
-				GC gc = event.gc;
-				gc.setAdvanced(true);
-
-				// Shadow
-				int shadowHeight = 20;
-				for (int y = 0; y < shadowHeight; y++) {
-					gc.setAlpha((int)(128 * Math.pow((double)y / shadowHeight, 5)));
-					gc.setBackground(getShell().getDisplay().getSystemColor(SWT.COLOR_BLACK));
-					gc.fillRectangle(thisRect.x, thisRect.y + thisRect.height - shadowHeight + y, thisRect.width, 1);
-				}
-				
-				//gc.dispose();
-			}
-		};
-		messagesListComposite.setLayout(new GridLayout(1, false));
-		messagesListComposite.addListener(SWT.Paint, messagesListComposite_shadowPaintListener);
 
 		inputPanelComposite_lightDarkGradientListener = new PaintOverListener(inputPanelComposite) {
 
@@ -211,14 +203,6 @@ public class AraViewWindow extends ViewWindowBase<AraDocument> {
 		updateButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 		updateButton.addSelectionListener(updateSelectionAdapter);
 		updateButton.setText("Update");
-		
-		messagesListComposite.addListener(SWT.Resize, new Listener() {
-			
-			@Override
-			public void handleEvent(Event arg0) {
-				messagesListComposite.redraw(0, 0, shell.getSize().x, shell.getSize().y, true);
-			}
-		});
 		
 		shell.addListener(SWT.Resize, new Listener() {
 			
