@@ -18,12 +18,17 @@ ifeq ($(UNAME), Darwin)	# OS X
 	cp -rf gltest/target-$(PLATFORM_TAG)-$(CLASSPATH)/package/GLDemo/bundle/* $(PACKAGE_NAME)
 	cp -rf oldland/target-$(PLATFORM_TAG)-$(CLASSPATH)/package/OldLand/bundle/* $(PACKAGE_NAME)
 	cp -rf tinyviewer/target-$(PLATFORM_TAG)-$(CLASSPATH)/package/Tiny\ Viewer/bundle/* $(PACKAGE_NAME)
+ifeq ($(CLASSPATH), android)
+	cp -rf parrot-server/target-$(PLATFORM_TAG)-$(CLASSPATH)/package/parrot-server $(PACKAGE_NAME)
+endif	
 else
 	cp -rf bellardpi/target-$(PLATFORM_TAG)-$(CLASSPATH)/package/BellardPI $(PACKAGE_NAME)
 	cp -rf gltest/target-$(PLATFORM_TAG)-$(CLASSPATH)/package/GLDemo $(PACKAGE_NAME)
 	cp -rf oldland/target-$(PLATFORM_TAG)-$(CLASSPATH)/package/OldLand $(PACKAGE_NAME)
 	cp -rf tinyviewer/target-$(PLATFORM_TAG)-$(CLASSPATH)/package/Tiny\ Viewer $(PACKAGE_NAME)
-
+ifeq ($(CLASSPATH), android)
+	cp -rf parrot-server/target-$(PLATFORM_TAG)-$(CLASSPATH)/package/parrot-server $(PACKAGE_NAME)
+endif	
 endif
 
 ifeq ($(UNAME), Darwin)	# OS X
@@ -40,6 +45,11 @@ else
 		tar -cjf ../$(PACKAGE_NAME).tar.bz2 *; \
 	)
 endif	
+
+ifeq ($(CLASSPATH), android)
+zetes-examples-app: bellardpi-app gltest-app oldland-app tinyviewer-app parrot-server-app
+zetes-examples-package: bellardpi-package gltest-package oldland-package tinyviewer-package parrot-server-package
+endif
 
 zetes-examples-app: bellardpi-app gltest-app oldland-app tinyviewer-app
 zetes-examples-package: bellardpi-package gltest-package oldland-package tinyviewer-package
@@ -58,6 +68,13 @@ oldland-package: zetes
 tinyviewer-package: zetes
 	$(MAKE) package -C tinyviewer
 
+ifeq ($(CLASSPATH), android)
+
+parrot-server-package: zetes
+	$(MAKE) package -C parrot-server
+
+endif
+
 # App targets
 	
 bellardpi-app: zetes
@@ -72,12 +89,22 @@ oldland-app: zetes
 tinyviewer-app: zetes
 	$(MAKE) app -C tinyviewer
 
+ifeq ($(CLASSPATH), android)
+
+parrot-server-app: zetes
+	$(MAKE) app -C parrot-server
+
+endif
+
 clean:
 	$(MAKE) clean -C bellardpi
 	$(MAKE) clean -C gltest
 	$(MAKE) clean -C oldland
 	$(MAKE) clean -C tinyviewer
+ifeq ($(CLASSPATH), android)
+	$(MAKE) clean -C parrot-server
+endif
 	rm -rf $(PACKAGE_NAME)
 
-.PHONY: all app package zetes-examples-app zetes-examples-package bellardpi-app gltest-app oldland-app tinyviewer-app bellardpi-package gltest-package oldland-package tinyviewer-package
+.PHONY: all app package zetes-examples-app zetes-examples-package bellardpi-app gltest-app oldland-app tinyviewer-app parrot-server-app bellardpi-package gltest-package oldland-package tinyviewer-package parrot-server-package
 .SILENT:
