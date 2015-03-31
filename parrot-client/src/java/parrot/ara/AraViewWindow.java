@@ -41,9 +41,6 @@ public class AraViewWindow extends ViewWindowBase<AraDocument> {
 	private ScrolledComposite messagesScrolledComposite;
 
 	private Color light, dark;
-
-	private PaintOverListener messagesListComposite_shadowPaintListener;	
-	private PaintOverListener inputPanelComposite_lightDarkGradientListener;
 	
 	private SelectionAdapter sendSelectionAdapter = new SelectionAdapter() {
 		@Override
@@ -66,10 +63,7 @@ public class AraViewWindow extends ViewWindowBase<AraDocument> {
 				Message[] newMessages = session.getLatestMessages();
 				for (int i = 0; i < newMessages.length; i++) {
 
-					ArrayList<PaintOverListener> pols = new ArrayList<PaintOverListener>();
-					//pols.add(messagesListComposite_shadowPaintListener);
-					
-					MessageView newMessageView = new MessageView(messagesListComposite, pols, SWT.NONE);
+					MessageView newMessageView = new MessageView(messagesListComposite, SWT.NONE);
 					newMessageView.setLayoutData(new RowData(100, 100));
 					newMessageView.setSize(newMessageView.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 					newMessageView.layout();
@@ -142,8 +136,7 @@ public class AraViewWindow extends ViewWindowBase<AraDocument> {
 		messagesScrolledComposite.setLayoutData(gd_messagesScrolledComposite);
 		
 		messagesListComposite = new Composite(messagesScrolledComposite, SWT.NONE);
-		RowLayout rl_messagesListComposite = new RowLayout(SWT.VERTICAL);
-		rl_messagesListComposite.wrap = false;
+		MessagesListLayout rl_messagesListComposite = new MessagesListLayout();
 		messagesListComposite.setLayout(rl_messagesListComposite);
 		messagesScrolledComposite.setContent(messagesListComposite);
 		messagesScrolledComposite.setMinSize(messagesListComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
@@ -170,19 +163,6 @@ public class AraViewWindow extends ViewWindowBase<AraDocument> {
 				(int)(base.getRed() * 0.9),
 				(int)(base.getGreen() * 0.9),
 				(int)(base.getBlue() * 0.9));
-
-		inputPanelComposite_lightDarkGradientListener = new PaintOverListener(inputPanelComposite) {
-
-				@Override
-				public void handleEvent(Event event, Rectangle thisRect) {
-					GC gc = event.gc;
-
-					gc.setForeground(light);
-					gc.setBackground(dark);
-					gc.fillGradientRectangle(thisRect.x, thisRect.y, thisRect.width, thisRect.height, true);
-				}
-		};
-		inputPanelComposite.addListener(SWT.Paint, inputPanelComposite_lightDarkGradientListener);
 		
 		text = new InputTextComposite(inputPanelComposite, SWT.BORDER | SWT.DOUBLE_BUFFERED);
 
