@@ -109,6 +109,7 @@ div.pageOut {
 	background-repeat: repeat;
 	position: relative;
 	min-height: 100vh;
+	overflow-x: hidden;
 }
 
 .shadowed {
@@ -120,7 +121,7 @@ div.pageOut {
 
 ul.messages {
 	list-style-type: none;
-	margin: 0pt 15pt 0pt;
+	margin: auto;
 	max-width: 500pt;
 	clear: left;
 	box-shadow: 0px 0px 5px #444444;
@@ -134,11 +135,14 @@ li.message {
 
 div.msgTitle {
 	overflow-x: hidden;
+	padding: 0pt 5pt;
+	
 }
 
 span.msgUser {
 	color: #444444;
-	padding: 0pt 5pt;
+	display: inline-block;
+	width: 50%;
 	font-weight: bold;
 	font-size: 105%;
 	font-family: sans-serif;
@@ -146,8 +150,10 @@ span.msgUser {
 
 span.msgTime {
 	color: #888888;
-	padding: 0pt 5pt;
+	display: inline-block;
+	width: 50%;
 	font-size: 80%;
+	text-align: right;
 }
 
 div.msgText {
@@ -259,8 +265,9 @@ div.messagesContainerIn {
 
 div.sendMessagePanel {
 	padding: 5pt;
-	max-width: 480pt;
+	max-width: 490pt;
 	margin: auto;
+	margin-top: 10pt;
 }
 
 .sendMessageButton {
@@ -307,7 +314,7 @@ textarea.messageTextArea {
 }
 
 div.regLogPanel {
-	margin: 5pt;
+	margin: 0pt 13pt 10pt 13pt;
 	font-family: sans-serif;
 	font-size: 90%;
 	padding: 10pt;
