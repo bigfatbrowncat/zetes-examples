@@ -37,14 +37,15 @@ public class MessageView extends Composite {
 
 		// User Name font
 		FontData userNameFontData = getDisplay().getSystemFont().getFontData()[0];
-		userNameFontData.height += 1;
-		userNameFontData.style = SWT.NORMAL | SWT.BOLD;
+		userNameFontData.setHeight(userNameFontData.getHeight() + 2);
+		userNameFontData.setStyle(SWT.BOLD);
 		Font userNameFont = new Font(getDisplay(), userNameFontData);
 		
 		// Date time font
 		FontData dateTimeFontData = getDisplay().getSystemFont().getFontData()[0];
-		dateTimeFontData.height *= 0.5;
-		dateTimeFontData.style = SWT.NORMAL | SWT.ITALIC;
+		dateTimeFontData.setHeight((int)(dateTimeFontData.getHeight() * 0.5));
+
+		dateTimeFontData.setStyle(SWT.ITALIC);
 		Font dateTimeFont = new Font(getDisplay(), userNameFontData);
 		
 		userNameLabel = new Label(this, SWT.DOUBLE_BUFFERED);

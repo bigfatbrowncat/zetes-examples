@@ -124,6 +124,7 @@ public class AraViewWindow extends ViewWindowBase<AraDocument> {
 		gd_messagesScrolledComposite.minimumHeight = 10;
 		messagesScrolledComposite.setLayoutData(gd_messagesScrolledComposite);
 		messagesScrolledComposite.setBackground(backColor);
+		messagesScrolledComposite.getVerticalBar().setIncrement(20);
 		
 		messagesListComposite = new Composite(messagesScrolledComposite, SWT.NONE);
 		MessagesListLayout rl_messagesListComposite = new MessagesListLayout();
