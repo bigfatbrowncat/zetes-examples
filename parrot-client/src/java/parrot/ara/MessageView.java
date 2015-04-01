@@ -7,6 +7,8 @@ import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -14,6 +16,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
 import parrot.client.data.objects.Message;
+
+import org.eclipse.wb.swt.SWTResourceManager;
 
 public class MessageView extends Composite {
 	private Label userNameLabel;
@@ -30,15 +34,27 @@ public class MessageView extends Composite {
 		Color base = getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND);
 		setBackground(base);
 		setLayout(new GridLayout(2, false));
+
+		// User Name font
+		FontData userNameFontData = getDisplay().getSystemFont().getFontData()[0];
+		userNameFontData.height += 1;
+		userNameFontData.style = SWT.NORMAL | SWT.BOLD;
+		Font userNameFont = new Font(getDisplay(), userNameFontData);
 		
+		// Date time font
+		FontData dateTimeFontData = getDisplay().getSystemFont().getFontData()[0];
+		dateTimeFontData.height *= 0.5;
+		dateTimeFontData.style = SWT.NORMAL | SWT.ITALIC;
+		Font dateTimeFont = new Font(getDisplay(), userNameFontData);
 		
 		userNameLabel = new Label(this, SWT.DOUBLE_BUFFERED);
+		userNameLabel.setFont(userNameFont);
 		userNameLabel.setBackground(base);
 		userNameLabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-//		userNameLabel.setFont(SWTResourceManager.getFont("Segoe UI", 9, SWT.BOLD));
 		userNameLabel.setText("User Name");
 		
 		dateTimeLabel = new Label(this, SWT.DOUBLE_BUFFERED);
+		userNameLabel.setFont(dateTimeFont);
 		dateTimeLabel.setBackground(base);
 		dateTimeLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		dateTimeLabel.setAlignment(SWT.RIGHT);
@@ -47,23 +63,6 @@ public class MessageView extends Composite {
 		styledText = new StyledText(this, SWT.DOUBLE_BUFFERED);
 		styledText.setWordWrap(true);
 		styledText.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1));
-
-		this.addControlListener(new ControlListener() {
-			
-			@Override
-			public void controlResized(ControlEvent arg0) {
-				int width = getSize().x;
-				Point computed = MessageView.this.computeSize(width, SWT.DEFAULT);
-				System.out.println(computed.x + ", " + computed.y);
-				
-			}
-			
-			@Override
-			public void controlMoved(ControlEvent arg0) {
-				// TODO Auto-generated method stub
-				
-			}
-		});
 		
 	}
 	

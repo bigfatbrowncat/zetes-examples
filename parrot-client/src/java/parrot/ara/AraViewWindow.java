@@ -5,17 +5,16 @@ import java.util.List;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowData;
-import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
@@ -30,7 +29,6 @@ import parrot.client.ClientConnectionProblemException;
 import parrot.client.Session;
 import parrot.client.data.objects.Message;
 import zetes.wings.base.ViewWindowBase;
-import org.eclipse.swt.layout.FillLayout;
 
 public class AraViewWindow extends ViewWindowBase<AraDocument> {
 	private APIClient apiClient;
@@ -64,18 +62,10 @@ public class AraViewWindow extends ViewWindowBase<AraDocument> {
 				for (int i = 0; i < newMessages.length; i++) {
 
 					MessageView newMessageView = new MessageView(messagesListComposite, SWT.NONE);
-					newMessageView.setLayoutData(new RowData(100, 100));
-					newMessageView.setSize(newMessageView.computeSize(SWT.DEFAULT, SWT.DEFAULT));
-					newMessageView.layout();
 					newMessageView.setMessage(newMessages[i]);
 					
 					messageViews.add(newMessageView);
 				}
-				String hh = "height: " + messagesListComposite.getSize().y;
-				messagesListComposite.setSize(messagesListComposite.computeSize(SWT.DEFAULT, 1000));
-				hh += ", height: " + messagesListComposite.getSize().y;
-				messagesListComposite.layout();
-				getShell().setText(hh);
 				
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -127,20 +117,29 @@ public class AraViewWindow extends ViewWindowBase<AraDocument> {
 		shell.setLayout(gl_shell);
 		
 		messagesScrolledComposite = new ScrolledComposite(shell, SWT.V_SCROLL);
-		messagesScrolledComposite.setExpandVertical(true);
 		messagesScrolledComposite.setExpandHorizontal(true);
 		GridData gd_messagesScrolledComposite = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
 		gd_messagesScrolledComposite.heightHint = 257;
 		gd_messagesScrolledComposite.minimumWidth = 10;
 		gd_messagesScrolledComposite.minimumHeight = 10;
 		messagesScrolledComposite.setLayoutData(gd_messagesScrolledComposite);
+		messagesScrolledComposite.setBackground(backColor);
 		
 		messagesListComposite = new Composite(messagesScrolledComposite, SWT.NONE);
 		MessagesListLayout rl_messagesListComposite = new MessagesListLayout();
 		messagesListComposite.setLayout(rl_messagesListComposite);
 		messagesScrolledComposite.setContent(messagesListComposite);
-		messagesScrolledComposite.setMinSize(messagesListComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
-
+		
+		messagesScrolledComposite.addControlListener(new ControlListener() {
+			
+			@Override
+			public void controlResized(ControlEvent arg0) {
+				messagesListComposite.setSize(messagesListComposite.computeSize(messagesListComposite.getClientArea().width, SWT.DEFAULT));
+			}
+			
+			@Override public void controlMoved(ControlEvent arg0) { }
+		});		
+		
 		final Composite inputPanelComposite = new Composite(shell, SWT.NONE);
 		inputPanelComposite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		GridLayout gl_inputPanelComposite = new GridLayout(2, false);
