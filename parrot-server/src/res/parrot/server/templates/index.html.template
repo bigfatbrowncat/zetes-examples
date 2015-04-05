@@ -149,6 +149,7 @@
 										messageTextArea.focus();
 									}
 								}
+								sendErrorMessage.innerHTML = "";
 							}
 							else
 							{
@@ -185,6 +186,7 @@
 								serverTimeMillis = messagesSliceResponse.serverTimeMillis;
 								messages = messagesSliceResponse.messages;
 								getUsersForMessages(messages);
+								sendErrorMessage.innerHTML = "";
 							}
 							else
 							{
