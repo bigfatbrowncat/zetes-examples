@@ -1,8 +1,8 @@
 ZETES_PATH = ../zetes
 
-APPLICATION_NAME = LiteHTML\ Demo
-BINARY_NAME = litehtml-demo
-ENTRY_CLASS = zetes/wings/litehtml/swt/demo/DemoMainWindow
+APPLICATION_NAME = HTML\ Viewer
+BINARY_NAME = htmlview
+ENTRY_CLASS = htmlview/HTMLApplication
 
 include $(ZETES_PATH)/common-scripts/globals.mk
 include $(ZETES_WINGS_PATH)/ZetesWings.mk

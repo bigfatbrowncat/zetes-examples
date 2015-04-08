@@ -3,13 +3,13 @@
 <plist version="1.0">
 <dict>
 	<key>CFBundleGetInfoString</key>
-	<string>A Parrot client application</string>
+	<string>HTML Viewer application</string>
 	<key>CFBundleExecutable</key>
-	<string>ara</string>
+	<string>htmlview</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.bigfatbrowncat.parrot.ara</string>
+	<string>com.bigfatbrowncat.htmlview</string>
 	<key>CFBundleName</key>
-	<string>Ara</string>
+	<string>HTML Viewer</string>
 	<key>CFBundleIconFile</key>
 	<string>ara.icns</string>
 	<key>CFBundleShortVersionString</key>
@@ -19,8 +19,8 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>NSHumanReadableCopyright</key>
-	<string>Copyright © Ilya Mizus, 2014</string>
+	<string>Copyright �� Ilya Mizus, 2015</string>
 	<key>CFBundleSignature</key>
-	<string>prtara</string>
+	<string>zhtvwr</string>
 </dict>
 </plist>
