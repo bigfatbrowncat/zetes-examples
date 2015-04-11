@@ -32,7 +32,7 @@ public class HTMLApplication extends ApplicationBase<DefaultAboutBox, HTMLDocume
 		res.setIconResourceName("/html/html64.png");
 		res.setDescriptionText("An HTML viewer application which doesn't depend on any external browser engine.\nIt's based on a small included liteHTML engine (http://www.litehtml.com)");
 		res.setCopyrightText("Copyright \u00a9 2015, Ilya Mizus");
-		res.setWindowSize(new Point(370, 220));
+		res.setWindowSize(new Point(410, 270));
 		return res;
 	}
 	
