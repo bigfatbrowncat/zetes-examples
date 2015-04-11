@@ -9,7 +9,10 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;
 
+import zetes.feet.WinLinMacApi;
 import zetes.wings.DefaultAboutBox;
+import zetes.wings.abstracts.Application;
+import zetes.wings.abstracts.ApplicationListener;
 import zetes.wings.actions.Handler;
 import zetes.wings.base.ApplicationBase;
 
@@ -29,7 +32,7 @@ public class HTMLApplication extends ApplicationBase<DefaultAboutBox, HTMLDocume
 		res.setIconResourceName("/html/html64.png");
 		res.setDescriptionText("An HTML viewer application which doesn't depend on any external browser engine.\nIt's based on a small included liteHTML engine (http://www.litehtml.com)");
 		res.setCopyrightText("Copyright \u00a9 2015, Ilya Mizus");
-		res.setWindowSize(new Point(400, 180));
+		res.setWindowSize(new Point(370, 220));
 		return res;
 	}
 	
@@ -106,6 +109,23 @@ public class HTMLApplication extends ApplicationBase<DefaultAboutBox, HTMLDocume
 
 	public static void main(String... args)
 	{
-		new HTMLApplication().run(args);
+		HTMLApplication app = new HTMLApplication();
+		
+		app.setListener(new ApplicationListener() {
+			
+			@Override
+			public void stopped(Application<?, ?, ?, ?, ?> application) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void started(Application<?, ?, ?, ?, ?> application) {
+				HTMLDocument demoDoc = (HTMLDocument) application.loadFromFile(WinLinMacApi.locateResource("htmls", "demo.html"));
+				((HTMLApplication)application).getViewWindowsManager().openWindowForDocument(demoDoc);
+			}
+		});
+		
+		app.run(args);
 	}
 }

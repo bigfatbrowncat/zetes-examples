@@ -1,6 +1,6 @@
 ZETES_PATH = ../zetes
 
-APPLICATION_NAME = HTML\ Viewer
+APPLICATION_NAME = HTMLViewer
 BINARY_NAME = htmlview
 ENTRY_CLASS = htmlview/HTMLApplication
 

@@ -1,0 +1,30 @@
+<html>
+<head>
+	<title>Just a simple HTML file</title>
+</head>
+<body style="font-family: serif; margin: auto; background: white; max-width: 600px;">
+	<div style="padding: 5pt; background-image: url('wing-bg.png'); background-repeat: no-repeat; background-position: right bottom;">
+	<div style="white-space: nowrap;">
+		<img src="wing512.png" style="width: 96px; height: 96px">
+		<div style="display: inline-block;">
+			<h1 style="position: relative; top: -20px; left: -20px; margin: 0">Zetes Wings</h1>
+			<p style="font-size: 120%; position: relative; top: -20px; left: 5px; margin: 0">An easy way to make<br/>an independent GUI app</p>
+		</div>
+	</div>
+	<div style="margin: 0px 10px" >
+		<p style="margin-top: 0">Long long time ago when every PC on a desk in a schoolboy's room was a holy grail, creating a piece of <em>independent</em> code was quite a simple task. Actually, in DOS almost all the code was completely independent of... well... everything. Programs were linked statically, there were no &#8220;system APIs&#8221;, only some programmable BIOS interrupts &#151; for mouse, hard disks and so on... Of course there was the <code>dos.h</code> file... A ridiculously tiny thing for such a global name (compare to <code>windows.h</code>).</p>
+		<p>Of course there were many disadvantages in that. Every app was written from scratch. You didn't have any help in such simple tasks as drawing on screen, reading mouse or keyboard input or making sounds. You even had to support every non-standard device in your app... Every app used to become a small OS.</p>
+		<p>Then in 1995-2000 modern OSes appeared. In most cases it was Windows. But there also was Mac OS which later switched into x86 processors and turned into OS X. And even linux became GUI-friendly with its Xorg and GTK+. The new era has arised &#151; the era of desktop GUI applications.</p>
+		<p>Unfortunately the cross-platform paradigm was still too heavy for real use. Everyone who tried to make an application for multiple OSes at the same time used to implement their own visual components toolkit or use a default one... Most system APIs was very different and many wrapping code should have been written. In addition Windows wasn't a POSIX-complying OS, so many API functions (even the low-level ones like file I/O) were implemented differently in it and in other desktop OSes.</p>
+		<p>In 1995 Sun Microsystems released Java. The language had a very beautiful slogan: &#8220;write once, run anywhere&#8221;. And it was partially true &#151; Java API was made as a thick wrapping to the OS API &#151; it unified the features and let almost every application work on every OS. It was even suitable as a web scripting language, but failed cause of some technical issues. But, in addition, Java had a huge disadvantage. Its default GUI toolkit &#151; Swing &#151; was ugly. It was slow and looked like an alien on every OS. Java applications had a visible mark on them: &#8220;written in Java&#8221;. That feeling was intensified by the fact that you had to download and install Sun JRE in order to run any Java app &#151; no matter, was it a huge server or a small game.</p>
+		<p style="text-align: center; margin: 15pt">
+			<span style="margin: 15pt">*</span>
+			<span style="margin: 15pt">*</span>
+			<span style="margin: 15pt">*</span>
+		</p>
+		<p>The author of Zetes started with a dream. He dreamed of a framework that would let a programmer to create a GUI application that would target multiple platforms simultaneously, has a beautiful UI on each of them and doesn't make the user to download any additional proprietary components. Modern computers allow you to easily download 50 or even 100 megabytes of code. That size should hold everything necessary for an application to work well (except the system API libraries which are present on every installation). That's why Zetes was made.</p>
+		<p>Of course, most parts of the framework were not originated by its author. But thankfully every one of them have either BSD or Apache licenses that allows everyone to use the code in their projects without any doubt.</p>
+	</div>
+	</div>
+</body>
+</html>

@@ -8,10 +8,9 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.widgets.Display;
 
-import zetes.wings.abstracts.Document;
+import zetes.wings.base.DocumentBase;
 
-
-public class ImageDocument implements Document
+public class ImageDocument extends DocumentBase
 {
 	private Image image;
 	private String fileName;
