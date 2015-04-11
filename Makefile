@@ -49,11 +49,11 @@ else
 endif	
 
 ifeq ($(CLASSPATH), android)
-zetes-examples-app: bellardpi-app gltest-app oldland-app tinyviewer-app html-viewer parrot-server-app
-zetes-examples-package: bellardpi-package gltest-package oldland-package tinyviewer-package html-viewer parrot-server-package
+zetes-examples-app: bellardpi-app gltest-app oldland-app tinyviewer-app htmlviewer-app parrot-server-app
+zetes-examples-package: bellardpi-package gltest-package oldland-package tinyviewer-package htmlviewer-package parrot-server-package
 else
-zetes-examples-app: bellardpi-app gltest-app oldland-app tinyviewer-app
-zetes-examples-package: bellardpi-package gltest-package oldland-package tinyviewer-package
+zetes-examples-app: bellardpi-app gltest-app oldland-app tinyviewer-app htmlviewer-app
+zetes-examples-package: bellardpi-package gltest-package oldland-package tinyviewer-package htmlviewer-package
 endif
 
 # Packaging targets
