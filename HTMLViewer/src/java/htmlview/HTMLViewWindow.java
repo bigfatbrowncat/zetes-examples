@@ -364,7 +364,7 @@ public class HTMLViewWindow extends ViewWindowBase<HTMLDocument> {
 
 	@Override
 	protected Shell constructShell() {
-		Shell shell = new Shell(SWT.MIN | SWT.MAX | SWT.CLOSE | SWT.RESIZE | SWT.DOUBLE_BUFFERED);
+		Shell shell = new Shell(SWT.MIN | SWT.MAX | SWT.CLOSE | SWT.RESIZE);
 		shell.setSize(500, 350);
 		shell.setText("LiteHTML Demo");
 		shell.setLayout(new FillLayout(SWT.HORIZONTAL));
@@ -372,7 +372,7 @@ public class HTMLViewWindow extends ViewWindowBase<HTMLDocument> {
 		scrolledComposite = new ScrolledComposite(shell, SWT.V_SCROLL);
 		scrolledComposite.setExpandHorizontal(true);
 		
-		liteHTMLView = new LiteHTMLView(scrolledComposite, SWT.DOUBLE_BUFFERED);
+		liteHTMLView = new LiteHTMLView(scrolledComposite, SWT.NONE);
 		liteHTMLView.setListener(htmlViewListener);
 		scrolledComposite.setContent(liteHTMLView);
 		
