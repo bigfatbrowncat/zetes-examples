@@ -28,11 +28,14 @@ public class HTMLViewWindow extends ViewWindowBase<HTMLDocument> {
 	};
 	
 	private void refreshContent() {
+		scrolledComposite.layout();
+		
 		Point minPageSize = liteHTMLView.computeSize(scrolledComposite.getClientArea().width, SWT.DEFAULT);
 		if (minPageSize.y < scrolledComposite.getClientArea().height) {
 			minPageSize.y = scrolledComposite.getClientArea().height;
 		}
 		liteHTMLView.setSize(minPageSize);
+		liteHTMLView.update();
 	}
 	
 	@Override
@@ -387,6 +390,7 @@ public class HTMLViewWindow extends ViewWindowBase<HTMLDocument> {
 		};
 		
 		scrolledComposite.addControlListener(scrollControlListener);
+		refreshContent();
 		return shell;
 	}
 }
