@@ -78,8 +78,7 @@ public class TinyViewerApplication extends ApplicationBase<DefaultAboutBox, Imag
 					}
 					catch (IOException e)
 					{
-						// TODO Show a message box here
-						e.printStackTrace();
+						throw new RuntimeException(e);
 					}
 				}
 				

@@ -8,12 +8,12 @@ BEGIN
     BLOCK "040904E4"
     BEGIN
       VALUE "CompanyName", "bigfatbrowncat\0"
-      VALUE "FileDescription", "A Parrot client application\0"
+      VALUE "FileDescription", "A small HTML viewer application\0"
       VALUE "FileVersion", "0.1\0"
-      VALUE "InternalName", "Ara\0"
+      VALUE "InternalName", "HTMLViewer\0"
       VALUE "LegalCopyright", "Ilya Mizus\0"
-      VALUE "OriginalFilename", "ara.exe\0"
-      VALUE "ProductName", "Ara\0"
+      VALUE "OriginalFilename", "htmlview.exe\0"
+      VALUE "ProductName", "HTML Viewer\0"
       VALUE "ProductVersion", "0.1\0"
     END
   END
