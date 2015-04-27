@@ -9,6 +9,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.SWT;
 
 import snake.Field.Cell;
 
@@ -55,7 +56,7 @@ public class FieldView extends Canvas {
 	};
 	
 	public FieldView(Composite arg0, int arg1) {
-		super(arg0, arg1);
+		super(arg0, arg1 | SWT.DOUBLE_BUFFERED);
 
 		for (int frame = 1; frame <= 2; frame++) {
 			images[frame - 1] = new HashMap<Field.Cell, Image>();

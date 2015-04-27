@@ -27,7 +27,15 @@ public class GameWindow extends ViewWindowBase<NullDocument>{
 		
 		@Override
 		public void run() {
+			try {
+				Thread.sleep(3000);
+			} catch (InterruptedException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 			while (!getShell().isDisposed()) {
+				long currentTime = System.currentTimeMillis();
+				
 				boolean gameOver = false;
 				if (frame == 0) {
 					gameOver = !controller.doStep();
@@ -48,8 +56,9 @@ public class GameWindow extends ViewWindowBase<NullDocument>{
 
 				frame = (frame + 1) % 2;
 
+				long currentTime2 = System.currentTimeMillis();
 				try {
-					Thread.sleep(1000 / fps);
+					Thread.sleep(Math.max(0, 1000 / fps - (currentTime2 - currentTime)));
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
