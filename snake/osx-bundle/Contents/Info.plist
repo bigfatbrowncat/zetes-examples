@@ -22,5 +22,7 @@
 	<string>Copyright © Ilya Mizus, 2015</string>
 	<key>CFBundleSignature</key>
 	<string>bfbcsnke</string>
+	<key>NSHighResolutionCapable</key>
+	<string>True</string>
 </dict>
 </plist>
