@@ -8,14 +8,14 @@ import snake.Field.Cell;
 import snake.Snake.Direction;
 
 public class Controller {
-	private Random random = new Random();
+	private static Random random = new Random();
 	
 	private Field initialField, field;
 	private Snake snake;
 	private Direction thisStepDirection = Direction.RIGHT;
 	private Direction nextStepDirection = Direction.RIGHT;
 	
-	private int foodX, foodY;
+	private Food food;
 	
 	private Point boomPosition;
 	
@@ -32,7 +32,7 @@ public class Controller {
 		}
 		
 		updateField();
-		setFood();
+		generateFood();
 	}
 	
 	private int torusIncX(int x) {
@@ -180,15 +180,23 @@ public class Controller {
 			break;
 		}
 		
-		// Setting food
-		field.setCell(foodX, foodY, Cell.FOOD);
+		if (food != null) {
+			placeFood();
+		}
 	}
 	
-	private void setFood() {
+	private void generateFood() {
+		int x, y;
 		do {
-			foodX = random.nextInt(initialField.getWidth()); 
-			foodY = random.nextInt(initialField.getHeight());
-		} while (field.getCell(foodX, foodY) != Cell.EMPTY);
+			x = random.nextInt(field.getWidth()); 
+			y = random.nextInt(field.getHeight());
+		} while (field.getCell(x, y) != Cell.EMPTY);
+		food = new Food(x, y);
+		placeFood();
+	}
+	
+	private void placeFood() {
+		field.setCell(food.getX(), food.getY(), Cell.FOOD);
 	}
 	
 	/**
@@ -217,9 +225,10 @@ public class Controller {
 		
 		boolean setNewFood = false;
 		
-		if (newX == foodX && newY == foodY) {
+		if (newX == food.getX() && newY == food.getY()) {
 			grow = true;
 			setNewFood = true;
+			food = null;
 		}
 		
 		boolean gameOver = field.getCell(newX, newY).isObstacle();
@@ -229,12 +238,11 @@ public class Controller {
 		
 		snake.move(nextStepDirection, grow);
 
+		updateField();
 		if (setNewFood) {
-			setFood();
+			generateFood();
 			setNewFood = false;
 		}
-
-		updateField();
 		
 		thisStepDirection = nextStepDirection;
 		
