@@ -9,6 +9,7 @@ import zetes.wings.DefaultAboutBox;
 
 public class SnakeApplication extends ApplicationBase<DefaultAboutBox, NullDocument, GameWindow, MenuConstructor, ViewWindowsManager>
 {
+	private GameWindow gameWindow;
 	/**
 	 * @param args
 	 */
@@ -62,4 +63,18 @@ public class SnakeApplication extends ApplicationBase<DefaultAboutBox, NullDocum
 		return true;
 	}
 
+	private final int fps = 12;
+	private long currentTime = System.currentTimeMillis();
+
+	@Override
+	protected void onIdle() {
+		if (getViewWindowsManager().getViewsForDocument(null).size() > 0) {
+			GameWindow gameWindow = getViewWindowsManager().getViewsForDocument(null).get(0);
+			long newTime = System.currentTimeMillis();
+			if (newTime - currentTime > 1000 / fps) {
+				gameWindow.frame();
+				currentTime = System.currentTimeMillis();
+			}
+		}
+	}
 }

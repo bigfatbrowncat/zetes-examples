@@ -17,54 +17,28 @@ import zetes.wings.base.ViewWindowBase;
 
 public class GameWindow extends ViewWindowBase<NullDocument>{
 
-	private final int fps = 10;
 	private int frame = 0;
 	
 	private Controller controller;
 	private FieldView snakeFieldView;
 	
-	private Thread gameThread = new Thread(new Runnable() {
-		
-		@Override
-		public void run() {
-			try {
-				Thread.sleep(3000);
-			} catch (InterruptedException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-			while (!getShell().isDisposed()) {
-				long currentTime = System.currentTimeMillis();
-				
-				boolean gameOver = false;
+	private boolean gameOver = false;
+	
+	void frame() {
+		if (!getShell().isDisposed() ) {
+			if (!gameOver) {
 				if (frame == 0) {
 					gameOver = !controller.doStep();
 				}
-				getShell().getDisplay().asyncExec(new Runnable() {
-					
-					@Override
-					public void run() {
-						if (!snakeFieldView.isDisposed()) {
-							snakeFieldView.setFrame(frame);
-							snakeFieldView.setBoomPosition(controller.getBoomPosition());
-							snakeFieldView.setField(controller.getField());
-						}
-					}
-				});
-				
-				if (gameOver) return;
 
 				frame = (frame + 1) % 2;
-
-				long currentTime2 = System.currentTimeMillis();
-				try {
-					Thread.sleep(Math.max(0, 1000 / fps - (currentTime2 - currentTime)));
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
+				snakeFieldView.setFrame(frame);
 			}
+			snakeFieldView.setBoomPosition(controller.getBoomPosition());
+			snakeFieldView.setField(controller.getField());
 		}
-	});
+	}
+
 	
 	/**
 	 * @wbp.parser.entryPoint
@@ -116,8 +90,6 @@ public class GameWindow extends ViewWindowBase<NullDocument>{
 		snakeFieldView.setLayout(new RowLayout(SWT.HORIZONTAL));
 		//composite.setLayoutData(new RowData(100, 100));
 
-		gameThread.start();
-		
 		shell.addKeyListener(new KeyListener() {
 			
 			@Override
