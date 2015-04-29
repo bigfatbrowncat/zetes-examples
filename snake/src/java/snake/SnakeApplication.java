@@ -9,7 +9,6 @@ import zetes.wings.DefaultAboutBox;
 
 public class SnakeApplication extends ApplicationBase<DefaultAboutBox, NullDocument, GameWindow, MenuConstructor, ViewWindowsManager>
 {
-	private GameWindow gameWindow;
 	/**
 	 * @param args
 	 */

@@ -7,7 +7,7 @@ import org.eclipse.swt.graphics.Point;
 import snake.Field.Cell;
 import snake.Snake.Direction;
 
-public class Controller {
+public class GameController {
 	private static Random random = new Random();
 	
 	private Field initialField, field;
@@ -19,7 +19,7 @@ public class Controller {
 	
 	private Point boomPosition;
 	
-	public Controller(int snakeLength, Field initialField) {
+	public GameController(int snakeLength, Field initialField) {
 		this.initialField = initialField.clone();
 		field = initialField.clone();
 		

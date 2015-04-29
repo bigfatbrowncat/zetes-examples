@@ -13,13 +13,16 @@ import org.eclipse.swt.widgets.Composite;
 
 import snake.Field.Cell;
 import zetes.wings.NullDocument;
+import zetes.wings.actions.Handler;
 import zetes.wings.base.ViewWindowBase;
 
 public class GameWindow extends ViewWindowBase<NullDocument>{
 
 	private int frame = 0;
-	
-	private Controller controller;
+	private int initialSnakeLength = 5;
+
+	private GameController controller;
+	private Field initialField;
 	private FieldView snakeFieldView;
 	
 	private boolean gameOver = false;
@@ -61,7 +64,7 @@ public class GameWindow extends ViewWindowBase<NullDocument>{
 		fd.setCell(1, 1, Cell.HEAD_DOWN);*/
 		
 		int s = 15;
-		Field initialField = new Field(s, s);
+		initialField = new Field(s, s);
 		
 		// Drawing walls
 		for (int i = 0; i < s / 3; i++) {
@@ -79,8 +82,7 @@ public class GameWindow extends ViewWindowBase<NullDocument>{
 		}
 		
 		
-		int snakeLength = 5;
-		controller = new Controller(snakeLength, initialField);
+		controller = new GameController(initialSnakeLength, initialField);
 		
 		snakeFieldView = new FieldView(shell, SWT.NONE);
 		snakeFieldView.setBackground(SWTResourceManager.getColor(SWT.COLOR_DARK_GREEN));
@@ -119,5 +121,18 @@ public class GameWindow extends ViewWindowBase<NullDocument>{
 	@Override
 	public boolean supportsMaximizing() {
 		return true;
+	}
+
+	private Handler<GameWindow> newGameHandler = new Handler<GameWindow>() {
+		
+		@Override
+		public void execute(GameWindow window) {
+			controller = new GameController(initialSnakeLength, initialField);
+			gameOver = false;
+		}
+	};
+
+	public Handler<GameWindow> getNewGameHandler() {
+		return newGameHandler;
 	}
 }

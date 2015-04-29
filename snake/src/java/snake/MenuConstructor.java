@@ -8,6 +8,26 @@ import zetes.wings.actions.ActionList;
 import zetes.wings.actions.Separator;
 
 public class MenuConstructor extends MenuConstructorBase<GameWindow> {
+	private Action<GameWindow> newGameAction;
+	private ViewWindowsManagerListener<GameWindow> viewWindowsManagerListener = new ViewWindowsManagerListener<GameWindow> () {
+		public void windowOpened(GameWindow window) 
+		{
+			newGameAction.getHandlers().put(window, window.getNewGameHandler());
+			updateMenus(window);
+		}
+		
+		public void windowClosed(GameWindow window) 
+		{
+			newGameAction.getHandlers().remove(window);
+			updateMenus(window);
+		}
+
+		@Override
+		public void lastWindowClosed() {
+			
+		}
+	};
+		 
 	/*private Action<GLViewWindow> viewModelCubeAction; 
 	private Action<GLViewWindow> viewModelMonkeyAction; 
 	private Action<GLViewWindow> viewModelMonkeySubdivAction; 
@@ -34,7 +54,14 @@ public class MenuConstructor extends MenuConstructorBase<GameWindow> {
 	
 	public MenuConstructor(ViewWindowsManager viewWindowsManager) {
 		super(viewWindowsManager);
-		//viewWindowsManager.addListener(viewWindowsManagerListener);
+		viewWindowsManager.addListener(viewWindowsManagerListener);
+		
+		ActionList<GameWindow> fileMenu = getFileActionCategory();
+		fileMenu.setTitle("Game");
+		
+		newGameAction = new Action<>("Start new");
+		newGameAction.setHotKey(new HotKey(HotKey.MOD1, 'N'));
+		fileMenu.addFirstItem(newGameAction);
 		
 		/*ActionList<GLViewWindow> viewModelActionList = new ActionList<>();
 
