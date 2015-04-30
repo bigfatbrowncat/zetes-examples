@@ -3,6 +3,7 @@ package snake;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.RowData;
 import org.eclipse.swt.widgets.Display;
@@ -49,8 +50,9 @@ public class GameWindow extends ViewWindowBase<NullDocument>{
 	@Override
 	protected Shell constructShell() {
 		Shell shell = new Shell();
-		shell.setBackground(SWTResourceManager.getColor(SWT.COLOR_DARK_GREEN));
-		shell.setSize(600, 600);
+		shell.setBackground(SWTResourceManager.getColor(SWT.COLOR_BLACK));
+		shell.setSize(690, 490);
+		shell.setMinimumSize(new Point(690, 490));
 		shell.setLayout(new FillLayout(SWT.HORIZONTAL));
 		
 		/*Field fd = new Field(3, 3);
@@ -85,7 +87,7 @@ public class GameWindow extends ViewWindowBase<NullDocument>{
 		controller = new GameController(initialSnakeLength, initialField);
 		
 		snakeFieldView = new FieldView(shell, SWT.NONE);
-		snakeFieldView.setBackground(SWTResourceManager.getColor(SWT.COLOR_DARK_GREEN));
+		snakeFieldView.setBackground(SWTResourceManager.getColor(SWT.COLOR_BLACK));
 		controller.doStep();
 		snakeFieldView.setField(controller.getField());
 		snakeFieldView.setFrame(0);
