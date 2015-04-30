@@ -4,6 +4,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.internal.win32.OS;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.RowData;
 import org.eclipse.swt.widgets.Display;
@@ -51,8 +52,8 @@ public class GameWindow extends ViewWindowBase<NullDocument>{
 	protected Shell constructShell() {
 		Shell shell = new Shell();
 		shell.setBackground(SWTResourceManager.getColor(SWT.COLOR_BLACK));
-		shell.setSize(690, 490);
-		shell.setMinimumSize(new Point(690, 490));
+		shell.setSize(690, 505);
+		shell.setMinimumSize(new Point(690, 500));
 		shell.setLayout(new FillLayout(SWT.HORIZONTAL));
 		
 		/*Field fd = new Field(3, 3);

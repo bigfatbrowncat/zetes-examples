@@ -18,7 +18,7 @@ import snake.Field.Cell;
 public class FieldView extends Canvas {
 
 	private Image boardImage = new Image(getDisplay(), this.getClass().getResourceAsStream("board.png"));
-	private Image grassImage = new Image(getDisplay(), this.getClass().getResourceAsStream("grass.png"));
+	private Image grassImage = new Image(getDisplay(), this.getClass().getResourceAsStream("grass.jpg"));
 
 	private Image bgImage = new Image(getDisplay(), this.getClass().getResourceAsStream("bg.png"));
 	private Image boomImage = new Image(getDisplay(), this.getClass().getResourceAsStream("boom.png"));
