@@ -27,9 +27,9 @@ import org.eclipse.swt.internal.opengl.glx.*;
  */
 
 public class CrossBaseGLCanvas extends Canvas {
-	long /*int*/ context;
-	long /*int*/ xWindow;
-	long /*int*/ glWindow;
+	int /*long*/ context;
+	int /*long*/ xWindow;
+	int /*long*/ glWindow;
 	XVisualInfo vinfo;
 	static final int MAX_ATTRIBUTES = 32;
 
@@ -104,15 +104,15 @@ public CrossBaseGLCanvas (Composite parent, int style, GLData data) {
 	}
 	glxAttrib [pos++] = 0;
 	OS.gtk_widget_realize (handle);
-	long /*int*/ window;
+	int /*long*/ window;
 	if (OS.GTK_VERSION >= OS.VERSION(2, 14, 0)){
 		window = OS.gtk_widget_get_window (handle);
 	} else {
 		window = OS.GTK_WIDGET_WINDOW (handle);
 	}
 	OS.gtk_widget_set_double_buffered(handle, false);
-	long /*int*/ xDisplay = OS.gdk_x11_drawable_get_xdisplay (window);
-	long /*int*/ infoPtr = GLX.glXChooseVisual (xDisplay, OS.XDefaultScreen (xDisplay), glxAttrib);
+	int /*long*/ xDisplay = OS.gdk_x11_drawable_get_xdisplay (window);
+	int /*long*/ infoPtr = GLX.glXChooseVisual (xDisplay, OS.XDefaultScreen (xDisplay), glxAttrib);
 	if (infoPtr == 0) {
 		dispose ();
 		SWT.error (SWT.ERROR_UNSUPPORTED_DEPTH);
@@ -120,9 +120,9 @@ public CrossBaseGLCanvas (Composite parent, int style, GLData data) {
 	vinfo = new XVisualInfo ();
 	GLX.memmove (vinfo, infoPtr, XVisualInfo.sizeof);
 	OS.XFree (infoPtr);
-	long /*int*/ screen = OS.gdk_screen_get_default ();
-	long /*int*/ gdkvisual = OS.gdk_x11_screen_lookup_visual (screen, vinfo.visualid);
-	long /*int*/ share = data.shareContext != null ? data.shareContext.context : 0;
+	int /*long*/ screen = OS.gdk_screen_get_default ();
+	int /*long*/ gdkvisual = OS.gdk_x11_screen_lookup_visual (screen, vinfo.visualid);
+	int /*long*/ share = data.shareContext != null ? data.shareContext.context : 0;
 	context = GLX.glXCreateContext (xDisplay, vinfo, share, true);
 	if (context == 0) SWT.error (SWT.ERROR_NO_HANDLES);
 	GdkWindowAttr attrs = new GdkWindowAttr ();
@@ -166,13 +166,13 @@ public CrossBaseGLCanvas (Composite parent, int style, GLData data) {
 				OS.gdk_window_resize (glWindow, clientArea.width, clientArea.height);
 				break;
 			case SWT.Dispose:
-				long /*int*/ window;
+				int /*long*/ window;
 				if (OS.GTK_VERSION >= OS.VERSION(2, 14, 0)){
 					window = OS.gtk_widget_get_window (handle);
 				} else {
 					window = OS.GTK_WIDGET_WINDOW (handle);
 				}
-				long /*int*/ xDisplay = gdk_x11_display_get_xdisplay (window);
+				int /*long*/ xDisplay = gdk_x11_display_get_xdisplay (window);
 				if (context != 0) {
 					if (GLX.glXGetCurrentContext () == context) {
 						GLX.glXMakeCurrent (xDisplay, 0, 0);
@@ -204,13 +204,13 @@ public CrossBaseGLCanvas (Composite parent, int style, GLData data) {
  */
 public GLData getGLData () {
 	checkWidget ();
-	long /*int*/ window;
+	int /*long*/ window;
 	if (OS.GTK_VERSION >= OS.VERSION(2, 14, 0)){
 		window = OS.gtk_widget_get_window (handle);
 	} else {
 		window = OS.GTK_WIDGET_WINDOW (handle);
 	}
-	long /*int*/ xDisplay = gdk_x11_display_get_xdisplay (window);
+	int /*long*/ xDisplay = gdk_x11_display_get_xdisplay (window);
 	GLData data = new GLData ();
 	int [] value = new int [1];
 	GLX.glXGetConfig (xDisplay, vinfo, GLX.GLX_DOUBLEBUFFER, value);
@@ -272,8 +272,8 @@ public boolean isCurrent () {
 public void setCurrent () {
 	checkWidget ();
 	if (GLX.glXGetCurrentContext () == context) return;
-	long /*int*/ window = OS.GTK_WIDGET_WINDOW (handle);
-	long /*int*/ xDisplay = gdk_x11_display_get_xdisplay (window);
+	int /*long*/ window = OS.GTK_WIDGET_WINDOW (handle);
+	int /*long*/ xDisplay = gdk_x11_display_get_xdisplay (window);
 	GLX.glXMakeCurrent (xDisplay, xWindow, context);
 }
 
@@ -287,13 +287,13 @@ public void setCurrent () {
  */
 public void swapBuffers () {
 	checkWidget ();
-	long /*int*/ window = OS.GTK_WIDGET_WINDOW (handle);
-	long /*int*/ xDisplay = gdk_x11_display_get_xdisplay (window);
+	int /*long*/ window = OS.GTK_WIDGET_WINDOW (handle);
+	int /*long*/ xDisplay = gdk_x11_display_get_xdisplay (window);
 	GLX.glXSwapBuffers (xDisplay, xWindow);
 }
 
-private long /*int*/ gdk_x11_display_get_xdisplay(long /*int*/ window) {
-	long /*int*/ xdisplay;
+private int /*long*/ gdk_x11_display_get_xdisplay(int /*long*/ window) {
+	int /*long*/ xdisplay;
 	if (OS.GTK_VERSION >= OS.VERSION(2, 24, 0)) {
 		xdisplay = OS.gdk_x11_display_get_xdisplay(OS.gdk_window_get_display(window));
 	} else {
@@ -304,7 +304,7 @@ private long /*int*/ gdk_x11_display_get_xdisplay(long /*int*/ window) {
 
 @Override
 public void redraw() {
-	long /*int*/ window;
+	int /*long*/ window;
 	if (OS.GTK_VERSION >= OS.VERSION(2, 14, 0)){
 		window = OS.gtk_widget_get_window (handle);
 	} else {
